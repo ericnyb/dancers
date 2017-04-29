@@ -66,7 +66,7 @@ public class DancerDao implements Serializable {
 	private SQLiteDatabase database;
 	private SqlHelper dbHelper;
 
-
+	//New comment
 	private Context context;
 
 
