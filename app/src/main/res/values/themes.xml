@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- the theme applied to the application or activity -->
+    <style name="CustomActionBarTheme"
+        parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <!--<item name="actionBarStyle">@style/MyActionBar</item>-->
+
+
+        <!--<item name="android:windowBackground">@color/Pink</item>-->
+        <!--<item name="android:colorBackground">@color/Pink</item>-->
+
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar"
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/LightSkyBlue</item>
+
+        <!-- Support library compatibility -->
+        <item name="background">@color/LightSkyBlue</item>
+    </style>
+
+    <style name="AppButton" parent="android:style/Widget.Button">
+        <item name="android:background">@color/LightSkyBlue</item>
+    </style>
+
+
+</resources>

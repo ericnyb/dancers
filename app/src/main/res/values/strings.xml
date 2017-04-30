@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Dancer App Version 1.0</string>
+    <string name="app_name">Dancer Finder - Version 1.0</string>
+    <string name="ButtonFinder">Get Data</string>
+    <string name="exitOption">Close Menu</string>
+    <string name="aboutOption">About</string>
+    <string name="title_activity_venue">VenueActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="Title">Title</string>
+    <string name="Venue">Venue</string>
+    <string name="Date">Date</string>
+    <string name="title_activity_detail">Detail</string>
+    <string name="DancerOPtion">Dancers</string>
+    <string name="OptionVenues">Venues</string>
+    <string name="OptionPeople">Choreographers</string>
+    <string name="textInfoRecords">Record count</string>
+    <string name="ButttonGoPerf">Performances</string>
+    <string name="title_activity_predict">Prediction Calendar</string>
+    <string name="ButtonPredict">Prediction</string>
+    <string name="textheader">Header</string>
+    <string name="textviewchild">Child</string>
+
+</resources>
