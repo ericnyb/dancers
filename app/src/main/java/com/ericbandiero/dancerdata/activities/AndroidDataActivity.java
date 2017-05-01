@@ -61,7 +61,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	private static final int ID_MENU_EXIT = 0;
 	private static final String TAG = "Droid Dancer";
 
-
+	//Test commit change.
 	ArrayList<String> results = new ArrayList<String>();
 	//transient Button mSearchButton;
 	transient EditText mInputEdit;
