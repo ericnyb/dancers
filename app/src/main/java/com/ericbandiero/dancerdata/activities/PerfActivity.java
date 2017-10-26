@@ -128,11 +128,6 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 
 	private Cursor getData() {
 
-		//Temp
-		StatData statData=new StatData(dancerDao);
-		Map<String, Integer> stringIntegerMap = statData.runStats();
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
-
 		Cursor cursor;
 		cursor=dancerDao.runRawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc");
 		if (cursor==null){

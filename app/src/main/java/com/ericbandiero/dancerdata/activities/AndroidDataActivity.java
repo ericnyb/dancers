@@ -38,6 +38,7 @@ import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
+import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
@@ -51,6 +52,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -265,6 +267,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
+		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
+			//Temp
+			StatData statData=new StatData(dancerDao);
+			Map<String, Integer> stringIntegerMap = statData.runStats();
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
+		}
 
 
 		if (item.getTitle() != null && item.getTitle().equals("Venue Data")) {
@@ -487,6 +496,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		menu.add("Import Data");
 		menu.add("Venue Data");
 		menu.add("Performance Data");
+		menu.add("Stats");
 
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);
