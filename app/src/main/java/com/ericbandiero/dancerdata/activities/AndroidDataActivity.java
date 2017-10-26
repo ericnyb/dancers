@@ -273,6 +273,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			StatData statData=new StatData(dancerDao);
 			Map<String, Integer> stringIntegerMap = statData.runStats();
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
+			StringBuilder stringBuilder=new StringBuilder();
+
+			String line_sep = System.getProperty("line.separator");
+
+			for (Map.Entry<String, Integer> stringIntegerEntry : stringIntegerMap.entrySet()) {
+				stringBuilder.append(stringIntegerEntry.getKey());
+				stringBuilder.append(":");
+				stringBuilder.append(stringIntegerEntry.getValue());
+				stringBuilder.append(line_sep);
+			}
+
+			UtilsShared.AlertMessageSimple(this,"Stats",stringBuilder.toString());
 		}
 
 
