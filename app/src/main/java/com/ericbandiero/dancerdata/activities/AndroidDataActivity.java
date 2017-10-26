@@ -90,6 +90,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	// String to get data
 	String sqlSeacrhString;
 
+	//For parameterss
+	String[] selectionArgs;
+
 	//data access class
 	DancerDao dancerDao;
 
@@ -529,7 +532,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				.toArray(new String[listOfFieldsToGet.size()]);
 
 		SQLiteDatabase	db=dancerDao.getDataBaseRead();
-		c = db.query("Info", fieldsToGet, sqlSeacrhString, null,
+
+		c = db.query("Info", fieldsToGet, sqlSeacrhString, selectionArgs,
 				fieldToGroupBy, null, orderByFields);
 
 		if (c != null) {
@@ -572,12 +576,15 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 					sqlSeacrhString = DancerData
 							.getUpperSearch(DancerDao.LAST_NAME)
-							+ " LIKE '"
-							+ userSearchText + "%'";
+							+ " LIKE ?";
+					selectionArgs=new String[] {userSearchText+'%'};
+
 				} else {
 					mInputEdit.setText("");
 					sqlSeacrhString = DancerData.getUpperSearch(DancerDao.CODE)
-							+ "= '" + DetailActivity.dancerdetailid + "'";
+							+ "=?";
+					selectionArgs=new String[] {DetailActivity.dancerdetailid};
+
 					DetailActivity.dancerdetailid = "-1";
 				}
 
@@ -588,7 +595,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				listOfFieldsToGet = new ArrayList<String>(
 						Arrays.asList(DancerDao.VENUE));
 				sqlSeacrhString = DancerData.getUpperSearch(DancerDao.VENUE)
-						+ " LIKE '" + userSearchText + "%'";
+						+ " LIKE ?";
+				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.VENUE;
 				orderByFields = DancerDao.VENUE;
 				Log.i(TAG, "Venue");
@@ -599,7 +607,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
 				sqlSeacrhString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
-						+ " LIKE '" + userSearchText + "%'";
+						+ " LIKE ?";
+				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
 				orderByFields = "CLastName,CFirstName,PerfDate Desc";
 				Log.i(TAG, "Venue");
