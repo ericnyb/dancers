@@ -1,6 +1,7 @@
 package com.ericbandiero.dancerdata.code;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,6 +98,10 @@ public class StatsAdapter extends BaseAdapter {
 
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
+		}
+
+		if ((position)==1){
+			//viewHolder.textViewData.setBackgroundColor(Color.YELLOW);
 		}
 
 		viewHolder.textViewData.setText(dataArray[position]);

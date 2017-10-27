@@ -3,6 +3,8 @@ package com.ericbandiero.dancerdata.code;
 import android.database.Cursor;
 import android.util.Log;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -79,6 +81,16 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 	public static String[] formatStatDataForTwoColumnsArray(Map<String,Integer> stringIntegerMap){
 		//if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
 
+		//First get max value
+		int maxValue=maxLengthOfValueFromMap(stringIntegerMap);
+
+		int maxValueLength=String.valueOf(maxValue).length();
+
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Max value:"+maxValue);
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Max value length:"+maxValueLength);
+
+
+
 		String [] dataArray=new String[stringIntegerMap.size()*2];
 
 		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","data array length:"+dataArray.length);
@@ -92,10 +104,22 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 		for (Map.Entry<String, Integer> stringIntegerEntry : stringIntegerMap.entrySet()) {
 				dataArray[counter]=stringIntegerEntry.getKey()+":";
 				counter++;
-				dataArray[counter]=String.valueOf(stringIntegerEntry.getValue());
+				int stuff=maxValueLength-String.valueOf(stringIntegerEntry.getValue()).length();
+				if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Stuff:"+stuff);
+
+			String s1="";
+			if (stuff>0) {
+				s1 = String.format("%0" + stuff + "d", 0).replace("0", "  ");
+				if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","String:"+s1);
+			}
+				dataArray[counter]=s1+String.valueOf(stringIntegerEntry.getValue());
 				counter++;
 		}
 		return dataArray;
 	}
 
+	public static int maxLengthOfValueFromMap(Map<String,Integer> stringIntegerMap){
+		Collection c = stringIntegerMap.values();
+		return (int) Collections.max(c);
+	}
 }
