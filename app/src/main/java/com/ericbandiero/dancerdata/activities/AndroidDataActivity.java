@@ -277,7 +277,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			statIntent.putExtra(StatsActivity.EXTRA_TITLE,"Shoot Information");
 			statIntent.putExtra(StatsActivity.EXTRA_HEADER,"Stats");
 			statIntent.putExtra(StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
-			statIntent.putExtra(StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleListViewClicksStats());
+			//statIntent.putExtra(StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleListViewClicksStats());
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 
