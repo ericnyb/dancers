@@ -47,6 +47,7 @@ import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.HandleListViewClicksStats;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
+import com.ericbandiero.librarymain.interfaces.IHandleListViewClicks;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 import com.ericbandiero.librarymain.interfaces.ITestParce;
 
@@ -278,7 +279,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_TITLE,"Shoot Information");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_HEADER,"Stats");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleListViewClicksStats());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleTestClick());
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 
@@ -672,5 +673,15 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		public void doSomething() {
 			System.out.println("Subclass calling!");
 		}
+	}
+}
+
+class HandleTestClick implements IHandleListViewClicks,Serializable{
+
+	private static final long serialVersionUID = -5001699047268760417L;
+
+	@Override
+	public void handleClicks(AdapterView<?> adapterView, View view, int i, long l) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test!");
 	}
 }
