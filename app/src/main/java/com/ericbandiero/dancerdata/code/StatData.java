@@ -3,6 +3,8 @@ package com.ericbandiero.dancerdata.code;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
