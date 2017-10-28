@@ -3,9 +3,11 @@ package com.ericbandiero.dancerdata.code;
 import android.database.Cursor;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,24 +20,27 @@ public class StatData {
 
 	Map<String,Integer> dataMap=new LinkedHashMap<>();
 
+	List<DataHolderTwoFields> dataHolderTwoFieldsList=new ArrayList<>();
+
 
 	public StatData(DancerDao sqLiteDatabase) {
 		dancerDao=sqLiteDatabase;
 	}
 
-	public Map<String,Integer> runStats() {
+	public List<DataHolderTwoFields> runStats() {
 		getDancerCount();
 		getChoreographerCount();
 		getVenueCount();
 		getDanceWorksCount();
 		getPerformanceCount();
-		return dataMap;
+		return dataHolderTwoFieldsList;
 	}
 
 	private void getDancerCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancer count"+cursor.getCount());
 		dataMap.put("Dancers",cursor.getCount());
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Dancers:",String.valueOf(cursor.getCount())));
 	}
 
 
@@ -43,24 +48,30 @@ public class StatData {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CHOR_CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Chore count"+cursor.getCount());
 		dataMap.put("Choreographers",cursor.getCount());
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Choreographers:",String.valueOf(cursor.getCount())));
 	}
 
 	private void getVenueCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.VENUE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue count"+cursor.getCount());
 		dataMap.put("Venues",cursor.getCount());
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Venues:",String.valueOf(cursor.getCount())));
+
 	}
 
 	private void getDanceWorksCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.DANCE_CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dance pieces count"+cursor.getCount());
 		dataMap.put("Dance pieces",cursor.getCount());
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Dance pieces:",String.valueOf(cursor.getCount())));
+
 	}
 
 	private void getPerformanceCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.PERF_CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance count"+cursor.getCount());
 		dataMap.put("Performances",cursor.getCount());
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Performances:",String.valueOf(cursor.getCount())));
 	}
 
 public static String formatStatData(Map<String,Integer> stringIntegerMap){
@@ -122,4 +133,6 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 		Collection c = stringIntegerMap.values();
 		return (int) Collections.max(c);
 	}
+
+
 }

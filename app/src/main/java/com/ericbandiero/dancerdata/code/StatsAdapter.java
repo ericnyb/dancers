@@ -1,7 +1,7 @@
 package com.ericbandiero.dancerdata.code;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,23 +10,32 @@ import android.widget.TextView;
 
 import com.ericbandiero.dancerdata.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Eric Bandiero on 10/26/2017.
  */
 
 public class StatsAdapter extends BaseAdapter {
 
-	public String [] dataArray;
+	private List<DataHolderTwoFields> dataHolderTwoFields=new ArrayList<>();
+
+	private int maxLengthOfDataField;
+	private int maxLengthOfDataValue;
+	private int totalLengthOfFieldAndValue;
 
 	public Context context;
 
-	public class ViewHolder {
-		TextView textViewData;
+	public StatsAdapter(List<DataHolderTwoFields> dataHolderTwoFields, Context context) {
+		this.context = context;
+		this.dataHolderTwoFields=dataHolderTwoFields;
+		maxLengthFromDataHolderTwoFields(this.dataHolderTwoFields);
 	}
 
-	public StatsAdapter(String[] dataArray, Context context) {
-		this.dataArray = dataArray;
-		this.context = context;
+	public class ViewHolder {
+		TextView textViewDataField;
+		TextView textViewDataValue;
 	}
 
 	/**
@@ -36,7 +45,7 @@ public class StatsAdapter extends BaseAdapter {
 	 */
 	@Override
 	public int getCount() {
-		return dataArray.length;
+		return dataHolderTwoFields.size();
 	}
 
 	/**
@@ -48,7 +57,7 @@ public class StatsAdapter extends BaseAdapter {
 	 */
 	@Override
 	public Object getItem(int position) {
-		return dataArray[position];
+		return dataHolderTwoFields.get(position);
 	}
 
 	/**
@@ -85,15 +94,17 @@ public class StatsAdapter extends BaseAdapter {
 		View rowView = convertView;
 		ViewHolder viewHolder;
 
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Parent name:"+parent.getClass().getName());
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Parent width:"+parent.getWidth());
+
 		if (rowView == null) {
 			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			rowView = inflater.inflate(R.layout.stats_grid_items, parent,false);
-			// configure view holder
+			// Configure view holder
 			viewHolder = new ViewHolder();
-//                viewHolder.copy = (ImageView) rowView.findViewById(R.id.copy);
-//                viewHolder.share = (ImageView) rowView.findViewById(R.id.share);
+			viewHolder.textViewDataField = (TextView) rowView.findViewById(R.id.textViewStatDataField);
+			viewHolder.textViewDataValue = (TextView) rowView.findViewById(R.id.textViewStatDataValue);
 
-			viewHolder.textViewData = (TextView) rowView.findViewById(R.id.textViewStatDataItem);
 			rowView.setTag(viewHolder);
 
 		} else {
@@ -104,11 +115,45 @@ public class StatsAdapter extends BaseAdapter {
 			//viewHolder.textViewData.setBackgroundColor(Color.YELLOW);
 		}
 
-		viewHolder.textViewData.setText(dataArray[position]);
+		String field=dataHolderTwoFields.get(position).getField();
+		String value=dataHolderTwoFields.get(position).getValue();
 
+		String fieldFormatted = String.format("%1$-" +maxLengthOfDataField + "s", field);
+		String valueFormatted=String.format("%1$" +maxLengthOfDataValue + "s", value);
 
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Length of string:"+fieldFormatted.length());
+		viewHolder.textViewDataField.setText(fieldFormatted);
+		viewHolder.textViewDataValue.setText(valueFormatted);
 
-		//TextView textView=
 		return rowView;
+	}
+
+	private void maxLengthFromDataHolderTwoFields(List<DataHolderTwoFields> dataHolderTwoFields){
+
+		int maxLengthField=0;
+		int maxLengthValue=0;
+
+
+		for (DataHolderTwoFields dataHolderTwoField : dataHolderTwoFields) {
+
+			int lengthField=dataHolderTwoField.getField().length();
+			int lengthValue=dataHolderTwoField.getValue().length();
+
+			if (lengthField>=maxLengthField){
+				maxLengthField=lengthField;
+			}
+
+			if (lengthValue>=maxLengthValue){
+				maxLengthValue=lengthValue;
+			}
+
+		}
+		maxLengthOfDataField =maxLengthField+1;
+		maxLengthOfDataValue=maxLengthValue;
+		totalLengthOfFieldAndValue=maxLengthField+maxLengthValue;
+
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Max length field:"+ maxLengthOfDataField);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Max length value:"+ maxLengthOfDataValue);
+
 	}
 }

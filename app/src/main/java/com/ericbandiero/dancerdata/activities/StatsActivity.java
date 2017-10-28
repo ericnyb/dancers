@@ -1,29 +1,27 @@
 package com.ericbandiero.dancerdata.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ListView;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.DataHolderTwoFields;
 import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.StatsAdapter;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
-import com.ericbandiero.librarymain.UtilsShared;
 
+import java.util.List;
 import java.util.Map;
 
 public class StatsActivity extends Lib_Base_ActionBarActivity {
 
-	GridView gridView;
+	ListView listView;
 	private DancerDao dancerDao;
 
 	@Override
@@ -31,29 +29,29 @@ public class StatsActivity extends Lib_Base_ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setTitle("Stats");
 		setContentView(R.layout.activity_stats);
-		gridView= (GridView) findViewById(R.id.statsGrid);
+		listView = (ListView) findViewById(R.id.listViewStats);
 
 		dancerDao=new DancerDao(this);
 		StatData statData=new StatData(dancerDao);
-		Map<String, Integer> stringIntegerMap = statData.runStats();
-		String[] strings;
-		strings = StatData.formatStatDataForTwoColumnsArray(stringIntegerMap);
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","data length:"+strings.length);
+		List<DataHolderTwoFields> dataHolderTwoFields = statData.runStats();
+		//String[] strings;
+		//strings = StatData.formatStatDataForTwoColumnsArray(dataHolderTwoFields);
+		//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","data length:"+strings.length);
 
-		for (int i = 0; i < strings.length; i++) {
-			String s = strings[i];
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","String:"+s);
-		}
+//		for (int i = 0; i < strings.length; i++) {
+//			String s = strings[i];
+//			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","String:"+s);
+//		}
 		//UtilsShared.AlertMessageSimple(this,"Stats",string);
 
 //		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 //				android.R.layout.simple_list_item_1, strings);
 
-		StatsAdapter statsAdapter=new StatsAdapter(strings,this);
+		StatsAdapter statsAdapter=new StatsAdapter(dataHolderTwoFields,this);
 
-		gridView.setAdapter(statsAdapter);
+		listView.setAdapter(statsAdapter);
 
-		gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,
 									int position, long id) {
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">",v.toString());
