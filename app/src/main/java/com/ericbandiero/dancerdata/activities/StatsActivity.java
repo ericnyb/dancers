@@ -1,12 +1,15 @@
 package com.ericbandiero.dancerdata.activities;
 
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
@@ -21,15 +24,36 @@ import java.util.Map;
 
 public class StatsActivity extends Lib_Base_ActionBarActivity {
 
-	ListView listView;
+	public static final String EXTRA_HEADER="header_text";
+	public static final String EXTRA_TITLE="title_text";
+
+	private ListView listView;
+	private TextView textViewHeader;
 	private DancerDao dancerDao;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle("Stats");
+		setTitle("Data Viewer");
 		setContentView(R.layout.activity_stats);
 		listView = (ListView) findViewById(R.id.listViewStats);
+		textViewHeader=(TextView)findViewById(R.id.textViewStatDataHeader);
+
+		String stringExtraTitle = getIntent().getStringExtra(EXTRA_TITLE);
+		String stringExtraHeader = getIntent().getStringExtra(EXTRA_HEADER);
+
+		if (stringExtraHeader==null){
+			textViewHeader.setVisibility(View.GONE);
+		}
+		else{
+			SpannableString content = new SpannableString(stringExtraHeader);
+			content.setSpan(new UnderlineSpan(), 0, stringExtraHeader.length(), 0);
+			textViewHeader.setText(content);
+		}
+
+		if (stringExtraTitle!=null){
+			setTitle(stringExtraTitle);
+		}
 
 		dancerDao=new DancerDao(this);
 		StatData statData=new StatData(dancerDao);

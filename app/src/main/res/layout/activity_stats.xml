@@ -7,13 +7,21 @@
     android:layout_height="match_parent"
     tools:context="com.ericbandiero.dancerdata.activities.StatsActivity">
 
+  <TextView
+      android:id="@+id/textViewStatDataHeader"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="5dp"
+      android:layout_marginTop="5dp"
+      android:gravity="center"
+      android:text="TextView"
+      android:textColor="@android:color/black"/>
+
   <ListView
       android:id="@+id/listViewStats"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginLeft="8dp"
-      android:layout_marginStart="8dp"
+      android:layout_below="@+id/textViewStatDataHeader"
       android:layout_marginTop="8dp"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintTop_toTopOf="parent"/>
+      />
 </RelativeLayout>

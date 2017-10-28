@@ -272,11 +272,12 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
 			Intent statIntent=new Intent(this,StatsActivity.class);
+			statIntent.putExtra(StatsActivity.EXTRA_TITLE,"Shoot Information");
+			statIntent.putExtra(StatsActivity.EXTRA_HEADER,"Stats");
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 
 		}
-
 
 		if (item.getTitle() != null && item.getTitle().equals("Venue Data")) {
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
