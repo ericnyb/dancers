@@ -20,7 +20,7 @@ import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 
 import java.util.List;
 
-public class StatsActivity extends Lib_Base_ActionBarActivity {
+public class Lib_StatsActivity extends Lib_Base_ActionBarActivity {
 
 	public static final String EXTRA_HEADER="header_text";
 	public static final String EXTRA_TITLE="title_text";
@@ -37,9 +37,9 @@ public class StatsActivity extends Lib_Base_ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle("Data Viewer");
-		setContentView(R.layout.activity_stats);
-		listView = (ListView) findViewById(R.id.listViewStats);
-		textViewHeader=(TextView)findViewById(R.id.textViewStatDataHeader);
+		setContentView(R.layout.lib_activity_stats);
+		listView = (ListView) findViewById(R.id.lib_listViewStats);
+		textViewHeader=(TextView)findViewById(R.id.lib_textViewStatDataHeader);
 
 		String stringExtraTitle = getIntent().getStringExtra(EXTRA_TITLE);
 		String stringExtraHeader = getIntent().getStringExtra(EXTRA_HEADER);

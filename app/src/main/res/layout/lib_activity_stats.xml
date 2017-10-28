@@ -5,10 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ericbandiero.dancerdata.activities.StatsActivity">
+    tools:context="com.ericbandiero.dancerdata.activities.Lib_StatsActivity">
 
   <TextView
-      android:id="@+id/textViewStatDataHeader"
+      android:id="@+id/lib_textViewStatDataHeader"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="5dp"
@@ -18,10 +18,10 @@
       android:textColor="@android:color/black"/>
 
   <ListView
-      android:id="@+id/listViewStats"
+      android:id="@+id/lib_listViewStats"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/textViewStatDataHeader"
+      android:layout_below="@+id/lib_textViewStatDataHeader"
       android:layout_marginTop="8dp"
       />
 </RelativeLayout>
