@@ -38,12 +38,16 @@ import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
+import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
+import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.basecode.HandleListViewClicksStats;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
+import com.ericbandiero.librarymain.interfaces.IHandleListViewClicks;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 import com.ericbandiero.librarymain.interfaces.ITestParce;
 
@@ -87,6 +91,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	// String to get data
 	String sqlSeacrhString;
+
+	//For parameterss
+	String[] selectionArgs;
 
 	//data access class
 	DancerDao dancerDao;
@@ -265,7 +272,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
+		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
+			DancerDao dancerDao=new DancerDao(this);
+			StatData statData=new StatData(dancerDao);
+			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_TITLE,"Shoot Information");
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_HEADER,"Stats");
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleTestClick());
+			startActivity(statIntent);
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 
+		}
 
 		if (item.getTitle() != null && item.getTitle().equals("Venue Data")) {
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
@@ -487,6 +505,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		menu.add("Import Data");
 		menu.add("Venue Data");
 		menu.add("Performance Data");
+		menu.add("Stats");
 
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);
@@ -507,7 +526,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				.toArray(new String[listOfFieldsToGet.size()]);
 
 		SQLiteDatabase	db=dancerDao.getDataBaseRead();
-		c = db.query("Info", fieldsToGet, sqlSeacrhString, null,
+
+		c = db.query("Info", fieldsToGet, sqlSeacrhString, selectionArgs,
 				fieldToGroupBy, null, orderByFields);
 
 		if (c != null) {
@@ -550,12 +570,15 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 					sqlSeacrhString = DancerData
 							.getUpperSearch(DancerDao.LAST_NAME)
-							+ " LIKE '"
-							+ userSearchText + "%'";
+							+ " LIKE ?";
+					selectionArgs=new String[] {userSearchText+'%'};
+
 				} else {
 					mInputEdit.setText("");
 					sqlSeacrhString = DancerData.getUpperSearch(DancerDao.CODE)
-							+ "= '" + DetailActivity.dancerdetailid + "'";
+							+ "=?";
+					selectionArgs=new String[] {DetailActivity.dancerdetailid};
+
 					DetailActivity.dancerdetailid = "-1";
 				}
 
@@ -566,7 +589,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				listOfFieldsToGet = new ArrayList<String>(
 						Arrays.asList(DancerDao.VENUE));
 				sqlSeacrhString = DancerData.getUpperSearch(DancerDao.VENUE)
-						+ " LIKE '" + userSearchText + "%'";
+						+ " LIKE ?";
+				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.VENUE;
 				orderByFields = DancerDao.VENUE;
 				Log.i(TAG, "Venue");
@@ -577,7 +601,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
 				sqlSeacrhString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
-						+ " LIKE '" + userSearchText + "%'";
+						+ " LIKE ?";
+				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
 				orderByFields = "CLastName,CFirstName,PerfDate Desc";
 				Log.i(TAG, "Venue");
@@ -648,5 +673,15 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		public void doSomething() {
 			System.out.println("Subclass calling!");
 		}
+	}
+}
+
+class HandleTestClick implements IHandleListViewClicks,Serializable{
+
+	private static final long serialVersionUID = -5001699047268760417L;
+
+	@Override
+	public void handleClicks(AdapterView<?> adapterView, View view, int i, long l) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test!");
 	}
 }

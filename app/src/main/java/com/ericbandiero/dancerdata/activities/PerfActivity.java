@@ -13,7 +13,9 @@ import android.widget.TextView;
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.StatData;
 
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import butterknife.BindView;
@@ -125,6 +127,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 	}
 
 	private Cursor getData() {
+
 		Cursor cursor;
 		cursor=dancerDao.runRawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc");
 		if (cursor==null){

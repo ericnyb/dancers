@@ -262,7 +262,7 @@ public class DancerDao implements Serializable {
 				+ SqlHelper.TABLE_INFO, null);
 		cursor.moveToFirst();
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">", "Rows of data in database:" + cursor.getInt(0));
-		String rowsImported = "Rows of data attempted:" + cursor.getInt(0);
+		String rowsImported = "Rows of data imported:" + cursor.getInt(0);
 
 //		AndroidUtility.AlertMessageSimple(context, "Database import results.",
 //				rowsAttempted + "\n" + rowsImported);
