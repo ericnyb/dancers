@@ -42,7 +42,9 @@ import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
+import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.basecode.HandleListViewClicksStats;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
@@ -52,7 +54,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -271,25 +272,17 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		super.onOptionsItemSelected(item);
 
 		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
-			//Temp
+			DancerDao dancerDao=new DancerDao(this);
 			StatData statData=new StatData(dancerDao);
-			Map<String, Integer> stringIntegerMap = statData.runStats();
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
-			StringBuilder stringBuilder=new StringBuilder();
+			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_TITLE,"Shoot Information");
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_HEADER,"Stats");
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleListViewClicksStats());
+			startActivity(statIntent);
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 
-			String line_sep = System.getProperty("line.separator");
-
-			for (Map.Entry<String, Integer> stringIntegerEntry : stringIntegerMap.entrySet()) {
-				stringBuilder.append(stringIntegerEntry.getKey());
-				stringBuilder.append(":");
-				stringBuilder.append(stringIntegerEntry.getValue());
-				stringBuilder.append(line_sep);
-			}
-
-			UtilsShared.AlertMessageSimple(this,"Stats",stringBuilder.toString());
 		}
-
 
 		if (item.getTitle() != null && item.getTitle().equals("Venue Data")) {
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
