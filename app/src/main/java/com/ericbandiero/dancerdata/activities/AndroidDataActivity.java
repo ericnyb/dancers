@@ -36,6 +36,7 @@ import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
+import com.ericbandiero.dancerdata.code.HandleListViewClicksStats;
 import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.StatData;
@@ -276,7 +277,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_TITLE,"Shoot Information");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_HEADER,"Stats");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleListViewClicksStats());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleListViewClicksStats());
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 

@@ -15,7 +15,7 @@ import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DataHolderTwoFields;
 import com.ericbandiero.dancerdata.code.IHandleListViewClicks;
-import com.ericbandiero.dancerdata.code.StatsAdapter;
+import com.ericbandiero.dancerdata.code.Lib_StatsAdapter;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 
 import java.util.List;
@@ -59,9 +59,9 @@ public class Lib_StatsActivity extends Lib_Base_ActionBarActivity {
 			setTitle(stringExtraTitle);
 		}
 
-		StatsAdapter statsAdapter=new StatsAdapter(dataHolderTwoFields,this);
+		Lib_StatsAdapter libStatsAdapter =new Lib_StatsAdapter(dataHolderTwoFields,this);
 
-		listView.setAdapter(statsAdapter);
+		listView.setAdapter(libStatsAdapter);
 
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v,

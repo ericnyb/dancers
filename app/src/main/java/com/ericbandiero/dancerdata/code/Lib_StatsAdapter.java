@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Eric Bandiero on 10/26/2017.
  */
 
-public class StatsAdapter extends BaseAdapter {
+public class Lib_StatsAdapter extends BaseAdapter {
 
 	private List<DataHolderTwoFields> dataHolderTwoFields=new ArrayList<>();
 
@@ -27,7 +27,7 @@ public class StatsAdapter extends BaseAdapter {
 
 	public Context context;
 
-	public StatsAdapter(List<DataHolderTwoFields> dataHolderTwoFields, Context context) {
+	public Lib_StatsAdapter(List<DataHolderTwoFields> dataHolderTwoFields, Context context) {
 		this.context = context;
 		this.dataHolderTwoFields=dataHolderTwoFields;
 		maxLengthFromDataHolderTwoFields(this.dataHolderTwoFields);
@@ -102,8 +102,8 @@ public class StatsAdapter extends BaseAdapter {
 			rowView = inflater.inflate(R.layout.stats_grid_items, parent,false);
 			// Configure view holder
 			viewHolder = new ViewHolder();
-			viewHolder.textViewDataField = (TextView) rowView.findViewById(R.id.textViewStatDataField);
-			viewHolder.textViewDataValue = (TextView) rowView.findViewById(R.id.textViewStatDataValue);
+			viewHolder.textViewDataField = (TextView) rowView.findViewById(R.id.lib_textViewStatDataField);
+			viewHolder.textViewDataValue = (TextView) rowView.findViewById(R.id.lib_textViewStatDataValue);
 
 			rowView.setTag(viewHolder);
 
