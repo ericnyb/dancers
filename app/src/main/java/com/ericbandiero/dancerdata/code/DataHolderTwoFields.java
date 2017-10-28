@@ -1,12 +1,16 @@
 package com.ericbandiero.dancerdata.code;
 
+import java.io.Serializable;
+
 /**
  * Created by Eric Bandiero on 10/27/2017.
  */
 
-public class DataHolderTwoFields {
+public class DataHolderTwoFields implements Serializable {
+	private static final long serialVersionUID = -3664907858807961798L;
 	private String field;
 	private String value;
+
 
 	public DataHolderTwoFields(String field, String value) {
 		this.field = field;
@@ -27,5 +31,13 @@ public class DataHolderTwoFields {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "DataHolderTwoFields{" +
+				"field='" + field + '\'' +
+				", value='" + value + '\'' +
+				'}';
 	}
 }
