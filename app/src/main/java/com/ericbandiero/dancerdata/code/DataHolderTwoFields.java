@@ -2,10 +2,11 @@ package com.ericbandiero.dancerdata.code;
 
 import java.io.Serializable;
 
-/**
- * Created by Eric Bandiero on 10/27/2017.
+/** Our basic data holder with a field and a value
+ *  Created by Eric Bandiero on 10/27/2017.
  */
 
+@SuppressWarnings("unused")
 public class DataHolderTwoFields implements Serializable {
 	private static final long serialVersionUID = -3664907858807961798L;
 	private String field;
