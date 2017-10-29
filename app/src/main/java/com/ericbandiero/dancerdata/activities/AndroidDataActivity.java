@@ -33,6 +33,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
+import com.ericbandiero.dancerdata.code.ControlStatAdapter;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
@@ -44,8 +45,10 @@ import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.adapters.Lib_StatsAdapter;
 import com.ericbandiero.librarymain.basecode.HandleListViewClicksStats;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
+import com.ericbandiero.librarymain.interfaces.IControlStatAdapter;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IHandleListViewClicks;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
@@ -275,11 +278,15 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
 			DancerDao dancerDao=new DancerDao(this);
 			StatData statData=new StatData(dancerDao);
+			ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_TITLE,"Shoot Information");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_HEADER,"Stats");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND,(Serializable)new HandleTestClick());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND_INTERFACE,(Serializable)new HandleTestClick());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_WANT_TOTALS,true);
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)controlStatAdapter);
+
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 
