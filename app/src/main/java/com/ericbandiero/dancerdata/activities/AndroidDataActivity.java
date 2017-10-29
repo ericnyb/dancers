@@ -283,7 +283,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_TITLE,"Shoot Information");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_HEADER,"Stats");
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_TITLE_BACK_COLOR, ContextCompat.getColor(context, R.color.PaleTurquoise));
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_HEADER_BACK_COLOR, ContextCompat.getColor(context, R.color.PaleTurquoise));
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND_INTERFACE,(Serializable)new HandleTestClick());
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_WANT_TOTALS,false);
