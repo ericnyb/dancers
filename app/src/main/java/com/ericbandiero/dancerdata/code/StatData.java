@@ -35,6 +35,8 @@ public class StatData {
 		getVenueCount();
 		getDanceWorksCount();
 		getPerformanceCount();
+		getFirstAndLastPerformance();
+		getMostCommonName();
 		return dataHolderTwoFieldsList;
 	}
 
@@ -75,6 +77,26 @@ public class StatData {
 		dataMap.put("Performances",cursor.getCount());
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Performances:",String.valueOf(cursor.getCount())));
 	}
+
+	private void getFirstAndLastPerformance() {
+		Cursor cursor = dancerDao.runRawQuery("Select min ("+ DancerDao.PERF_DATE+") from info");
+		cursor.moveToFirst();
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("First shoot:",String.valueOf(cursor.getString(0))));
+
+		cursor = dancerDao.runRawQuery("Select max ("+ DancerDao.PERF_DATE+") from info");
+		cursor.moveToFirst();
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance last shoot"+cursor.getString(0));
+		dataMap.put("Latest shoot",cursor.getCount());
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Last shoot:",String.valueOf(cursor.getString(0))));
+	}
+
+	private void getMostCommonName() {
+		String sql="Select distinct "+DancerDao.FIRST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.FIRST_NAME+") from info group by "+DancerDao.FIRST_NAME +" order by 2 desc";
+		Cursor cursor = dancerDao.runRawQuery(sql);
+		cursor.moveToFirst();
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Most common first name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+	}
+
 
 public static String formatStatData(Map<String,Integer> stringIntegerMap){
 	//if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
