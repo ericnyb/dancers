@@ -295,8 +295,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			ControlStatsAdapterBuilder controlStatsAdapterBuilder=new ControlStatsAdapterBuilder(
 					ContextCompat.getColor(this,R.color.LightBlue),
 					ContextCompat.getColor(this,R.color.LightSalmon),
-					null,
-					false);
+					ContextCompat.getColor(this,R.color.LightGreen),
+					true);
 
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)controlStatsAdapterBuilder);
 			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
