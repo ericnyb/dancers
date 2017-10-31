@@ -279,15 +279,19 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
 			DancerDao dancerDao=new DancerDao(this);
 			StatData statData=new StatData(dancerDao);
-			ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+
+			//These are for the activity
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_TITLE,"Shoot Information");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_HEADER,"Stats");
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_HEADER_BACK_COLOR, ContextCompat.getColor(context, R.color.PaleTurquoise));
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_CLICK_COMMAND_INTERFACE,(Serializable)new HandleTestClick());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_LIST_VIEW_CLICK_COMMAND_INTERFACE,(Serializable)new HandleTestClick());
+
+			//These are for the adapter
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_WANT_TOTALS,false);
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)controlStatAdapter);
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
 
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");

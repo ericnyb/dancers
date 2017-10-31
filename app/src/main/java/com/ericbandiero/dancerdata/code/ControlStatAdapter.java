@@ -21,6 +21,7 @@ public class ControlStatAdapter implements IControlStatAdapter,Serializable {
 		Lib_StatsAdapter lib_statsAdapter=(Lib_StatsAdapter)baseAdapter;
 		//lib_statsAdapter.setColorTextField(ContextCompat.getColor(context, R.color.LightSteelBlue));
 		lib_statsAdapter.setColorTextValue(ContextCompat.getColor(context, R.color.LightSalmon));
+		//lib_statsAdapter.setPerformTotalOnValues(true);
 		//lib_statsAdapter.setTotalBackColorTotalValue(ContextCompat.getColor(context, R.color.LightGreen));
 	}
 }
