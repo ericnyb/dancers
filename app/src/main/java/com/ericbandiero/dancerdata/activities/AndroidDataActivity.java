@@ -289,8 +289,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_LIST_VIEW_CLICK_COMMAND_INTERFACE,(Serializable)new HandleTestClick());
 
-			//These are for the adapter
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_WANT_TOTALS,false);
+			//This is for the adapter
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
 
 			startActivity(statIntent);
