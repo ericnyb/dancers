@@ -9,11 +9,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.StatData;
+import com.ericbandiero.dancerdata.code.TestBus;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
+import com.squareup.otto.ThreadEnforcer;
 
 import java.util.Map;
 import java.util.SortedSet;
@@ -32,6 +38,8 @@ import butterknife.OnClick;
 
 public class PerfActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 	//static SQLiteDatabase db;
+	public static Bus bus;
+
 	final static String TAG="Perf";
 	SimpleCursorAdapter mAdapter; 	
 	Cursor cursor;
@@ -58,7 +66,13 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setTitle("Performances");
 
+		bus = new Bus(ThreadEnforcer.MAIN);
+		bus.register(this);
 
+		TestBus testBus=new TestBus();
+
+		produceEvent();
+		bus.post("Hello from OTTO event bus");
 
 		ButterKnife.bind(this);
 		//listviewperf=(ListView) findViewById(R.id.listViewPerfs);
@@ -141,7 +155,14 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 //		db=database;
 //	}
 
-    @Override
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		bus.unregister(this);
+	}
+
+	@Override
     protected void onStop() {
 		if (cursor!=null) {
 			cursor.close();
@@ -149,6 +170,16 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		}
         super.onStop();
     }
+
+	@Produce
+	public String produceEvent() {
+		return "Starting up...we are using OTTO event bus";
+	}
+
+	@Subscribe
+	public void getMessage(String s) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received:"+s);
+	}
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
