@@ -14,4 +14,5 @@ import dagger.Component;
 @Component(modules = {AppModule.class})
 public interface BasicComponent {
 	void inject(AndroidDataActivity activity);
+	void inject(TestDaggerObject td);
 }
