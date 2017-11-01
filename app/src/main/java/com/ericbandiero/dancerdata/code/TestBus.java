@@ -15,6 +15,7 @@ public class TestBus {
 		PerfActivity.bus.register(this);
 	}
 
+	//This method name doesn't matter - what matters is the argument (String) - which producer sends.
 	@Subscribe
 	public void getMessage(String s) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received:"+s);
