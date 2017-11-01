@@ -72,7 +72,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		TestBus testBus=new TestBus();
 
 		produceEvent();
-		bus.post("Hello");
+		bus.post("Hello from OTTO event bus");
 
 		ButterKnife.bind(this);
 		//listviewperf=(ListView) findViewById(R.id.listViewPerfs);
@@ -173,7 +173,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 
 	@Produce
 	public String produceEvent() {
-		return "Starting up";
+		return "Starting up...we are using OTTO event bus";
 	}
 
 	@Subscribe

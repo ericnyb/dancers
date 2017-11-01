@@ -17,7 +17,8 @@ public class TestBus {
 
 	@Subscribe
 	public void getMessage(String s) {
-		if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received:"+s);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received:"+s);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","We will now stop receiving messages from the event bus...");
 		//We will no longer receive these.
 		PerfActivity.bus.unregister(this);
 	}
