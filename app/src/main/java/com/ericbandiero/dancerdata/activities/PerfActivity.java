@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.EventBusTester;
 import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestBus;
 import com.squareup.otto.Bus;
@@ -69,10 +70,15 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		bus = new Bus(ThreadEnforcer.MAIN);
 		bus.register(this);
 
+
 		TestBus testBus=new TestBus();
 
 		produceEvent();
 		bus.post("Hello from OTTO event bus");
+
+		EventBusTester ev=new EventBusTester("Sample event!");
+
+		bus.post(ev);
 
 		ButterKnife.bind(this);
 		//listviewperf=(ListView) findViewById(R.id.listViewPerfs);
@@ -181,6 +187,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		return 7;
 	}
 
+
 	//This method name doesn't matter - what matters is the argument (String) - which producer sends.
 	@Subscribe
 	public void getMessage(String s) {
@@ -190,6 +197,11 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 	@Subscribe
 	public void getMessage(int s) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received for int:"+s);
+	}
+
+	@Subscribe
+	public void getMessageFromEventBusTester(EventBusTester s) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received from our own event class:"+s.getS());
 	}
 
 	@Override
