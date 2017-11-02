@@ -65,6 +65,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -117,6 +118,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Inject
 	TestDaggerObject testDaggerObject;
 	@Inject
+	@Named("stats")
 	ControlStatsActivityBuilder controlStatsActivityBuilder;
 	@Inject
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;

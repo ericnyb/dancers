@@ -14,6 +14,7 @@ import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -59,18 +60,25 @@ public class AppModule {
 	}
 
 	@Singleton @Provides
-	public StatData provideStatData(){
-		return new StatData(provideDancerDao());
+	public StatData provideStatData(DancerDao dancerDao){
+		return new StatData(dancerDao);
 	}
 
-	@Singleton @Provides
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivity(){
+	@Singleton @Provides @Named ("stats")
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity(StatData statData){
 		return new ControlStatsActivityBuilder("Shooting History Stats",
 				"Data",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				provideStatData().runStats(), provideHandleTestClick());
+				statData.runStats(), provideHandleTestClick());
 	}
 
+	@Singleton @Provides @Named ("stats_new")
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(StatData statData){
+		return new ControlStatsActivityBuilder("Shooting History Stats",
+				"My New Data",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				statData.runStats(), provideHandleTestClick());
+	}
 
 	@Singleton @Provides
 	public ControlStatsAdapterBuilder provideDaggerControlStatsAdapterBuilder(){
