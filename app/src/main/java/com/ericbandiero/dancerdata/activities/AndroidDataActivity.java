@@ -116,6 +116,10 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	@Inject
 	TestDaggerObject testDaggerObject;
+	@Inject
+	ControlStatsActivityBuilder controlStatsActivityBuilder;
+	@Inject
+	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -295,24 +299,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
-			ControlStatsActivityBuilder controlStatsActivityBuilder=new ControlStatsActivityBuilder(
-					"Shooting History Stats",
-					"Data",
-					ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-					statData.runStats(),new HandleTestClick());
-
 			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER,(Serializable)controlStatsActivityBuilder);
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER,(Serializable) controlStatsActivityBuilder);
 
-			//This is for the adapter
-			//We can use a builder - not actually a builder yet
-			ControlStatsAdapterBuilder controlStatsAdapterBuilder=new ControlStatsAdapterBuilder(
-					ContextCompat.getColor(this,R.color.LightBlue),
-					ContextCompat.getColor(this,R.color.LightSalmon),
-					ContextCompat.getColor(this,R.color.LightGreen),
-					true);
 
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)controlStatsAdapterBuilder);
+			//Builder is injected
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable) controlStatsAdapterBuilder);
+
 			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
 
 			startActivity(statIntent);
@@ -709,12 +702,3 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	}
 }
 
-class HandleTestClick implements IHandleListViewClicks,Serializable{
-
-	private static final long serialVersionUID = -5001699047268760417L;
-
-	@Override
-	public void handleClicks(AdapterView<?> adapterView, View view, int i, long l) {
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test!");
-	}
-}
