@@ -49,6 +49,7 @@ import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.adapters.Lib_StatsAdapter;
+import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.basecode.HandleListViewClicksStats;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
@@ -294,12 +295,14 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
+			ControlStatsActivityBuilder controlStatsActivityBuilder=new ControlStatsActivityBuilder(
+					"Shooting History Stats",
+					"Data",
+					ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+					statData.runStats(),new HandleTestClick());
+
 			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_TITLE,"Shoot Information");
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_HEADER,"Stats");
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_HEADER_BACK_COLOR, ContextCompat.getColor(context, R.color.PaleTurquoise));
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_HOLDER_TWO_FIELDS, (Serializable) statData.runStats());
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_LIST_VIEW_CLICK_COMMAND_INTERFACE,(Serializable)new HandleTestClick());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER,(Serializable)controlStatsActivityBuilder);
 
 			//This is for the adapter
 			//We can use a builder - not actually a builder yet
@@ -325,8 +328,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 			//Intent i=new Intent(this, Lib_Expandable_Activity.class);
 			Intent i = new Intent(this, ExpandListSubclass.class);
-
-
 
 			IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
 
