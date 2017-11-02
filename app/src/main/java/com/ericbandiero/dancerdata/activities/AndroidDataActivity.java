@@ -35,6 +35,7 @@ import android.widget.TextView.OnEditorActionListener;
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.ControlStatAdapter;
+import com.ericbandiero.dancerdata.code.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
@@ -42,6 +43,7 @@ import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
+import com.ericbandiero.dancerdata.code.TestDaggerObject;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -60,6 +62,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -109,11 +113,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@BindView(R.id.button1) Button mSearchButton;
 	@BindView(R.id.textViewRecordCount1) TextView textInfo;
 
+	@Inject
+	TestDaggerObject testDaggerObject;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
+		//Dagger
+		DanceApp.app().basicComponent().inject(this);
+
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
 
 		//We want a context that we can use
 		AppConstant.CONTEXT = this;
