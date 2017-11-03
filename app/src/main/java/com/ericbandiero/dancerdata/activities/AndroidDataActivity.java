@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -34,7 +33,6 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.code.ControlStatAdapter;
 import com.ericbandiero.dancerdata.code.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
@@ -48,30 +46,27 @@ import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
-import com.ericbandiero.librarymain.adapters.Lib_StatsAdapter;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
-import com.ericbandiero.librarymain.basecode.HandleListViewClicksStats;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
-import com.ericbandiero.librarymain.interfaces.IControlStatAdapter;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
-import com.ericbandiero.librarymain.interfaces.IHandleListViewClicks;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 import com.ericbandiero.librarymain.interfaces.ITestParce;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
-		OnItemClickListener, OnCheckedChangeListener,Serializable,ITest {
+		OnItemClickListener, OnCheckedChangeListener,ITest {
 	private static final int ID_MENU_EXIT = 0;
 	private static final String TAG = "Droid Dancer";
 
@@ -100,12 +95,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	transient List<String> listOfFieldsToGet = new ArrayList<String>();
 
 	// String to get data
-	String sqlSeacrhString;
+	String sqlSearchString;
 
-	//For parameterss
+	//For parameters
 	String[] selectionArgs;
 
 	//data access class
+	@Inject
 	DancerDao dancerDao;
 
 	//Permission request integer
@@ -116,6 +112,11 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	@Inject
 	TestDaggerObject testDaggerObject;
+	@Inject
+	@Named("stats")
+	ControlStatsActivityBuilder controlStatsActivityBuilder;
+	@Inject
+	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -139,7 +140,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//textInfo = (TextView) findViewById(R.id.textViewRecordCount1);
 		listview = (ListView) findViewById(R.id.listViewDancer);
 		buttonPredict = (Button) findViewById(R.id.button2);
-		dancerDao = new DancerDao(context);
+
 
 		//Ask for permissions to use the app
 		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,1);
@@ -290,29 +291,16 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		super.onOptionsItemSelected(item);
 
 		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
-			DancerDao dancerDao=new DancerDao(this);
-			StatData statData=new StatData(dancerDao);
+
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
-			ControlStatsActivityBuilder controlStatsActivityBuilder=new ControlStatsActivityBuilder(
-					"Shooting History Stats",
-					"Data",
-					ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-					statData.runStats(),new HandleTestClick());
-
 			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER,(Serializable)controlStatsActivityBuilder);
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder);
 
-			//This is for the adapter
-			//We can use a builder - not actually a builder yet
-			ControlStatsAdapterBuilder controlStatsAdapterBuilder=new ControlStatsAdapterBuilder(
-					ContextCompat.getColor(this,R.color.LightBlue),
-					ContextCompat.getColor(this,R.color.LightSalmon),
-					ContextCompat.getColor(this,R.color.LightGreen),
-					true);
+			//Builder is injected
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
 
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)controlStatsAdapterBuilder);
 			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
 
 			startActivity(statIntent);
@@ -490,7 +478,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 								// if this button is clicked, close
 								// current activity
 								//	if (checkIfInputFileExists()) {
-								DancerDao dancerDao = new DancerDao(context);
+								//DancerDao dancerDao = new DancerDao(context);
 								dancerDao.importData();
 
 								//dropTable();
@@ -546,7 +534,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		return true;
 	}
 
-	private void getDataAndShowIt(String datatoget) {
+	private void getDataAndShowIt(String dataToGet) {
 
 		Cursor c;
 		// Get rid of previous results
@@ -560,7 +548,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		SQLiteDatabase	db=dancerDao.getDataBaseRead();
 
-		c = db.query("Info", fieldsToGet, sqlSeacrhString, selectionArgs,
+		c = db.query("Info", fieldsToGet, sqlSearchString, selectionArgs,
 				fieldToGroupBy, null, orderByFields);
 
 		if (c != null) {
@@ -575,7 +563,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 					i++;
 					results.add("" + i + ": " + getColumnsFromSqliteColumn(c));
 				} while (c.moveToNext());
-				textInfo.setText("Records found:" + i);
+				textInfo.setText(getString(R.string.results_text) + i);
 			} else {
 				results.add("No Data Found!");
 			}
@@ -589,7 +577,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		String userSearchText = mInputEdit.getText().toString().trim()
 				.toUpperCase();
-		;
+
 
 		switch (buttonId) {
 			case R.id.radioDancer:
@@ -601,27 +589,27 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 				if (DetailActivity.dancerdetailid.equals("-1")) {
 
-					sqlSeacrhString = DancerData
+					sqlSearchString = DancerData
 							.getUpperSearch(DancerDao.LAST_NAME)
 							+ " LIKE ?";
 					selectionArgs=new String[] {userSearchText+'%'};
 
 				} else {
 					mInputEdit.setText("");
-					sqlSeacrhString = DancerData.getUpperSearch(DancerDao.CODE)
+					sqlSearchString = DancerData.getUpperSearch(DancerDao.CODE)
 							+ "=?";
 					selectionArgs=new String[] {DetailActivity.dancerdetailid};
 
 					DetailActivity.dancerdetailid = "-1";
 				}
 
-				fieldToGroupBy = "Code,LastName,Firstname,Title,Venue,PerfDate,Dance_Code";
+				fieldToGroupBy = "Code,LastName,FirstName,Title,Venue,PerfDate,Dance_Code";
 				orderByFields = "LastName,FirstName,PerfDate Desc";
 				break;
 			case R.id.radioVenue:
 				listOfFieldsToGet = new ArrayList<String>(
-						Arrays.asList(DancerDao.VENUE));
-				sqlSeacrhString = DancerData.getUpperSearch(DancerDao.VENUE)
+						Collections.singletonList(DancerDao.VENUE));
+				sqlSearchString = DancerData.getUpperSearch(DancerDao.VENUE)
 						+ " LIKE ?";
 				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.VENUE;
@@ -633,7 +621,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				listOfFieldsToGet = new ArrayList<String>(Arrays.asList(
 						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
-				sqlSeacrhString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+				sqlSearchString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
 						+ " LIKE ?";
 				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
@@ -646,7 +634,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		Log.i(TAG + " fields", listOfFieldsToGet.toString());
-		Log.i(TAG + " search str", sqlSeacrhString);
+		Log.i(TAG + " search str", sqlSearchString);
 		Log.i(TAG + " group by", fieldToGroupBy);
 		Log.i(TAG + " order by", orderByFields);
 	}
@@ -679,7 +667,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapterview, View view,
+	public void onItemClick(AdapterView<?> adapterView, View view,
 							int position, long row) {
 		Log.d(TAG, listOfDanceCode.toString());
 		if (radioButton.getId() == R.id.radioDancer || radioButton.getId() == R.id.radioPeople) {
@@ -709,12 +697,3 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	}
 }
 
-class HandleTestClick implements IHandleListViewClicks,Serializable{
-
-	private static final long serialVersionUID = -5001699047268760417L;
-
-	@Override
-	public void handleClicks(AdapterView<?> adapterView, View view, int i, long l) {
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test!");
-	}
-}

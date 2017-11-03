@@ -6,7 +6,10 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 
 import com.ericbandiero.dancerdata.AppConstant;
+import com.ericbandiero.dancerdata.code.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
+
+import javax.inject.Inject;
 
 
 /**
@@ -19,6 +22,14 @@ public class DancedAtVenue {
 	SimpleCursorAdapter mAdapter;
 	Cursor cursor;
 
+	@Inject
+	DancerDao dancerDao;
+
+	public DancedAtVenue() {
+		//Dagger
+		DanceApp.app().basicComponent().inject(this);
+	}
+
 	public static void main(String[] args) {
 
 		DancedAtVenue dancedAtVenue=new DancedAtVenue();
@@ -27,7 +38,7 @@ public class DancedAtVenue {
 
 	private void runner() {
 		//SQLiteDatabase db = SQLiteDatabase.openDatabase(SqlHelper.SAMPLE_DB_NAME, null, 0);
-		DancerDao dancerDao=new DancerDao(AppConstant.CONTEXT);
+		//DancerDao dancerDao=new DancerDao(AppConstant.CONTEXT);
 		Cursor cursor = dancerDao.runRawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc");
 		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
 		this.cursor.moveToFirst();

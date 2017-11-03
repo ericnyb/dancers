@@ -26,8 +26,11 @@ import android.widget.TextView;
 import com.ericbandiero.dancerdata.code.AndroidUtility;
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
+import com.ericbandiero.dancerdata.code.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.SqlHelper;
+
+import javax.inject.Inject;
 
 
 public class PredictActivity extends AppCompatActivity {
@@ -36,17 +39,22 @@ public class PredictActivity extends AppCompatActivity {
 	ListView listPredict;
 	TextView textviewChild;
 	TextView textviewrecord;
+
+	@Inject
 	DancerDao dancerDao;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_predict);
+		//Dagger
+		DanceApp.app().basicComponent().inject(this);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		 listPredict=(ListView)findViewById(R.id.listViewPredict);
 	     textviewChild=(TextView)findViewById(R.id.textViewChild);
 	     textviewrecord=(TextView)findViewById(R.id.textViewRecordCountBase);
-		dancerDao=new DancerDao(this);
+		//dancerDao=new DancerDao(this);
 		 listPredict.setOnItemClickListener(new OnItemClickListener() {
 	            @Override
 	            public void onItemClick(AdapterView<?> parent, View view,
