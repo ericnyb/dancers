@@ -64,7 +64,7 @@ public class AppModule {
 		return new StatData(dancerDao);
 	}
 
-	@Singleton @Provides @Named ("stats")
+	@Provides @Named ("stats")
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity(StatData statData){
 		return new ControlStatsActivityBuilder("Shooting History Stats",
 				"Data",
@@ -72,12 +72,12 @@ public class AppModule {
 				statData.runStats(), provideHandleTestClick());
 	}
 
-	@Singleton @Provides @Named ("stats_new")
+	@Provides @Named ("stats_test")
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(StatData statData){
-		return new ControlStatsActivityBuilder("Shooting History Stats",
-				"My New Data",
+		return new ControlStatsActivityBuilder("Test Stats",
+				"Testing 123",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runStats(), provideHandleTestClick());
+				statData.runTestStats(), provideHandleTestClick());
 	}
 
 	@Singleton @Provides
@@ -86,7 +86,7 @@ public class AppModule {
 				ContextCompat.getColor(context, R.color.LightBlue),
 				ContextCompat.getColor(context,R.color.LightSalmon),
 				ContextCompat.getColor(context,R.color.LightGreen),
-				true);
+				false);
 	}
 
 	/*
