@@ -129,7 +129,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
 
 	@Inject
-	@Named("stats_test")
+	@Named("stats_venues")
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderTest;
 
 	@Override
@@ -322,7 +322,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		}
 
-		if (item.getTitle() != null && item.getTitle().equals("Stats_New")) {
+		if (item.getTitle() != null && item.getTitle().equals("Venue By Count")) {
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
@@ -558,7 +558,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		menu.add("Venue Data");
 		menu.add("Performance Data");
 		menu.add("Stats");
-		menu.add("Stats_New");
+		menu.add("Venue By Count");
 
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);

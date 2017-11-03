@@ -72,10 +72,10 @@ public class AppModule {
 				statData.runStats(), provideHandleTestClick());
 	}
 
-	@Provides @Named ("stats_test")
+	@Provides @Named ("stats_venues")
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(StatData statData){
-		return new ControlStatsActivityBuilder("Test Stats",
-				"Testing 123",
+		return new ControlStatsActivityBuilder("Venue Stats",
+				"Venues By Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
 				statData.runTestStats(), provideHandleTestClick());
 	}
