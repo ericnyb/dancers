@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
+import com.ericbandiero.dancerdata.code.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.EventBusTester;
 import com.ericbandiero.dancerdata.code.StatData;
@@ -25,6 +26,9 @@ import com.squareup.otto.ThreadEnforcer;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -51,6 +55,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 	@BindView(R.id.textViewPerfInfo)
 	TextView textviewinfo;
 
+	@Inject
 	DancerDao dancerDao;
 
 	//Cool ButterKnife feature - cleaner code
@@ -65,6 +70,10 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_perf);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		DanceApp.app().basicComponent().inject(this);
+
+
 		setTitle("Performances");
 
 		bus = new Bus(ThreadEnforcer.MAIN);

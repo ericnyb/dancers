@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.ericbandiero.dancerdata.*;
+import com.ericbandiero.dancerdata.code.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 
 import android.os.Build;
@@ -24,6 +25,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import javax.inject.Inject;
 
 public class DetailActivity extends AppCompatActivity implements OnItemClickListener{
 
@@ -54,6 +57,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	
 	public static int dance_id;
 	//SQLiteDatabase database;
+	@Inject
 	DancerDao dancerDao;
 	private TextView txtviewChoreos;
 	ListView listviewdancers;
@@ -66,6 +70,8 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_detail);
+		//Dagger
+		DanceApp.app().basicComponent().inject(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setchoreos.clear();
 		setdancers.clear();
@@ -89,8 +95,6 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 //		ListAdapter listadapter= new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listDancers);
 //		listviewdancers.setAdapter(listadapter);
 //		 
-
-		dancerDao=new DancerDao(this);
 
 
 		Log.d(TAG,"Dance code getting data for:"+dance_id);
