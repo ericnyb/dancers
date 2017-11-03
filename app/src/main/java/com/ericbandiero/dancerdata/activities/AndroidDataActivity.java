@@ -60,9 +60,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.Lazy;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -112,11 +114,23 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	@Inject
 	TestDaggerObject testDaggerObject;
+/*
+
 	@Inject
 	@Named("stats")
 	ControlStatsActivityBuilder controlStatsActivityBuilder;
+*/
+
 	@Inject
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
+
+	@Inject
+	@Named("stats")
+	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
+
+	@Inject
+	@Named("stats_test")
+	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderTest;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -296,7 +310,24 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
 			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder);
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
+
+			//Builder is injected
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+
+			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+
+			startActivity(statIntent);
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
+
+		}
+
+		if (item.getTitle() != null && item.getTitle().equals("Stats_New")) {
+			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+
+			//These are for the activity
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilderTest.get());
 
 			//Builder is injected
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
@@ -527,6 +558,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		menu.add("Venue Data");
 		menu.add("Performance Data");
 		menu.add("Stats");
+		menu.add("Stats_New");
 
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);

@@ -30,15 +30,24 @@ public class StatData {
 	}
 
 	public List<DataHolderTwoFields> runStats() {
+		dataHolderTwoFieldsList.clear();
 		getDancerCount();
 		getChoreographerCount();
 		getVenueCount();
 		getDanceWorksCount();
 		getPerformanceCount();
+		getSolos();
 		getFirstAndLastPerformance();
 		getMostCommonName();
 		return dataHolderTwoFieldsList;
 	}
+
+	public List<DataHolderTwoFields> runTestStats() {
+		dataHolderTwoFieldsList.clear();
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Test data","Hello!"));
+		return dataHolderTwoFieldsList;
+	}
+
 
 	private void getDancerCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
@@ -95,7 +104,19 @@ public class StatData {
 		Cursor cursor = dancerDao.runRawQuery(sql);
 		cursor.moveToFirst();
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Most common first name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+
+		sql="Select distinct "+DancerDao.LAST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.LAST_NAME+") from info group by "+DancerDao.LAST_NAME +" order by 2 desc";
+		cursor = dancerDao.runRawQuery(sql);
+		cursor.moveToFirst();
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Most common last name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
 	}
+
+	private void getSolos() {
+		String sql="Select count(distinct "+ DancerDao.CODE+") as cnt from info group by "+DancerDao.DANCE_CODE +" having cnt=1";
+		Cursor cursor = dancerDao.runRawQuery(sql);
+		cursor.moveToFirst();
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Solos:",String.valueOf(cursor.getCount())));
+}
 
 
 public static String formatStatData(Map<String,Integer> stringIntegerMap){
