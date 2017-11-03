@@ -101,6 +101,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	String[] selectionArgs;
 
 	//data access class
+	@Inject
 	DancerDao dancerDao;
 
 	//Permission request integer
@@ -139,7 +140,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//textInfo = (TextView) findViewById(R.id.textViewRecordCount1);
 		listview = (ListView) findViewById(R.id.listViewDancer);
 		buttonPredict = (Button) findViewById(R.id.button2);
-		dancerDao = new DancerDao(context);
+
 
 		//Ask for permissions to use the app
 		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,1);
@@ -290,7 +291,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		super.onOptionsItemSelected(item);
 
 		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
-			DancerDao dancerDao=new DancerDao(this);
 
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
@@ -478,7 +478,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 								// if this button is clicked, close
 								// current activity
 								//	if (checkIfInputFileExists()) {
-								DancerDao dancerDao = new DancerDao(context);
+								//DancerDao dancerDao = new DancerDao(context);
 								dancerDao.importData();
 
 								//dropTable();

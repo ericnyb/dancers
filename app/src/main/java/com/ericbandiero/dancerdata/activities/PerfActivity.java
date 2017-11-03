@@ -93,8 +93,6 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		//listviewperf=(ListView) findViewById(R.id.listViewPerfs);
 		listviewperf.setOnItemClickListener(this);
 		//textviewinfo=(TextView)findViewById(R.id.textViewPerfInfo);
-
-		dancerDao=new DancerDao(this);
 	}
 
 	/**
