@@ -30,15 +30,25 @@ public class StatData {
 	}
 
 	public List<DataHolderTwoFields> runStats() {
+		dataHolderTwoFieldsList.clear();
 		getDancerCount();
 		getChoreographerCount();
 		getVenueCount();
+		getMostShotVenue(true);
 		getDanceWorksCount();
 		getPerformanceCount();
+		getSolos();
 		getFirstAndLastPerformance();
 		getMostCommonName();
 		return dataHolderTwoFieldsList;
 	}
+
+	public List<DataHolderTwoFields> runTestStats() {
+		dataHolderTwoFieldsList.clear();
+		getMostShotVenue(false);
+		return dataHolderTwoFieldsList;
+	}
+
 
 	private void getDancerCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
@@ -94,7 +104,42 @@ public class StatData {
 		String sql="Select distinct "+DancerDao.FIRST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.FIRST_NAME+") from info group by "+DancerDao.FIRST_NAME +" order by 2 desc";
 		Cursor cursor = dancerDao.runRawQuery(sql);
 		cursor.moveToFirst();
-		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Most common first name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Common first name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+
+		sql="Select distinct "+DancerDao.LAST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.LAST_NAME+") from info group by "+DancerDao.LAST_NAME +" order by 2 desc";
+		cursor = dancerDao.runRawQuery(sql);
+		cursor.moveToFirst();
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Common last name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+	}
+
+	private void getSolos() {
+		String sql="Select count(distinct "+ DancerDao.CODE+") as cnt from info group by "+DancerDao.DANCE_CODE +" having cnt=1";
+		Cursor cursor = dancerDao.runRawQuery(sql);
+		cursor.moveToFirst();
+		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Solos:",String.valueOf(cursor.getCount())));
+}
+
+	private void getMostShotVenue(boolean rollUp) {
+		final int maxLengthOfVenueName=rollUp?10:30;
+		String sql="Select "+DancerDao.VENUE+",count(distinct "+ DancerDao.PERF_DATE+") as cnt from info group by "+DancerDao.VENUE +" having cnt>1 order by cnt desc";
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Sql:"+sql);
+		Cursor cursor = dancerDao.runRawQuery(sql);
+
+		while (cursor.moveToNext()){
+			String venueName=cursor.getString(0).trim();
+			if (rollUp){
+				dataHolderTwoFieldsList.add(new DataHolderTwoFields(rollUp?"Venue most shot:":venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length())),venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1))));
+			}
+			else {
+				dataHolderTwoFieldsList.add(new DataHolderTwoFields(venueName.substring(0, (venueName.length() > maxLengthOfVenueName ? maxLengthOfVenueName : venueName.length()))+":",  String.valueOf(cursor.getString(1))));
+			}
+			if (rollUp){
+				break;
+			}
+		}
+
+//		String venueName=cursor.getString(0).trim();
+//		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Venue most shot:",venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1))));
 	}
 
 

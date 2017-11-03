@@ -23,5 +23,6 @@
     <string name="textheader">Header</string>
     <string name="textviewchild">Child</string>
     <string name="stats">Stats</string>
+    <string name="results_text">Records found:</string>
 
 </resources>

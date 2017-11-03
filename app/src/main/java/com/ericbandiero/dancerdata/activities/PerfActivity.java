@@ -9,15 +9,26 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
+import com.ericbandiero.dancerdata.code.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.EventBusTester;
 import com.ericbandiero.dancerdata.code.StatData;
+import com.ericbandiero.dancerdata.code.TestBus;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
+import com.squareup.otto.ThreadEnforcer;
 
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,6 +43,8 @@ import butterknife.OnClick;
 
 public class PerfActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 	//static SQLiteDatabase db;
+	public static Bus bus;
+
 	final static String TAG="Perf";
 	SimpleCursorAdapter mAdapter; 	
 	Cursor cursor;
@@ -42,6 +55,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 	@BindView(R.id.textViewPerfInfo)
 	TextView textviewinfo;
 
+	@Inject
 	DancerDao dancerDao;
 
 	//Cool ButterKnife feature - cleaner code
@@ -56,16 +70,29 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_perf);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		DanceApp.app().basicComponent().inject(this);
+
+
 		setTitle("Performances");
 
+		bus = new Bus(ThreadEnforcer.MAIN);
+		bus.register(this);
 
+
+		TestBus testBus=new TestBus();
+
+		produceEvent();
+		bus.post("Hello from OTTO event bus");
+
+		EventBusTester ev=new EventBusTester("Sample event!");
+
+		bus.post(ev);
 
 		ButterKnife.bind(this);
 		//listviewperf=(ListView) findViewById(R.id.listViewPerfs);
 		listviewperf.setOnItemClickListener(this);
 		//textviewinfo=(TextView)findViewById(R.id.textViewPerfInfo);
-
-		dancerDao=new DancerDao(this);
 	}
 
 	/**
@@ -141,7 +168,14 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 //		db=database;
 //	}
 
-    @Override
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		bus.unregister(this);
+	}
+
+	@Override
     protected void onStop() {
 		if (cursor!=null) {
 			cursor.close();
@@ -149,6 +183,33 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		}
         super.onStop();
     }
+
+	@Produce
+	public String produceEvent() {
+		return "Starting up...we are using OTTO event bus";
+	}
+
+	@Produce
+	public int produceEvent2() {
+		return 7;
+	}
+
+
+	//This method name doesn't matter - what matters is the argument (String) - which producer sends.
+	@Subscribe
+	public void getMessage(String s) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received:"+s);
+	}
+
+	@Subscribe
+	public void getMessage(int s) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received for int:"+s);
+	}
+
+	@Subscribe
+	public void getMessageFromEventBusTester(EventBusTester s) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received from our own event class:"+s.getS());
+	}
 
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
