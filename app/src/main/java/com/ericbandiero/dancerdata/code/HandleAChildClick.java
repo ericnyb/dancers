@@ -39,7 +39,7 @@ public class HandleAChildClick implements IHandleChildClicksExpandableIds,Serial
 				if (AppConstant.DEBUG)
 					Log.d(this.getClass().getSimpleName() + ">", "child:" + child.getTextStringChild());
 				if (AppConstant.DEBUG)
-					Log.d(this.getClass().getSimpleName() + ">", "Performance id:" + child.getAnyObject());
+					Log.d(this.getClass().getSimpleName() + ">", "Dance piece code:" + child.getAnyObject());
 
 				DetailActivity.setDance_id(Integer.parseInt(child.getAnyObject().toString()));
 				Intent intent = new Intent(context, DetailActivity.class);
@@ -48,6 +48,9 @@ public class HandleAChildClick implements IHandleChildClicksExpandableIds,Serial
 				break;
 			case VENUE_CLICK:
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Waiting for implementation");
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Child info:"+child.getAnyObject());
+				if (AppConstant.DEBUG)
+					Log.d(this.getClass().getSimpleName() + ">", "child:" + child.getTextStringChild());
 				break;
 		}
 
