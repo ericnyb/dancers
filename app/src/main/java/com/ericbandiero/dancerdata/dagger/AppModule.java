@@ -1,4 +1,4 @@
-package com.ericbandiero.dancerdata.code;
+package com.ericbandiero.dancerdata.dagger;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,9 @@ import android.support.v4.content.ContextCompat;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.activities.HandleTestClick;
+import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.StatData;
+import com.ericbandiero.dancerdata.code.TestDaggerObject;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
@@ -27,7 +30,6 @@ import dagger.Provides;
 @Module
 public class AppModule {
 	private Context context;
-	private DancerDao dancerDao;
 
 	public AppModule(Context context) {
 		this.context = context;
@@ -44,10 +46,7 @@ public class AppModule {
 		return PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-	@Singleton @Provides
-	public TestDaggerObject provideDaggerObject(){
-		return new TestDaggerObject("Eric");
-	}
+
 
 	@Singleton @Provides
 	public DancerDao provideDancerDao(){

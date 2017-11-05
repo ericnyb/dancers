@@ -9,21 +9,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.code.DanceApp;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.EventBusTester;
-import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestBus;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 import com.squareup.otto.ThreadEnforcer;
 
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 

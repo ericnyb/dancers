@@ -33,13 +33,12 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.code.DanceApp;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
-import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.code.TestDaggerObject;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
@@ -64,7 +63,6 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dagger.Lazy;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -112,8 +110,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@BindView(R.id.button1) Button mSearchButton;
 	@BindView(R.id.textViewRecordCount1) TextView textInfo;
 
-	@Inject
-	TestDaggerObject testDaggerObject;
+
 /*
 
 	@Inject
@@ -140,7 +137,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//Dagger
 		DanceApp.app().basicComponent().inject(this);
 
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
+
 
 		//We want a context that we can use
 		AppConstant.CONTEXT = this;
