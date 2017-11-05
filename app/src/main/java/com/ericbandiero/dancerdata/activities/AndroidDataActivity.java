@@ -33,13 +33,12 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.code.DanceApp;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
-import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.code.TestDaggerObject;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
@@ -64,7 +63,6 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import dagger.Lazy;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements

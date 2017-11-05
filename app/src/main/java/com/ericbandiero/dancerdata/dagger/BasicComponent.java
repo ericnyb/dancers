@@ -1,10 +1,11 @@
-package com.ericbandiero.dancerdata.code;
+package com.ericbandiero.dancerdata.dagger;
 
 import com.ericbandiero.dancerdata.activities.AndroidDataActivity;
 import com.ericbandiero.dancerdata.activities.DancedAtVenue;
 import com.ericbandiero.dancerdata.activities.DetailActivity;
 import com.ericbandiero.dancerdata.activities.PerfActivity;
 import com.ericbandiero.dancerdata.activities.PredictActivity;
+import com.ericbandiero.dancerdata.code.TestDaggerObject;
 
 import javax.inject.Singleton;
 

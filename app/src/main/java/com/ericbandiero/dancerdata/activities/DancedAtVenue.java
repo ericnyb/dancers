@@ -6,7 +6,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 
 import com.ericbandiero.dancerdata.AppConstant;
-import com.ericbandiero.dancerdata.code.DanceApp;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 
 import javax.inject.Inject;

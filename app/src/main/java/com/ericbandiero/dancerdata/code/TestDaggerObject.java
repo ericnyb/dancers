@@ -3,6 +3,8 @@ package com.ericbandiero.dancerdata.code;
 import android.content.Context;
 import android.util.Log;
 
+import com.ericbandiero.dancerdata.dagger.DanceApp;
+
 import javax.inject.Inject;
 
 /**

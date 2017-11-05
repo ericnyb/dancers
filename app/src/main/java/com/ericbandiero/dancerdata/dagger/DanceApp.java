@@ -1,7 +1,10 @@
-package com.ericbandiero.dancerdata.code;
+package com.ericbandiero.dancerdata.dagger;
 
 import android.app.Application;
 import android.util.Log;
+
+import com.ericbandiero.dancerdata.code.AppConstant;
+import com.ericbandiero.dancerdata.dagger.DaggerBasicComponent;
 
 /**
  * Created by Eric Bandiero on 11/1/2017.

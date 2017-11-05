@@ -1,4 +1,4 @@
-package com.ericbandiero.dancerdata.code;
+package com.ericbandiero.dancerdata.dagger;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,9 @@ import android.support.v4.content.ContextCompat;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.activities.HandleTestClick;
+import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.StatData;
+import com.ericbandiero.dancerdata.code.TestDaggerObject;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
