@@ -110,8 +110,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@BindView(R.id.button1) Button mSearchButton;
 	@BindView(R.id.textViewRecordCount1) TextView textInfo;
 
-	@Inject
-	TestDaggerObject testDaggerObject;
+
 /*
 
 	@Inject
@@ -138,7 +137,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//Dagger
 		DanceApp.app().basicComponent().inject(this);
 
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
+
 
 		//We want a context that we can use
 		AppConstant.CONTEXT = this;

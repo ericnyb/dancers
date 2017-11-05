@@ -16,8 +16,6 @@ public class TestDaggerObject {
 	@Inject
 	Context c;
 
-
-
 	public TestDaggerObject(String name) {
 		DanceApp.app().basicComponent().inject(this);
 		this.name=name;

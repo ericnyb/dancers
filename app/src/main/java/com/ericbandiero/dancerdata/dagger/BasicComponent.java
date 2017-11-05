@@ -5,6 +5,7 @@ import com.ericbandiero.dancerdata.activities.DancedAtVenue;
 import com.ericbandiero.dancerdata.activities.DetailActivity;
 import com.ericbandiero.dancerdata.activities.PerfActivity;
 import com.ericbandiero.dancerdata.activities.PredictActivity;
+import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestDaggerObject;
 
 import javax.inject.Singleton;
@@ -16,7 +17,7 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = {AppModule.class})
+@Component(modules = {AppModule.class,TestObjectModule.class})
 public interface BasicComponent {
 	void inject(AndroidDataActivity activity);
 	void inject(PredictActivity activity);

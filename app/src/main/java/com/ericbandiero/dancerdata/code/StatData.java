@@ -3,6 +3,7 @@ package com.ericbandiero.dancerdata.code;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 
 import java.util.ArrayList;
@@ -12,20 +13,26 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 /**
  * Created by Eric Bandiero on 10/25/2017.
  */
 
 public class StatData {
 
-	DancerDao dancerDao;;
+	DancerDao dancerDao;
 
 	Map<String,Integer> dataMap=new LinkedHashMap<>();
 
 	List<DataHolderTwoFields> dataHolderTwoFieldsList=new ArrayList<>();
 
+	@Inject
+	TestDaggerObject testDaggerObject;
 
 	public StatData(DancerDao sqLiteDatabase) {
+		DanceApp.app().testObjectComponent().inject(this);
+		if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
 		dancerDao=sqLiteDatabase;
 	}
 

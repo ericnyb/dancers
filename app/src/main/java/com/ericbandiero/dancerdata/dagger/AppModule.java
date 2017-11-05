@@ -30,7 +30,6 @@ import dagger.Provides;
 @Module
 public class AppModule {
 	private Context context;
-	private DancerDao dancerDao;
 
 	public AppModule(Context context) {
 		this.context = context;
@@ -47,10 +46,7 @@ public class AppModule {
 		return PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-	@Singleton @Provides
-	public TestDaggerObject provideDaggerObject(){
-		return new TestDaggerObject("Eric");
-	}
+
 
 	@Singleton @Provides
 	public DancerDao provideDancerDao(){
