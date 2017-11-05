@@ -1,6 +1,7 @@
 package com.ericbandiero.dancerdata.dagger;
 
 import com.ericbandiero.dancerdata.code.StatData;
+import com.ericbandiero.dancerdata.code.TestDaggerObject;
 
 import javax.inject.Singleton;
 
@@ -13,5 +14,6 @@ import dagger.Component;
 @Singleton
 @Component(modules = {TestObjectModule.class})
 public interface TestObjectComponent {
+	TestDaggerObject providesTestObject();
 	void inject(StatData stats);
 }

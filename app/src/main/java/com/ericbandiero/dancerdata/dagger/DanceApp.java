@@ -13,7 +13,7 @@ import com.ericbandiero.dancerdata.dagger.DaggerBasicComponent;
 public class DanceApp extends Application {
 	private static DanceApp app;
 	private BasicComponent basicComponent;
-	private TestObjectComponent testObjectComponent;
+
 
 	@Override
 	public void onCreate() {
@@ -24,9 +24,6 @@ public class DanceApp extends Application {
 		basicComponent = DaggerBasicComponent.builder()
 				.appModule(new AppModule(getApplicationContext()))
 				.build();
-
-		testObjectComponent=DaggerTestObjectComponent.builder().testObjectModule(new TestObjectModule()).build();
-
 	}
 
 	public static DanceApp app() {
@@ -35,9 +32,5 @@ public class DanceApp extends Application {
 
 	public BasicComponent basicComponent() {
 		return basicComponent;
-	}
-
-	public TestObjectComponent testObjectComponent(){
-		return testObjectComponent;
 	}
 }

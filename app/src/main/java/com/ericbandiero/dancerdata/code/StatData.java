@@ -3,7 +3,9 @@ package com.ericbandiero.dancerdata.code;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.ericbandiero.dancerdata.dagger.DaggerTestObjectComponent;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
+import com.ericbandiero.dancerdata.dagger.TestObjectComponent;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 
 import java.util.ArrayList;
@@ -30,8 +32,12 @@ public class StatData {
 	@Inject
 	TestDaggerObject testDaggerObject;
 
+	private TestObjectComponent testObjectComponent;
+
 	public StatData(DancerDao sqLiteDatabase) {
-		DanceApp.app().testObjectComponent().inject(this);
+		//DanceApp.app().testObjectComponent().inject(this);
+		testObjectComponent= DaggerTestObjectComponent.builder().build();
+		testObjectComponent.inject(this);
 		if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
 		dancerDao=sqLiteDatabase;
 	}
