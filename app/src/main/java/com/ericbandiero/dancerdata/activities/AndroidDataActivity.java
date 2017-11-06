@@ -441,8 +441,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				}
 			}
 
-			//Intent i=new Intent(this, Lib_Expandable_Activity.class);
-			Intent i = new Intent(this, ExpandListSubclass.class);
+
 
 			IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
 
@@ -455,7 +454,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				}
 			};
 
-
+			//Intent i=new Intent(this, Lib_Expandable_Activity.class);
+			Intent i = new Intent(this, ExpandListSubclass.class);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
 			i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:"+size);

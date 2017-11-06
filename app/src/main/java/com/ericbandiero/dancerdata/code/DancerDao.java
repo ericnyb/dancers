@@ -129,6 +129,7 @@ public class DancerDao implements Serializable {
 	}
 
 	public Cursor runRawQuery(String sql) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
 		Cursor cursor=null;
 
 		try {
@@ -146,6 +147,7 @@ public class DancerDao implements Serializable {
 	}
 	catch(SQLiteException ex)
 	{
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error!");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Cursor is null?"+cursor==null?"Null":"Not null");
 		UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
@@ -316,7 +318,11 @@ public class DancerDao implements Serializable {
 		return fileExists;
 	}
 
-	public List<Lib_ExpandableDataWithIds> prepDataPerformance(){
+	public List<Lib_ExpandableDataWithIds> prepDataPerformance(String performanceCode){
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Performance code passed in:"+performanceCode);
+
+
+		String  whereClause=!performanceCode.equals("-1")?" where Perf_Code ="+performanceCode:"";
 		final Cursor cursor = runRawQuery(
 				"select PerfDate as _id," +
 						"PerfDate," +
@@ -325,7 +331,10 @@ public class DancerDao implements Serializable {
 						"Dance_Code," +
 						"title," +
 						"Perf_Code" +
-						" from Info group by Perf_Code,Dance_code order by PerfDate desc");
+						" from Info "+
+						whereClause+
+						" group by Perf_Code,Dance_code "+
+						" order by PerfDate desc");
 		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
 
 		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
@@ -358,6 +367,12 @@ public class DancerDao implements Serializable {
 		return listData;
 
 	}
+
+
+	public List<Lib_ExpandableDataWithIds> prepDataPerformance(){
+		return prepDataPerformance("-1");
+	}
+
 	public List<Lib_ExpandableDataWithIds> prepDataVenue(){
 		final Cursor cursor = runRawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue,Dance_Code,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc");
 		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
