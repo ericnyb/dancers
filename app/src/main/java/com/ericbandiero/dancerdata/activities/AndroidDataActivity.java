@@ -40,7 +40,6 @@ import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
-import com.ericbandiero.dancerdata.code.TestDaggerObject;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -107,7 +106,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	//Permission request integer
 	public static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
 
-	@BindView(R.id.button1) Button mSearchButton;
+	@BindView(R.id.button_performances) Button mSearchButton;
 	@BindView(R.id.textViewRecordCount1) TextView textInfo;
 
 
@@ -150,7 +149,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		radioButton = (RadioButton) findViewById(R.id.radioDancer);
 		//textInfo = (TextView) findViewById(R.id.textViewRecordCount1);
 		listview = (ListView) findViewById(R.id.listViewDancer);
-		buttonPredict = (Button) findViewById(R.id.button2);
+		buttonPredict = (Button) findViewById(R.id.button_venues);
 
 
 		//Ask for permissions to use the app
@@ -285,11 +284,56 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		int id = view.getId();
 
 		switch (id) {
-			case R.id.button1:
-				intent = new Intent(this, PerfActivity.class);
+			case R.id.button_performances:
+				intent = dancerDao.prepPerformanceActivity();
 				break;
-			case R.id.button2:
-				intent = new Intent(this, PredictActivity.class);
+			case R.id.button_venues:
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
+
+				//We call routine to create the data list.
+				List<Lib_ExpandableDataWithIds> listData=dancerDao.prepDataVenue();
+
+				//Intent i=new Intent(this, Lib_Expandable_Activity.class);
+				intent = new Intent(this, ExpandListSubclass.class);
+
+				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
+
+				HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.VENUE_CLICK);
+				//HandleAChildClick handleAChildClick = new HandleAChildClick(this);
+
+				IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds(){
+					@Override
+					public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
+						if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
+					}
+				};
+
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venue list");
+
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+				//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
+
+
+
+
+//			TestConcrete t1=new TestConcrete(){
+//				@Override
+//				public void doSomething(){
+//					System.out.println("Yowser!");
+//				}
+//
+//		};
+
+				ITestParce t1= new My();
+
+
+				t1.doSomething();
+				intent.putExtra("test", t1);
+
 				break;
 			default:
 				break;
@@ -386,11 +430,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			startActivity(i);
 		}
 
-		//Performance data
-		if (item.getTitle() != null && item.getTitle().equals("Performance Data")) {
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked performance");
-
-			Intent intent = dancerDao.prepPerformanceActivity();
+		//Predictions
+		if (item.getTitle().equals(getResources().getString(R.string.prediction_Text))) {
+			Intent intent = new Intent(this, PredictActivity.class);
 			startActivity(intent);
 		}
 
@@ -475,9 +517,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		// the menu option text is defined as constant String
 		menu.add("Import Data");
-		menu.add("Venue Data");
-		menu.add("Performance Data");
 		menu.add("Stats");
+		menu.add(getResources().getString(R.string.prediction_Text));
 		menu.add("Venue By Count");
 
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
