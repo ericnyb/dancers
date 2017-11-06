@@ -5,6 +5,7 @@ import com.ericbandiero.dancerdata.activities.DancedAtVenue;
 import com.ericbandiero.dancerdata.activities.DetailActivity;
 import com.ericbandiero.dancerdata.activities.PerfActivity;
 import com.ericbandiero.dancerdata.activities.PredictActivity;
+import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestDaggerObject;
 
@@ -25,4 +26,5 @@ public interface BasicComponent {
 	void inject(PerfActivity activity);
 	void inject(DancedAtVenue activity);
 	void inject(TestDaggerObject td);
+	void inject(HandleAChildClick ck);
 }
