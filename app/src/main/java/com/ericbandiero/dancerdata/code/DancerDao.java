@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
@@ -34,9 +36,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.inject.Inject;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
 
@@ -67,6 +74,8 @@ public class DancerDao implements Serializable {
 	private static final String WORKING_DATA_FOLDER = "/DancerData";
 	private static final String DANCER_DATA_INPUT_FILE = "/dancers.txt";
 
+	private static List<Lib_ExpandableDataWithIds> listPerformances=new ArrayList<>();
+
 	// Database fields
 	private SQLiteDatabase database;
 	private SqlHelper dbHelper;
@@ -74,10 +83,15 @@ public class DancerDao implements Serializable {
 	//New comment 3
 	private Context context;
 
+	@Inject
+	SharedPreferences sharedPreferences;
 
 	public DancerDao(Context context) {
 		//Setup
 		this.context = context;
+		//Dagger
+		DanceApp.app().basicComponent().inject(this);
+
 		dbHelper = new SqlHelper(context);
 		//We call this to make sure onCreate gets called if database was never created
 		dbHelper.getWritableDatabase();
@@ -324,6 +338,13 @@ public class DancerDao implements Serializable {
 
 	private List<Lib_ExpandableDataWithIds> prepDataPerformance(String performanceCode){
 		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Performance code passed in:"+performanceCode);
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Start time:"+new Date().toString());
+
+		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
+
+		if (performanceCode.equals("-1")& !listPerformances.isEmpty()){
+			return listPerformances;
+		}
 
 		String  whereClause=!performanceCode.equals("-1")?" where Perf_Code ="+performanceCode:"";
 
@@ -341,7 +362,7 @@ public class DancerDao implements Serializable {
 						" order by PerfDate desc");
 		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
 
-		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
+
 
 		SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
 
@@ -367,6 +388,11 @@ public class DancerDao implements Serializable {
 		}
 
 		cursor.close();
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","End time:"+new Date().toString());
+
+		if (listPerformances.isEmpty()) {
+			listPerformances = listData;
+		}
 
 		return listData;
 
@@ -409,6 +435,7 @@ public class DancerDao implements Serializable {
 	}
 
 	public Intent prepPerformanceActivity(String performanceCode){
+
 		List<Lib_ExpandableDataWithIds> listData=prepDataPerformance(performanceCode);
 
 		int size=0;
