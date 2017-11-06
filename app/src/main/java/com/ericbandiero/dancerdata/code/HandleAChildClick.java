@@ -6,10 +6,13 @@ import android.util.Log;
 
 import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.activities.DetailActivity;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 
 import java.io.Serializable;
+
+import javax.inject.Inject;
 
 /**
  * Created by ${"Eric Bandiero"} on 4/12/2017.
@@ -51,6 +54,11 @@ public class HandleAChildClick implements IHandleChildClicksExpandableIds,Serial
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Child info:"+child.getAnyObject());
 				if (AppConstant.DEBUG)
 					Log.d(this.getClass().getSimpleName() + ">", "child:" + child.getTextStringChild());
+				//TODO Use dagger to get this DanceDao object
+				DancerDao dancerDao=new DancerDao(context);
+				Intent intentPerformance = dancerDao.prepPerformanceActivity(child.getAnyObject().toString());
+				intentPerformance.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(intentPerformance);
 				break;
 		}
 

@@ -386,90 +386,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			startActivity(i);
 		}
 
+		//Performance data
 		if (item.getTitle() != null && item.getTitle().equals("Performance Data")) {
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked performance");
-/*
 
-			//SQLiteDatabase db = SQLiteDatabase.openDatabase(SqlHelper.SAMPLE_DB_NAME, null, 0);
-			//DancerDao dancerDao = new DancerDao(AppConstant.CONTEXT);
-			final Cursor cursor = dancerDao.runRawQuery(
-					"select PerfDate as _id," +
-							"PerfDate," +
-							"PerfDesc," +
-							"Venue," +
-							"Dance_Code," +
-							"title," +
-							"Perf_Code" +
-							" from Info group by Perf_Code,Dance_code order by PerfDate desc");
-			//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
-
-			List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
-
-			SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
-
-			//First get venues
-			while (cursor.moveToNext()) {
-				if (!performances.add(cursor.getString(1)+":"+cursor.getString(2))){
-					if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Duplicate:"+cursor.getString(2));
-				}
-
-				Lib_ExpandableDataWithIds lib_expandableDataWithIds=new Lib_ExpandableDataWithIds(cursor.getString(1)+":"+cursor.getString(2), cursor.getString(5));
-				lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
-				//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
-				listData.add(lib_expandableDataWithIds);
-				if (AppConstant.DEBUG)
-					Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
-			}
-
-
-
-
-			for (String performance : performances) {
-				listData.add(new Lib_ExpandableDataWithIds(performance));
-			}
-
-			cursor.close();
-*/
-
-			List<Lib_ExpandableDataWithIds> listData=dancerDao.prepDataPerformance();
-
-			int size=0;
-
-			for (Lib_ExpandableDataWithIds lib_expandableDataWithIds : listData) {
-				if (lib_expandableDataWithIds.getTextStringChild()==null){
-					size++;
-				}
-			}
-
-
-
-			IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-
-			HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
-
-			IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds() {
-				@Override
-				public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
-					if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
-				}
-			};
-
-			//Intent i=new Intent(this, Lib_Expandable_Activity.class);
-			Intent i = new Intent(this, ExpandListSubclass.class);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
-			i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:"+size);
-
-			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-
-			i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
-			//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
-			//Test comment
-			//Test 2
-			startActivity(i);
+			Intent intent = dancerDao.prepPerformanceActivity();
+			startActivity(intent);
 		}
-
-
 
 		// check selected menu item
 		if (item.getTitle() != null && item.getTitle().equals("Import Data")) {

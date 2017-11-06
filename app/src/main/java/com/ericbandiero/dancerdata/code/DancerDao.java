@@ -3,6 +3,7 @@ package com.ericbandiero.dancerdata.code;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -16,8 +17,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ericbandiero.dancerdata.AppConstant;
+import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
+import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
+import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
+import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -147,7 +152,6 @@ public class DancerDao implements Serializable {
 	}
 	catch(SQLiteException ex)
 	{
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error!");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Cursor is null?"+cursor==null?"Null":"Not null");
 		UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
@@ -318,11 +322,11 @@ public class DancerDao implements Serializable {
 		return fileExists;
 	}
 
-	public List<Lib_ExpandableDataWithIds> prepDataPerformance(String performanceCode){
+	private List<Lib_ExpandableDataWithIds> prepDataPerformance(String performanceCode){
 		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Performance code passed in:"+performanceCode);
 
-
 		String  whereClause=!performanceCode.equals("-1")?" where Perf_Code ="+performanceCode:"";
+
 		final Cursor cursor = runRawQuery(
 				"select PerfDate as _id," +
 						"PerfDate," +
@@ -369,7 +373,7 @@ public class DancerDao implements Serializable {
 	}
 
 
-	public List<Lib_ExpandableDataWithIds> prepDataPerformance(){
+	private List<Lib_ExpandableDataWithIds> prepDataPerformance(){
 		return prepDataPerformance("-1");
 	}
 
@@ -398,5 +402,48 @@ public class DancerDao implements Serializable {
 
 		cursor.close();
 		return listData;
+	}
+
+	public Intent prepPerformanceActivity(){
+		return	prepPerformanceActivity("-1");
+	}
+
+	public Intent prepPerformanceActivity(String performanceCode){
+		List<Lib_ExpandableDataWithIds> listData=prepDataPerformance(performanceCode);
+
+		int size=0;
+
+		for (Lib_ExpandableDataWithIds lib_expandableDataWithIds : listData) {
+			if (lib_expandableDataWithIds.getTextStringChild()==null){
+				size++;
+			}
+		}
+
+
+
+		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
+
+		HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
+
+		IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds() {
+			@Override
+			public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
+			}
+		};
+
+		//Intent i=new Intent(this, Lib_Expandable_Activity.class);
+		Intent i = new Intent(context, ExpandListSubclass.class);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:"+size);
+
+		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+
+		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+		return i;
+		//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
+		//Test comment
+		//Test 2
 	}
 }
