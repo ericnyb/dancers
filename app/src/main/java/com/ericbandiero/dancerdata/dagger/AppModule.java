@@ -49,11 +49,6 @@ public class AppModule {
 
 
 	@Singleton @Provides
-	public DancerDao provideDancerDao(){
-		return new DancerDao(context);
-	}
-
-	@Singleton @Provides
 	public HandleTestClick provideHandleTestClick(){
 		return new HandleTestClick();
 	}

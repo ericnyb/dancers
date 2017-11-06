@@ -17,13 +17,12 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = {AppModule.class,TestObjectModule.class})
+@Component(modules = {AppModule.class,TestObjectModule.class,DancerModule.class})
 public interface BasicComponent {
 	void inject(AndroidDataActivity activity);
 	void inject(PredictActivity activity);
 	void inject(DetailActivity activity);
 	void inject(PerfActivity activity);
 	void inject(DancedAtVenue activity);
-
 	void inject(TestDaggerObject td);
 }
