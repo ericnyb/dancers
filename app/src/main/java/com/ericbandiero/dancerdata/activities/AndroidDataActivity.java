@@ -286,7 +286,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		switch (id) {
 			case R.id.button1:
-				intent = new Intent(this, PerfActivity.class);
+				intent = dancerDao.prepPerformanceActivity();
 				break;
 			case R.id.button2:
 				intent = new Intent(this, PredictActivity.class);
@@ -386,14 +386,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			startActivity(i);
 		}
 
-		//Performance data
-		if (item.getTitle() != null && item.getTitle().equals("Performance Data")) {
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked performance");
-
-			Intent intent = dancerDao.prepPerformanceActivity();
-			startActivity(intent);
-		}
-
 		// check selected menu item
 		if (item.getTitle() != null && item.getTitle().equals("Import Data")) {
 			if (ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED){
@@ -476,7 +468,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		// the menu option text is defined as constant String
 		menu.add("Import Data");
 		menu.add("Venue Data");
-		menu.add("Performance Data");
 		menu.add("Stats");
 		menu.add("Venue By Count");
 
