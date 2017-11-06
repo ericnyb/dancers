@@ -342,6 +342,7 @@ public class DancerDao implements Serializable {
 
 		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
 
+		//We already have gotten the full list once
 		if (performanceCode.equals("-1")& !listPerformances.isEmpty()){
 			return listPerformances;
 		}
@@ -390,7 +391,8 @@ public class DancerDao implements Serializable {
 		cursor.close();
 		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","End time:"+new Date().toString());
 
-		if (listPerformances.isEmpty()) {
+		//Saving entire list for first time.
+		if (performanceCode.equals("-1")&listPerformances.isEmpty()) {
 			listPerformances = listData;
 		}
 
