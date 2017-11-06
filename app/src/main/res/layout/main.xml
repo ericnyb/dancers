@@ -58,7 +58,7 @@
           
     <Button
         style="@style/AppButton"
-        android:id="@+id/button1"
+        android:id="@+id/button_performances"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="1dp"
@@ -67,12 +67,12 @@
 
    <Button
        style="@style/AppButton"
-       android:id="@+id/button2"
+       android:id="@+id/button_venues"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:layout_marginLeft="10dp"
        android:onClick="myClickHandler"
-       android:text="@string/ButtonPredict" />
+       android:text="@string/button_venue_text" />
       </LinearLayout>
       
     <ListView
