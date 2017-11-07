@@ -472,7 +472,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 								// current activity
 								//	if (checkIfInputFileExists()) {
 								//DancerDao dancerDao = new DancerDao(context);
-								dancerDao.importData();
+								dancerDao.importData(context);
 
 								//dropTable();
 								//createSqlTable();
