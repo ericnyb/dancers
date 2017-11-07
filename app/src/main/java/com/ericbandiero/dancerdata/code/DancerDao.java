@@ -83,6 +83,8 @@ public class DancerDao implements Serializable {
 	//New comment 3
 	private Context context;
 
+	private Context activityContext;
+
 	@Inject
 	SharedPreferences sharedPreferences;
 
@@ -115,9 +117,11 @@ public class DancerDao implements Serializable {
 		return database;
 	}
 
-	public void importData() {
+	public void importData(Context context_activity) {
 		//TODO Add option to get from assets for testing
-		if (checkIfInputFileExists()) {
+		activityContext=context_activity;
+
+			if (checkIfInputFileExists()) {
 			//open();
 			deleteAllFromTable(SqlHelper.TABLE_INFO);
 			//dbHelper.createSqlTable();
@@ -286,7 +290,7 @@ public class DancerDao implements Serializable {
 
 //		AndroidUtility.AlertMessageSimple(context, "Database import results.",
 //				rowsAttempted + "\n" + rowsImported);
-		UtilsShared.AlertMessageSimple(context, "Database import results.",
+		UtilsShared.AlertMessageSimple(activityContext, "Database import results.",
 			rowsAttempted + "\n" + rowsImported);
 	}
 
