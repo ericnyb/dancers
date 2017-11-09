@@ -44,13 +44,13 @@ public class StatData {
 
 	public List<DataHolderTwoFields> runStats() {
 		dataHolderTwoFieldsList.clear();
+		getPerformanceCount();
+		getDanceWorksCount();
+		getVenueCount();
 		getDancerCount();
 		getChoreographerCount();
-		getVenueCount();
-		getMostShotVenue(true);
-		getDanceWorksCount();
-		getPerformanceCount();
 		getSolos();
+		getMostShotVenue(true);
 		getFirstAndLastPerformance();
 		getMostCommonName();
 		return dataHolderTwoFieldsList;
