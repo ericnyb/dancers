@@ -128,6 +128,11 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Named("stats_venues")
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderTest;
 
+	@Inject
+	@Named("stats_gigs_by_year")
+	Provider <ControlStatsActivityBuilder> controlStatsActivityGigsByYear;
+
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -376,9 +381,27 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
 
 			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
 
 		}
+
+		if (item.getTitle() != null && item.getTitle().equals("Gigs By Year")) {
+			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+
+			//These are for the activity
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityGigsByYear.get());
+
+			//Builder is injected
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+
+			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+
+			startActivity(statIntent);
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
+
+		}
+
 
 		if (item.getTitle() != null && item.getTitle().equals("Venue Data")) {
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
@@ -518,9 +541,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		// the menu option text is defined as constant String
 		menu.add("Import Data");
 		menu.add("Stats");
-		menu.add(getResources().getString(R.string.prediction_Text));
+		menu.add("Gigs By Year");
 		menu.add("Venue By Count");
-
+		menu.add(getResources().getString(R.string.prediction_Text));
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);
 
