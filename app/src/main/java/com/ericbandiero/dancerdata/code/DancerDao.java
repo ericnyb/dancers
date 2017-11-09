@@ -17,7 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
@@ -37,9 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 

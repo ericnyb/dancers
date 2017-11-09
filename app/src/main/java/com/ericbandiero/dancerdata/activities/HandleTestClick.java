@@ -4,7 +4,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.ericbandiero.dancerdata.AppConstant;
+import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.librarymain.interfaces.IHandleListViewClicks;
 
 import java.io.Serializable;

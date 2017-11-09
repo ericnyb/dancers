@@ -4,15 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.activities.DetailActivity;
-import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 
 import java.io.Serializable;
-
-import javax.inject.Inject;
 
 /**
  * Created by ${"Eric Bandiero"} on 4/12/2017.

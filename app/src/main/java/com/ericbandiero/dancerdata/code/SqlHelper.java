@@ -5,10 +5,7 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.ericbandiero.dancerdata.AppConstant;
-import com.ericbandiero.dancerdata.activities.AndroidDataActivity;
 import com.ericbandiero.librarymain.UtilsShared;
 
 import java.io.Serializable;

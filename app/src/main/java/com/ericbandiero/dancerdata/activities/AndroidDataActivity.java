@@ -31,8 +31,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.R;
+import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
