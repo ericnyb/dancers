@@ -157,10 +157,13 @@ public class StatData {
 		while (cursor.moveToNext()){
 			String venueName=cursor.getString(0).trim();
 			if (rollUp){
-				dataHolderTwoFieldsList.add(new DataHolderTwoFields(rollUp?"Venue most shot:":venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length())),venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1))));
+				DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(rollUp?"Venue most shot:":venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length())),venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1)));
+				dataHolderTwoFieldsList.add(dataHolderTwoFields);
 			}
 			else {
-				dataHolderTwoFieldsList.add(new DataHolderTwoFields(venueName.substring(0, (venueName.length() > maxLengthOfVenueName ? maxLengthOfVenueName : venueName.length()))+":",  String.valueOf(cursor.getString(1))));
+				DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(venueName.substring(0, (venueName.length() > maxLengthOfVenueName ? maxLengthOfVenueName : venueName.length()))+":",  String.valueOf(cursor.getString(1)));
+				dataHolderTwoFields.setId(venueName); //Want this for click event.
+				dataHolderTwoFieldsList.add(dataHolderTwoFields);
 			}
 			if (rollUp){
 				break;
