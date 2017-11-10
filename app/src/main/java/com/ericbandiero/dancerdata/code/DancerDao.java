@@ -24,6 +24,7 @@ import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
+import com.ericbandiero.myframework.Utility;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -476,4 +477,91 @@ public class DancerDao implements Serializable {
 		//Test comment
 		//Test 2
 	}
+
+
+	public Intent createIntentForPerformanceByVenueName(String venueName){
+
+		List<Lib_ExpandableDataWithIds> listData=new ArrayList<>();
+
+		String  whereClause=" where venue ="+ Utility.quote(venueName);
+
+		final Cursor cursor = runRawQuery(
+				"select PerfDate as _id," +
+						"PerfDate," +
+						"PerfDesc," +
+						"Venue," +
+						"Dance_Code," +
+						"title," +
+						"Perf_Code" +
+						" from Info "+
+						whereClause+
+						" group by Perf_Code,Dance_code "+
+						" order by PerfDate desc");
+
+
+
+
+		SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
+
+		//First get venues
+		while (cursor.moveToNext()) {
+			if (!performances.add(cursor.getString(1)+":"+cursor.getString(2))){
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Duplicate:"+cursor.getString(2));
+			}
+
+			Lib_ExpandableDataWithIds lib_expandableDataWithIds=new Lib_ExpandableDataWithIds(cursor.getString(1)+":"+cursor.getString(2), cursor.getString(5));
+			lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
+			//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
+			listData.add(lib_expandableDataWithIds);
+			if (AppConstant.DEBUG)
+				Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
+		}
+
+
+
+
+		for (String performance : performances) {
+			listData.add(new Lib_ExpandableDataWithIds(performance));
+		}
+
+
+		//==================
+		//List<Lib_ExpandableDataWithIds> listData=prepDataPerformance(performanceCode);
+
+		int size=0;
+
+		for (Lib_ExpandableDataWithIds lib_expandableDataWithIds : listData) {
+			if (lib_expandableDataWithIds.getTextStringChild()==null){
+				size++;
+			}
+		}
+
+
+
+		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
+
+		HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
+
+		IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds() {
+			@Override
+			public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
+			}
+		};
+
+		//Intent i=new Intent(this, Lib_Expandable_Activity.class);
+		Intent i = new Intent(context, ExpandListSubclass.class);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:"+size);
+
+		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+
+		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+		return i;
+		//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
+		//Test comment
+		//Test 2
+	}
+
 }
