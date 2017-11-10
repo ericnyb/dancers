@@ -29,5 +29,4 @@ public interface BasicComponent {
 	void inject(TestDaggerObject td);
 	void inject(HandleAChildClick ck);
 	void inject(DancerDao dancerDao);
-
 }

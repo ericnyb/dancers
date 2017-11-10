@@ -12,6 +12,7 @@ import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -41,8 +42,6 @@ public class AppModule {
 		return PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-
-
 	@Singleton @Provides
 	public HandleListClickForVenueCount provideHandleTestClick(){
 		return new HandleListClickForVenueCount();
@@ -58,7 +57,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Shooting History Stats",
 				"Data",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runStats(), provideHandleTestClick());
+				statData.runStats(),null);
 	}
 
 	@Provides @Named ("stats_venues")
@@ -66,7 +65,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueStats(), provideHandleTestClick());
+				statData.runVenueStats(), provideHandleTestClick() );
 	}
 
 	@Provides @Named ("stats_gigs_by_year")
@@ -74,7 +73,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Gigs By Year",
 				"Gigs By Year",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runGigsByYear(), provideHandleTestClick());
+				statData.runGigsByYear(), null);
 	}
 
 	@Singleton @Provides
