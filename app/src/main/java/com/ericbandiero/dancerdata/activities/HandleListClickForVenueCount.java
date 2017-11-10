@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.ericbandiero.dancerdata.code.AppConstant;
+import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.interfaces.IHandleListViewClicks;
 
@@ -21,7 +22,9 @@ public class HandleListClickForVenueCount implements IHandleListViewClicks,Seria
 		DataHolderTwoFields dataHolderTwoFields= (DataHolderTwoFields) adapterView.getAdapter().getItem(i);
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue id:"+dataHolderTwoFields.getId());
 		DetailActivity.setDance_id(1733);
-		Intent intent = new Intent(AppConstant.CONTEXT, DetailActivity.class);
+		DancerDao dancerDao=new DancerDao(AppConstant.CONTEXT);
+		Intent intent=dancerDao.createIntentForPerformanceByVenueName(dataHolderTwoFields.getId());
+		//Intent intent = new Intent(AppConstant.CONTEXT, DetailActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		AppConstant.CONTEXT.startActivity(intent);
 	}
