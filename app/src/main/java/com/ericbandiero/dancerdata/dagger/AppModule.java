@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 
 import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.activities.HandleTestClick;
+import com.ericbandiero.dancerdata.activities.HandleListClickForVenueCount;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
@@ -44,8 +44,8 @@ public class AppModule {
 
 
 	@Singleton @Provides
-	public HandleTestClick provideHandleTestClick(){
-		return new HandleTestClick();
+	public HandleListClickForVenueCount provideHandleTestClick(){
+		return new HandleListClickForVenueCount();
 	}
 
 	@Singleton @Provides
