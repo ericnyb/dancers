@@ -408,6 +408,7 @@ public class DancerDao implements Serializable {
 	}
 
 	public List<Lib_ExpandableDataWithIds> prepDataVenue(){
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Prepping venue data...");
 		final Cursor cursor = runRawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue,Dance_Code,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc");
 		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
 
