@@ -19,6 +19,7 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
+ * Main Dagger module
  * Created by Eric Bandiero on 11/1/2017.
  */
 
@@ -41,8 +42,6 @@ public class AppModule {
 		return PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-
-
 	@Singleton @Provides
 	public HandleListClickForVenueCount provideHandleTestClick(){
 		return new HandleListClickForVenueCount();
@@ -58,7 +57,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Shooting History Stats",
 				"Data",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runStats(), provideHandleTestClick());
+				statData.runStats(),null);
 	}
 
 	@Provides @Named ("stats_venues")
@@ -66,7 +65,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueStats(), provideHandleTestClick());
+				statData.runVenueStats(), provideHandleTestClick() );
 	}
 
 	@Provides @Named ("stats_gigs_by_year")
@@ -74,7 +73,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Gigs By Year",
 				"Gigs By Year",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runGigsByYear(), provideHandleTestClick());
+				statData.runGigsByYear(), null);
 	}
 
 	@Singleton @Provides
@@ -85,11 +84,4 @@ public class AppModule {
 				ContextCompat.getColor(context,R.color.LightGreen),
 				false);
 	}
-
-	/*
-	@Singleton @Provides
-	public ObjectManager provideObjectManager(SharedPreferences sharedPreferences, Gson gson){
-		return new ObjectManager(sharedPreferences, gson);
-	}
-	*/
 }
