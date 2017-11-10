@@ -132,6 +132,14 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Named("stats_gigs_by_year")
 	Provider <ControlStatsActivityBuilder> controlStatsActivityGigsByYear;
 
+	@Inject
+	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
+	HandleAChildClick handleAChildClickPerformance;
+
+	@Inject
+	@Named(HandleAChildClick.GET_PERFORMANCE_FROM_CLICK)
+	HandleAChildClick handleAChildClickVenues;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -303,7 +311,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
 
-				HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.VENUE_CLICK);
+				//HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.VENUE_CLICK);
 				//HandleAChildClick handleAChildClick = new HandleAChildClick(this);
 
 				IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds(){
@@ -319,7 +327,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
 				//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
 
 
@@ -400,57 +408,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
 
-		}
-
-
-		if (item.getTitle() != null && item.getTitle().equals("Venue Data")) {
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
-
-			//We call routine to create the data list.
-			List<Lib_ExpandableDataWithIds> listData=dancerDao.prepDataVenue();
-
-			//Intent i=new Intent(this, Lib_Expandable_Activity.class);
-			Intent i = new Intent(this, ExpandListSubclass.class);
-
-			IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-
-			HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.VENUE_CLICK);
-			//HandleAChildClick handleAChildClick = new HandleAChildClick(this);
-
-			IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds(){
-				@Override
-				public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
-				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
-				}
-			};
-
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
-			i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venue list");
-
-			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-
-			i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
-		//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
-
-
-
-
-//			TestConcrete t1=new TestConcrete(){
-//				@Override
-//				public void doSomething(){
-//					System.out.println("Yowser!");
-//				}
-//
-//		};
-
-			ITestParce t1= new My();
-
-
-			t1.doSomething();
-			i.putExtra("test", t1);
-
-			startActivity(i);
 		}
 
 		//Predictions

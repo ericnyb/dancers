@@ -42,6 +42,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
 
@@ -85,6 +86,10 @@ public class DancerDao implements Serializable {
 
 	@Inject
 	SharedPreferences sharedPreferences;
+
+	@Inject
+	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
+	HandleAChildClick handleAChildClick;
 
 	public DancerDao(Context context) {
 		//Setup
@@ -455,7 +460,7 @@ public class DancerDao implements Serializable {
 
 		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
 
-		HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
+		//HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
 
 		IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds() {
 			@Override
@@ -541,7 +546,7 @@ public class DancerDao implements Serializable {
 
 		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
 
-		HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
+		//HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
 
 		IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds() {
 			@Override

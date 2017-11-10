@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.activities.HandleListClickForVenueCount;
 import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
@@ -84,4 +85,17 @@ public class AppModule {
 				ContextCompat.getColor(context,R.color.LightGreen),
 				false);
 	}
+
+	@Provides
+	@Named (HandleAChildClick.GET_PERFORMANCE_FROM_CLICK)
+	public HandleAChildClick provideDaggerHandleClickVenues(){
+		return new HandleAChildClick(HandleAChildClick.GET_PERFORMANCE_FROM_CLICK);
+	}
+
+	@Provides
+	@Named (HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
+	public HandleAChildClick provideDaggerHandleClickPerformances(){
+		return new HandleAChildClick(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK);
+	}
+
 }
