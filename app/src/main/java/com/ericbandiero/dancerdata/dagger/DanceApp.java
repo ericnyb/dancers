@@ -1,7 +1,10 @@
-package com.ericbandiero.dancerdata.code;
+package com.ericbandiero.dancerdata.dagger;
 
 import android.app.Application;
 import android.util.Log;
+
+import com.ericbandiero.dancerdata.code.AppConstant;
+import com.ericbandiero.dancerdata.dagger.DaggerBasicComponent;
 
 /**
  * Created by Eric Bandiero on 11/1/2017.
@@ -10,6 +13,7 @@ import android.util.Log;
 public class DanceApp extends Application {
 	private static DanceApp app;
 	private BasicComponent basicComponent;
+
 
 	@Override
 	public void onCreate() {
@@ -20,7 +24,6 @@ public class DanceApp extends Application {
 		basicComponent = DaggerBasicComponent.builder()
 				.appModule(new AppModule(getApplicationContext()))
 				.build();
-
 	}
 
 	public static DanceApp app() {

@@ -1,13 +1,8 @@
 package com.ericbandiero.dancerdata.code;
 
-import android.database.Cursor;
-import android.util.Log;
-
-import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

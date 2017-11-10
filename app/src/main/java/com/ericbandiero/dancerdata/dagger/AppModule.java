@@ -1,4 +1,4 @@
-package com.ericbandiero.dancerdata.code;
+package com.ericbandiero.dancerdata.dagger;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,13 +6,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 
 import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.activities.HandleTestClick;
+import com.ericbandiero.dancerdata.activities.HandleListClickForVenueCount;
+import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
-import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -27,7 +25,6 @@ import dagger.Provides;
 @Module
 public class AppModule {
 	private Context context;
-	private DancerDao dancerDao;
 
 	public AppModule(Context context) {
 		this.context = context;
@@ -44,19 +41,11 @@ public class AppModule {
 		return PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-	@Singleton @Provides
-	public TestDaggerObject provideDaggerObject(){
-		return new TestDaggerObject("Eric");
-	}
+
 
 	@Singleton @Provides
-	public DancerDao provideDancerDao(){
-		return new DancerDao(context);
-	}
-
-	@Singleton @Provides
-	public HandleTestClick provideHandleTestClick(){
-		return new HandleTestClick();
+	public HandleListClickForVenueCount provideHandleTestClick(){
+		return new HandleListClickForVenueCount();
 	}
 
 	@Singleton @Provides
@@ -77,7 +66,15 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runTestStats(), provideHandleTestClick());
+				statData.runVenueStats(), provideHandleTestClick());
+	}
+
+	@Provides @Named ("stats_gigs_by_year")
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivityGigs(StatData statData){
+		return new ControlStatsActivityBuilder("Gigs By Year",
+				"Gigs By Year",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				statData.runGigsByYear(), provideHandleTestClick());
 	}
 
 	@Singleton @Provides

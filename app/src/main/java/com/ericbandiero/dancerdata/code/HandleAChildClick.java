@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.ericbandiero.dancerdata.AppConstant;
 import com.ericbandiero.dancerdata.activities.DetailActivity;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
@@ -39,7 +38,7 @@ public class HandleAChildClick implements IHandleChildClicksExpandableIds,Serial
 				if (AppConstant.DEBUG)
 					Log.d(this.getClass().getSimpleName() + ">", "child:" + child.getTextStringChild());
 				if (AppConstant.DEBUG)
-					Log.d(this.getClass().getSimpleName() + ">", "Performance id:" + child.getAnyObject());
+					Log.d(this.getClass().getSimpleName() + ">", "Dance piece code:" + child.getAnyObject());
 
 				DetailActivity.setDance_id(Integer.parseInt(child.getAnyObject().toString()));
 				Intent intent = new Intent(context, DetailActivity.class);
@@ -48,6 +47,14 @@ public class HandleAChildClick implements IHandleChildClicksExpandableIds,Serial
 				break;
 			case VENUE_CLICK:
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Waiting for implementation");
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Child info:"+child.getAnyObject());
+				if (AppConstant.DEBUG)
+					Log.d(this.getClass().getSimpleName() + ">", "child:" + child.getTextStringChild());
+				//TODO Use dagger to get this DanceDao object
+				DancerDao dancerDao=new DancerDao(context);
+				Intent intentPerformance = dancerDao.prepPerformanceActivity(child.getAnyObject().toString());
+				intentPerformance.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(intentPerformance);
 				break;
 		}
 

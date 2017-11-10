@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.ericbandiero.dancerdata.*;
-import com.ericbandiero.dancerdata.code.DanceApp;
+import com.ericbandiero.dancerdata.code.AppConstant;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 
 import android.os.Build;

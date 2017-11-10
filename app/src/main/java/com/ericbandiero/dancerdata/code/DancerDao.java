@@ -3,6 +3,8 @@ package com.ericbandiero.dancerdata.code;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -15,9 +17,14 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.ericbandiero.dancerdata.AppConstant;
+import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
+import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
+import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
+import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
+import com.ericbandiero.myframework.Utility;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,9 +36,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.inject.Inject;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
 
@@ -62,6 +72,8 @@ public class DancerDao implements Serializable {
 	private static final String WORKING_DATA_FOLDER = "/DancerData";
 	private static final String DANCER_DATA_INPUT_FILE = "/dancers.txt";
 
+	private static List<Lib_ExpandableDataWithIds> listPerformances=new ArrayList<>();
+
 	// Database fields
 	private SQLiteDatabase database;
 	private SqlHelper dbHelper;
@@ -69,10 +81,17 @@ public class DancerDao implements Serializable {
 	//New comment 3
 	private Context context;
 
+	private Context activityContext;
+
+	@Inject
+	SharedPreferences sharedPreferences;
 
 	public DancerDao(Context context) {
 		//Setup
 		this.context = context;
+		//Dagger
+		DanceApp.app().basicComponent().inject(this);
+
 		dbHelper = new SqlHelper(context);
 		//We call this to make sure onCreate gets called if database was never created
 		dbHelper.getWritableDatabase();
@@ -96,9 +115,11 @@ public class DancerDao implements Serializable {
 		return database;
 	}
 
-	public void importData() {
+	public void importData(Context context_activity) {
 		//TODO Add option to get from assets for testing
-		if (checkIfInputFileExists()) {
+		activityContext=context_activity;
+
+			if (checkIfInputFileExists()) {
 			//open();
 			deleteAllFromTable(SqlHelper.TABLE_INFO);
 			//dbHelper.createSqlTable();
@@ -129,6 +150,7 @@ public class DancerDao implements Serializable {
 	}
 
 	public Cursor runRawQuery(String sql) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
 		Cursor cursor=null;
 
 		try {
@@ -266,7 +288,7 @@ public class DancerDao implements Serializable {
 
 //		AndroidUtility.AlertMessageSimple(context, "Database import results.",
 //				rowsAttempted + "\n" + rowsImported);
-		UtilsShared.AlertMessageSimple(context, "Database import results.",
+		UtilsShared.AlertMessageSimple(activityContext, "Database import results.",
 			rowsAttempted + "\n" + rowsImported);
 	}
 
@@ -316,7 +338,19 @@ public class DancerDao implements Serializable {
 		return fileExists;
 	}
 
-	public List<Lib_ExpandableDataWithIds> prepDataPerformance(){
+	private List<Lib_ExpandableDataWithIds> prepDataPerformance(String performanceCode){
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Performance code passed in:"+performanceCode);
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Start time:"+new Date().toString());
+
+		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
+
+		//We already have gotten the full list once
+		if (performanceCode.equals("-1")& !listPerformances.isEmpty()){
+			return listPerformances;
+		}
+
+		String  whereClause=!performanceCode.equals("-1")?" where Perf_Code ="+performanceCode:"";
+
 		final Cursor cursor = runRawQuery(
 				"select PerfDate as _id," +
 						"PerfDate," +
@@ -325,10 +359,13 @@ public class DancerDao implements Serializable {
 						"Dance_Code," +
 						"title," +
 						"Perf_Code" +
-						" from Info group by Perf_Code,Dance_code order by PerfDate desc");
+						" from Info "+
+						whereClause+
+						" group by Perf_Code,Dance_code "+
+						" order by PerfDate desc");
 		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
 
-		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
+
 
 		SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
 
@@ -354,10 +391,22 @@ public class DancerDao implements Serializable {
 		}
 
 		cursor.close();
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","End time:"+new Date().toString());
+
+		//Saving entire list for first time.
+		if (performanceCode.equals("-1")&listPerformances.isEmpty()) {
+			listPerformances = listData;
+		}
 
 		return listData;
 
 	}
+
+
+	private List<Lib_ExpandableDataWithIds> prepDataPerformance(){
+		return prepDataPerformance("-1");
+	}
+
 	public List<Lib_ExpandableDataWithIds> prepDataVenue(){
 		final Cursor cursor = runRawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue,Dance_Code,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc");
 		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
@@ -384,4 +433,135 @@ public class DancerDao implements Serializable {
 		cursor.close();
 		return listData;
 	}
+
+	public Intent prepPerformanceActivity(){
+		return	prepPerformanceActivity("-1");
+	}
+
+	public Intent prepPerformanceActivity(String performanceCode){
+
+		List<Lib_ExpandableDataWithIds> listData=prepDataPerformance(performanceCode);
+
+		int size=0;
+
+		for (Lib_ExpandableDataWithIds lib_expandableDataWithIds : listData) {
+			if (lib_expandableDataWithIds.getTextStringChild()==null){
+				size++;
+			}
+		}
+
+
+
+		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
+
+		HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
+
+		IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds() {
+			@Override
+			public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
+			}
+		};
+
+		//Intent i=new Intent(this, Lib_Expandable_Activity.class);
+		Intent i = new Intent(context, ExpandListSubclass.class);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:"+size);
+
+		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+
+		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+		return i;
+		//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
+		//Test comment
+		//Test 2
+	}
+
+
+	public Intent createIntentForPerformanceByVenueName(String venueName){
+
+		List<Lib_ExpandableDataWithIds> listData=new ArrayList<>();
+
+		String  whereClause=" where venue ="+ Utility.quote(venueName);
+
+		final Cursor cursor = runRawQuery(
+				"select PerfDate as _id," +
+						"PerfDate," +
+						"PerfDesc," +
+						"Venue," +
+						"Dance_Code," +
+						"title," +
+						"Perf_Code" +
+						" from Info "+
+						whereClause+
+						" group by Perf_Code,Dance_code "+
+						" order by PerfDate desc");
+
+
+
+
+		SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
+
+		//First get venues
+		while (cursor.moveToNext()) {
+			if (!performances.add(cursor.getString(1)+":"+cursor.getString(2))){
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Duplicate:"+cursor.getString(2));
+			}
+
+			Lib_ExpandableDataWithIds lib_expandableDataWithIds=new Lib_ExpandableDataWithIds(cursor.getString(1)+":"+cursor.getString(2), cursor.getString(5));
+			lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
+			//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
+			listData.add(lib_expandableDataWithIds);
+			if (AppConstant.DEBUG)
+				Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
+		}
+
+
+
+
+		for (String performance : performances) {
+			listData.add(new Lib_ExpandableDataWithIds(performance));
+		}
+
+
+		//==================
+		//List<Lib_ExpandableDataWithIds> listData=prepDataPerformance(performanceCode);
+
+		int size=0;
+
+		for (Lib_ExpandableDataWithIds lib_expandableDataWithIds : listData) {
+			if (lib_expandableDataWithIds.getTextStringChild()==null){
+				size++;
+			}
+		}
+
+
+
+		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
+
+		HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
+
+		IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds() {
+			@Override
+			public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
+			}
+		};
+
+		//Intent i=new Intent(this, Lib_Expandable_Activity.class);
+		Intent i = new Intent(context, ExpandListSubclass.class);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:"+size);
+
+		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+
+		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+		return i;
+		//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
+		//Test comment
+		//Test 2
+	}
+
 }

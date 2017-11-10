@@ -19,10 +19,11 @@
     <string name="textInfoRecords">Record count</string>
     <string name="ButttonGoPerf">Performances</string>
     <string name="title_activity_predict">Prediction Calendar</string>
-    <string name="ButtonPredict">Prediction</string>
+    <string name="prediction_Text">Prediction</string>
     <string name="textheader">Header</string>
     <string name="textviewchild">Child</string>
     <string name="stats">Stats</string>
     <string name="results_text">Records found:</string>
+    <string name="button_venue_text">Venues</string>
 
 </resources>
