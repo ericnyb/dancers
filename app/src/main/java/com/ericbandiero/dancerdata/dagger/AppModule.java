@@ -12,7 +12,6 @@ import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -20,6 +19,7 @@ import dagger.Module;
 import dagger.Provides;
 
 /**
+ * Main Dagger module
  * Created by Eric Bandiero on 11/1/2017.
  */
 
@@ -84,11 +84,4 @@ public class AppModule {
 				ContextCompat.getColor(context,R.color.LightGreen),
 				false);
 	}
-
-	/*
-	@Singleton @Provides
-	public ObjectManager provideObjectManager(SharedPreferences sharedPreferences, Gson gson){
-		return new ObjectManager(sharedPreferences, gson);
-	}
-	*/
 }
