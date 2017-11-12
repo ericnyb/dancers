@@ -86,12 +86,14 @@ public class AppModule {
 				false);
 	}
 
+	@Singleton
 	@Provides
 	@Named (HandleAChildClick.GET_PERFORMANCE_FROM_CLICK)
 	public HandleAChildClick provideDaggerHandleClickVenues(){
 		return new HandleAChildClick(HandleAChildClick.GET_PERFORMANCE_FROM_CLICK);
 	}
 
+	@Singleton
 	@Provides
 	@Named (HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
 	public HandleAChildClick provideDaggerHandleClickPerformances(){
