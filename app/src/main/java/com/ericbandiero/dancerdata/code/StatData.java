@@ -36,8 +36,8 @@ public class StatData {
 
 	public StatData(DancerDao sqLiteDatabase) {
 		//DanceApp.app().testObjectComponent().inject(this);
-		testObjectComponent= DaggerTestObjectComponent.builder().build();
-		testObjectComponent.inject(this);
+		DaggerTestObjectComponent.create().inject(this);
+		//testObjectComponent.inject(this);
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
 		dancerDao=sqLiteDatabase;
 	}
