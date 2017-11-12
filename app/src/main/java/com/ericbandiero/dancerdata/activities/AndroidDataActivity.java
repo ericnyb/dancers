@@ -126,7 +126,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	@Inject
 	@Named("stats_venues")
-	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderTest;
+	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderVenueCounts;
 
 	@Inject
 	@Named("stats_gigs_by_year")
@@ -381,7 +381,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
 			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilderTest.get());
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilderVenueCounts.get());
 
 			//Builder is injected
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
