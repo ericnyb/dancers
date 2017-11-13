@@ -103,6 +103,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Inject
 	DancerDao dancerDao;
 
+	@Inject
+	HandleListClickForVenueCount venueClickGetPerformance;
+
 	//Permission request integer
 	public static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
 
@@ -647,6 +650,12 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			DetailActivity.setDance_id(listOfDanceCode.get(position));
 			Intent intent = new Intent(this, DetailActivity.class);
 			startActivity(intent);
+		}
+		else{
+			String venueToGet=adapterView.getAdapter().getItem(position).toString();
+			String venueName=venueToGet.substring(venueToGet.indexOf(":")+1).trim();
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue:"+venueName);
+			dancerDao.getPerformanceForAVenue(venueName);
 		}
 	}
 

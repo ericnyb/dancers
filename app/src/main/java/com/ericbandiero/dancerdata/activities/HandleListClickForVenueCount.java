@@ -1,5 +1,6 @@
 package com.ericbandiero.dancerdata.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
@@ -26,8 +27,8 @@ public class HandleListClickForVenueCount implements IHandleListViewClicks,Seria
 	public void handleClicks(AdapterView<?> adapterView, View view, int i, long l) {
 		DanceApp.app().basicComponent().inject(this);
 		DataHolderTwoFields dataHolderTwoFields= (DataHolderTwoFields) adapterView.getAdapter().getItem(i);
-		Intent intent=dancerDao.createIntentForPerformanceByVenueName(dataHolderTwoFields.getId());
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		AppConstant.CONTEXT.startActivity(intent);
+		dancerDao.getPerformanceForAVenue(dataHolderTwoFields.getId());
 	}
+
+
 }

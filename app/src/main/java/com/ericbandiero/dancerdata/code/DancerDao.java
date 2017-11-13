@@ -570,4 +570,10 @@ public class DancerDao implements Serializable {
 		//Test 2
 	}
 
+	public void getPerformanceForAVenue(String venueName) {
+		Intent intent=createIntentForPerformanceByVenueName(venueName);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		AppConstant.CONTEXT.startActivity(intent);
+	}
+
 }
