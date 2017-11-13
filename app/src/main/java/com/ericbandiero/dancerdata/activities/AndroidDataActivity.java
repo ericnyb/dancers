@@ -313,43 +313,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				intent = new Intent(this, ExpandListSubclass.class);
 
 				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-
-				//HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.VENUE_CLICK);
-				//HandleAChildClick handleAChildClick = new HandleAChildClick(this);
-
-				IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds(){
-					@Override
-					public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
-						if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
-					}
-				};
-
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venue list");
-
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
-				//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
-
-
-
-
-//			TestConcrete t1=new TestConcrete(){
-//				@Override
-//				public void doSomething(){
-//					System.out.println("Yowser!");
-//				}
-//
-//		};
 
 				ITestParce t1= new My();
-
-
 				t1.doSomething();
 				intent.putExtra("test", t1);
-
 				break;
 			default:
 				break;
@@ -544,7 +514,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				results.add("No Data Found!");
 			}
 		}
-		c.close();
+		if (c != null) {
+			c.close();
+		}
 	}
 
 	private void setDataSearch() {
@@ -654,7 +626,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		else{
 			String venueToGet=adapterView.getAdapter().getItem(position).toString();
 			String venueName=venueToGet.substring(venueToGet.indexOf(":")+1).trim();
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue:"+venueName);
 			dancerDao.getPerformanceForAVenue(venueName);
 		}
 	}
