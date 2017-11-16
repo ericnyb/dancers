@@ -126,7 +126,7 @@ public class DancerDao implements Serializable {
 
 			if (checkIfInputFileExists()) {
 			//open();
-			deleteAllFromTable(SqlHelper.TABLE_INFO);
+			deleteAllFromTable(SqlHelper.MAIN_TABLE_NAME);
 			//dbHelper.createSqlTable();
 			open();
 			readDataFile(database);
@@ -211,7 +211,7 @@ public class DancerDao implements Serializable {
 		}
 
 		SQLiteStatement stmt = db.compileStatement("INSERT INTO "
-				+ SqlHelper.TABLE_INFO + " Values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+				+ SqlHelper.MAIN_TABLE_NAME + " Values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
 		db.beginTransaction();
 		// Read text from file
@@ -286,7 +286,7 @@ public class DancerDao implements Serializable {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">", "Input file was imported!");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">", "Rows of data attempted:" + cnt);
 		Cursor cursor = db.rawQuery("select count(*) as cnt from "
-				+ SqlHelper.TABLE_INFO, null);
+				+ SqlHelper.MAIN_TABLE_NAME, null);
 		cursor.moveToFirst();
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">", "Rows of data in database:" + cursor.getInt(0));
 		String rowsImported = "Rows of data imported:" + cursor.getInt(0);
@@ -576,4 +576,13 @@ public class DancerDao implements Serializable {
 		AppConstant.CONTEXT.startActivity(intent);
 	}
 
+	public boolean isTableEmpty(String table_name){
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Checking if table "+table_name+" is empty.");
+		boolean isEmpty;
+		Cursor cursor = runRawQuery("Select count(*) from " + table_name);
+		cursor.moveToFirst();
+		isEmpty= cursor.getInt(0) == 0;
+		cursor.close();
+		return isEmpty;
+	}
 }

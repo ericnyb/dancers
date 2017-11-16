@@ -95,7 +95,7 @@ public class PredictActivity extends AppCompatActivity {
 		/**
 		 * List to hold the predicted date and frequence of past 
 		 */
-		Cursor cursor=dancerDao.runRawQuery("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from "+ SqlHelper.TABLE_INFO +
+		Cursor cursor=dancerDao.runRawQuery("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from "+ SqlHelper.MAIN_TABLE_NAME +
 	                " where strftime('%Y',Perfdate)<>'"+currentYear+"' order by strftime('%W',Perfdate)");
 	        try{
 	        Log.i(TAG,"Count:"+    cursor.getCount());

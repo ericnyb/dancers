@@ -130,15 +130,22 @@ public class StatData {
 	}
 
 	private void getMostCommonName() {
+
 		String sql="Select distinct "+DancerDao.FIRST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.FIRST_NAME+") from info group by "+DancerDao.FIRST_NAME +" order by 2 desc";
 		Cursor cursor = dancerDao.runRawQuery(sql);
-		cursor.moveToFirst();
+
+		if(cursor != null && cursor.moveToFirst()){
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Common first name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+		cursor.close();
+		}
 
 		sql="Select distinct "+DancerDao.LAST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.LAST_NAME+") from info group by "+DancerDao.LAST_NAME +" order by 2 desc";
 		cursor = dancerDao.runRawQuery(sql);
-		cursor.moveToFirst();
-		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Common last name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+
+		if(cursor != null && cursor.moveToFirst()) {
+			dataHolderTwoFieldsList.add(new DataHolderTwoFields("Common last name:", String.valueOf(cursor.getString(0)) + "(" + String.valueOf(cursor.getString(1)) + ")"));
+			cursor.close();
+		}
 	}
 
 	private void getSolos() {
