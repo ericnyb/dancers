@@ -33,6 +33,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AppConstant;
+import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
@@ -152,8 +153,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//Dagger
 		DanceApp.app().basicComponent().inject(this);
 
-
-
 		//We want a context that we can use
 		AppConstant.CONTEXT = this;
 
@@ -167,9 +166,17 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		listview = (ListView) findViewById(R.id.listViewDancer);
 		buttonPredict = (Button) findViewById(R.id.button_venues);
 
-
 		//Ask for permissions to use the app
 		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,1);
+
+		if (!AppConstant.WE_HAVE_DATA_IN_TABLE&&dancerDao.isTableEmpty(SqlHelper.MAIN_TABLE_NAME)){
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Table is empty!");
+			UtilsShared.AlertMessageSimple(this,"New Database Created","You need to import data - see menu option.");
+			AppConstant.WE_HAVE_DATA_IN_TABLE=false;
+		}
+		else{
+			AppConstant.WE_HAVE_DATA_IN_TABLE=true;
+		}
 
 		// First thing - make sure we have a directory
 		//We will call this from the ask callback

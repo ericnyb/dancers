@@ -6,8 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.ericbandiero.librarymain.UtilsShared;
-
 import java.io.Serializable;
 
 /**
@@ -17,7 +15,7 @@ import java.io.Serializable;
 public class SqlHelper extends SQLiteOpenHelper implements Serializable{
 
 
-	public static final String TABLE_INFO="Info";
+	public static final String MAIN_TABLE_NAME ="Info";
 	private static final String DATABASE_NAME="DancerData";
 	private static final int DATABASE_VERSION = 5;
 
@@ -78,7 +76,7 @@ public class SqlHelper extends SQLiteOpenHelper implements Serializable{
 
 		createSqlTable(sqLiteDatabase);
 
-		UtilsShared.AlertMessageSimple(context,"New Database Created","You need to import data - see menu option.");
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","You need to import data - see menu option.");
 		//UtilsShared.toastIt(DancerDao.context,"New database created - you need to import data", Toast.LENGTH_LONG);
 
 	}
@@ -96,7 +94,7 @@ public class SqlHelper extends SQLiteOpenHelper implements Serializable{
 		if(newVersion>1){
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Upgrading database from version " + oldVersion + " to "
 						+ newVersion + ", which will destroy all old data");
-		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_INFO);
+		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MAIN_TABLE_NAME);
 		//onCreate(sqLiteDatabase);
 			createSqlTable(sqLiteDatabase);
 		}
@@ -134,7 +132,7 @@ public class SqlHelper extends SQLiteOpenHelper implements Serializable{
 */
 
 		db.execSQL("CREATE TABLE IF NOT EXISTS "
-				+ SqlHelper.TABLE_INFO
+				+ SqlHelper.MAIN_TABLE_NAME
 				+ " (Code INTEGER," +
 				DancerDao.VENUE+" VARCHAR," +
 				DancerDao.PERF_DESC+" VARCHAR," +
