@@ -210,8 +210,10 @@ public class DancerDao implements Serializable {
 			open();
 		}
 
+		//Temp fix for AS bug reporting error.
+		String values=" Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		SQLiteStatement stmt = db.compileStatement("INSERT INTO "
-				+ SqlHelper.MAIN_TABLE_NAME + " Values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+				+ SqlHelper.MAIN_TABLE_NAME + values);
 
 		db.beginTransaction();
 		// Read text from file
