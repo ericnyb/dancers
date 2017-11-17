@@ -50,7 +50,7 @@ import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
-import com.ericbandiero.librarymain.interfaces.ITestParce;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -324,9 +324,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
 
-				ITestParce t1= new My();
-				t1.doSomething();
-				intent.putExtra("test", t1);
+				//ITestParce t1= new My();
+				//t1.doSomething();
+				//intent.putExtra("test", t1);
 				break;
 			default:
 				break;
