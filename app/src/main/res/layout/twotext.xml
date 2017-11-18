@@ -25,9 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="1dp"
         android:layout_weight="1"
-        android:maxLines="1" 
-    	android:maxLength="20" 
-   	 	android:ellipsize="marquee"
-        android:text="TextView" />
+        android:maxLength="20"
+        android:ellipsize="marquee"
+        android:text="TextView"
+        android:singleLine="true"/>
 
 </LinearLayout>

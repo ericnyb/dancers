@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -106,8 +107,8 @@ public class PredictActivity extends AppCompatActivity {
 
 			textviewrecord.setText("Record count:"+cursor.getCount());
 	        //Date formatter
-	        SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)");
-	        SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd");
+	        SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)", Locale.US);
+	        SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd",Locale.US);
 	        
 	        //Create a date
 	        Calendar calendar=Calendar.getInstance();

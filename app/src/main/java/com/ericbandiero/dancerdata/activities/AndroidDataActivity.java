@@ -325,7 +325,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 		else{
 			//We can do this
-			dancerDao.createMyWorkingDirectory();
+			boolean myWorkingDirectory = dancerDao.createMyWorkingDirectory();
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Was directory created?"+myWorkingDirectory);
 		}
 	}
 

@@ -38,9 +38,8 @@
         </activity>
         <activity
             android:name=".activities.DetailActivity"
-            android:label="@string/title_activity_detail">
-            android:parentActivityName="com.ericbandiero.dancerdata.activities.AndroidDataActivity"
-            >
+            android:label="@string/title_activity_detail"
+            android:parentActivityName="com.ericbandiero.dancerdata.activities.AndroidDataActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ericbandiero.dancerdata.activities.AndroidDataActivity"/>

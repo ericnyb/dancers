@@ -303,10 +303,8 @@ public class DancerDao implements Serializable {
 		// Get the name of the folder we want to create
 		File folder = new File(Environment.getExternalStorageDirectory()
 				+ DancerDao.WORKING_DATA_FOLDER);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Folder where we will directory:"+folder.getAbsolutePath().toLowerCase());
 		boolean success = true;
-
-
-
 
 		// If it doesn't exist we try to make it.
 		if (!folder.exists()) {
@@ -322,6 +320,9 @@ public class DancerDao implements Serializable {
 			}
 
 			success = folder.mkdir();
+		}
+		else{
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Folder already exists:"+folder.getAbsolutePath());
 		}
 		if (success == false) {
 			toastIt(context,"Folder " + DancerDao.WORKING_DATA_FOLDER + " cannot be created", Toast.LENGTH_LONG);
