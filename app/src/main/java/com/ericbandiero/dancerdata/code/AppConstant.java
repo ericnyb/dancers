@@ -8,6 +8,5 @@ import android.content.Context;
 
 public class AppConstant {
 	public static final boolean DEBUG = true ;
-	public static Context CONTEXT;
 	public static boolean WE_HAVE_DATA_IN_TABLE=false;
 }

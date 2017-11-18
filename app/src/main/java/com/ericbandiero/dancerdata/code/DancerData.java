@@ -48,12 +48,11 @@ public class DancerData {
 	 * @return
 	 */
 	public static String getDayOfWeekString() {
-		String dayOfWeek = ",case cast (strftime('%w', PerfDate) as integer)"
+		return ",case cast (strftime('%w', PerfDate) as integer)"
 				+ " when 0 then 'Sunday   '" + "" + " when 1 then 'Monday   '"
 				+ "" + " when 2 then 'Tuesday  '" + " when 3 then 'Wednesday'"
 				+ " when 4 then 'Thursday '" + " when 5 then 'Friday   '"
 				+ " else 'Saturday ' end as dayofweek ";
-		return dayOfWeek;
 
 	}
 	
@@ -82,7 +81,9 @@ public class DancerData {
 				Log.d(TAG,"No data found!");
 			}
 		}
-		c.close();
-		
+		if (c != null) {
+			c.close();
+		}
+
 	}
 }

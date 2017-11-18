@@ -13,6 +13,7 @@ import java.util.List;
 
 public class PrepareCursorData implements IPrepDataExpandableList {
 
+	private static final long serialVersionUID = 9018823601740024403L;
 	List<Lib_ExpandableDataWithIds> list;
 
 	public PrepareCursorData(List <Lib_ExpandableDataWithIds> c){

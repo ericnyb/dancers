@@ -16,6 +16,8 @@ import java.io.Serializable;
 
 public class ControlStatAdapter implements IControlStatAdapter,Serializable {
 
+	private static final long serialVersionUID = -8558578750902552937L;
+
 	@Override
 	public void customize(Context context,BaseAdapter baseAdapter) {
 		Lib_StatsAdapter lib_statsAdapter=(Lib_StatsAdapter)baseAdapter;

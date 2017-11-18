@@ -163,7 +163,7 @@ public class StatData {
 		while (cursor.moveToNext()){
 			String venueName=cursor.getString(0).trim();
 			if (rollUp){
-				DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(rollUp?"Venue most shot:":venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length())),venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1)));
+				DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields("Venue most shot:",venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1)));
 				dataHolderTwoFieldsList.add(dataHolderTwoFields);
 			}
 			else {
