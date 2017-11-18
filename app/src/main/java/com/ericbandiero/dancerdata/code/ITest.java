@@ -1,7 +1,5 @@
 package com.ericbandiero.dancerdata.code;
 
-import java.io.Serializable;
-
 /**
  * Created by ${"Eric Bandiero"} on 4/26/2017.
  */

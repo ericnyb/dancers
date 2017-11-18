@@ -2,10 +2,6 @@ package com.ericbandiero.dancerdata.code;
 
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-
 /**
  * Class of helper methods
  * @author Eric Bandiero

@@ -2,7 +2,6 @@ package com.ericbandiero.dancerdata.code;
 
 import android.util.Log;
 
-import com.ericbandiero.dancerdata.*;
 import com.ericbandiero.dancerdata.activities.PerfActivity;
 import com.squareup.otto.Subscribe;
 

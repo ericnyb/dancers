@@ -3,16 +3,13 @@ package com.ericbandiero.dancerdata.activities;
 
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.ericbandiero.dancerdata.*;
+
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 
 public class ExpandListSubclass extends Lib_Expandable_Activity {

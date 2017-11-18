@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.ericbandiero.dancerdata.dagger.DaggerTestObjectComponent;
-import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.dagger.TestObjectComponent;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 
