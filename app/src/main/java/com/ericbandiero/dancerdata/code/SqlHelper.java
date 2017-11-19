@@ -9,6 +9,7 @@ import android.util.Log;
 import java.io.Serializable;
 
 /**
+ * Helper class
  * Created by ${"Eric Bandiero"} on 4/12/2017.
  */
 
@@ -18,6 +19,7 @@ public class SqlHelper extends SQLiteOpenHelper implements Serializable{
 	public static final String MAIN_TABLE_NAME ="Info";
 	private static final String DATABASE_NAME="DancerData";
 	private static final int DATABASE_VERSION = 5;
+	private static final long serialVersionUID = 8228633626342412247L;
 
 //	public static final String LAST_NAME = "LastName";
 //	public static final String FIRST_NAME = "FirstName";
@@ -51,7 +53,7 @@ public class SqlHelper extends SQLiteOpenHelper implements Serializable{
 
 	/**
 	 * This only gets called if the database does not exist
-	 * @param sqLiteDatabase
+	 * @param sqLiteDatabase database
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -83,9 +85,9 @@ public class SqlHelper extends SQLiteOpenHelper implements Serializable{
 
 	/**
 	 * If we change the database version above this gets called - we don't have to call this manually
-	 * @param sqLiteDatabase
-	 * @param oldVersion
-	 * @param newVersion
+	 * @param sqLiteDatabase database
+	 * @param oldVersion	old version
+	 * @param newVersion	new version
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {

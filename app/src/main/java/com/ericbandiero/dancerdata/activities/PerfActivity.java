@@ -125,7 +125,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		        new String[] {"PerfDate","PerfDesc","Venue"},
 		        new int[] { R.id.textViewRecordCount1,R.id.textView2,R.id.textView3},1);
 		listviewperf.setAdapter(adapter);
-		TextView tv=(TextView) findViewById(R.id.textViewRecordCount1);
+		TextView tv= findViewById(R.id.textViewRecordCount1);
 	//	Log.d(TAG,"Text size"+tv.getText());
 
     }

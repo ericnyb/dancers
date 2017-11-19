@@ -77,11 +77,11 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 		setchoreos.clear();
 		setdancers.clear();
 		listDancers.clear();
-		txtviewVenue=(TextView) findViewById(R.id.textViewVenue);
-		txtviewDate=(TextView) findViewById(R.id.textViewDate);
-		txtviewTitle=(TextView) findViewById(R.id.textViewTitle);
-		txtviewChoreos=(TextView) findViewById(R.id.textViewChoreos);
-		listviewdancers=(ListView)findViewById(R.id.listViewDancer);
+		txtviewVenue= findViewById(R.id.textViewVenue);
+		txtviewDate= findViewById(R.id.textViewDate);
+		txtviewTitle= findViewById(R.id.textViewTitle);
+		txtviewChoreos= findViewById(R.id.textViewChoreos);
+		listviewdancers= findViewById(R.id.listViewDancer);
 		listviewdancers.setOnItemClickListener(this);
 		
 		
@@ -137,8 +137,6 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 				} while (cursorDanceInfo.moveToNext());
 				txtviewChoreos.setText("Choreographers: "+setchoreos.toString());
 				listDancers.addAll(setdancers);
-			} else {
-		//		results.add("No Data Found!");
 			}
 	
 			//This we moved here so that the data is already prepared.
@@ -153,9 +151,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setupActionBar() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override

@@ -12,7 +12,8 @@
      android:clickable="true"
      android:onClick="onClickHeader"
      android:textSize="21sp"
-     android:text="@string/textheader" />
+     android:text="@string/textheader"
+     android:focusable="true"/>
 
     <TextView
         android:id="@+id/textViewChild"

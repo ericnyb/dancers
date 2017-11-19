@@ -72,6 +72,7 @@ public class DancerDao implements Serializable {
 	//Import location for data file that user needs to have
 	private static final String WORKING_DATA_FOLDER = "/DancerData";
 	private static final String DANCER_DATA_INPUT_FILE = "/dancers.txt";
+	private static final long serialVersionUID = 8631832636106174063L;
 
 	private static List<Lib_ExpandableDataWithIds> listPerformances=new ArrayList<>();
 
@@ -174,8 +175,8 @@ public class DancerDao implements Serializable {
 	catch(SQLiteException ex)
 	{
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error!");
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Cursor is null?"+cursor==null?"Null":"Not null");
-		UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
+		//UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error getting data!"+"Data error:" + ex.getMessage());
 		return cursor;
 	}
 }
@@ -206,7 +207,7 @@ public class DancerDao implements Serializable {
 		File file = new File(sdcard, WORKING_DATA_FOLDER
 				+ DANCER_DATA_INPUT_FILE);
 
-		if (db.isOpen()==false){
+		if (!db.isOpen()){
 			open();
 		}
 
@@ -231,7 +232,7 @@ public class DancerDao implements Serializable {
 			}
 
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","File name being read:"+br.toString());
-			String line = null;
+			String line;
 
 			while ((line = br.readLine()) != null) {
 				//Log.d(TAG,line);
@@ -272,7 +273,9 @@ public class DancerDao implements Serializable {
 			e.printStackTrace();
 		} finally {
 			try {
-				br.close();
+				if (br != null) {
+					br.close();
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -292,7 +295,7 @@ public class DancerDao implements Serializable {
 		cursor.moveToFirst();
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">", "Rows of data in database:" + cursor.getInt(0));
 		String rowsImported = "Rows of data imported:" + cursor.getInt(0);
-
+		cursor.close();
 //		AndroidUtility.AlertMessageSimple(context, "Database import results.",
 //				rowsAttempted + "\n" + rowsImported);
 		UtilsShared.AlertMessageSimple(activityContext, "Database import results.",
@@ -303,10 +306,8 @@ public class DancerDao implements Serializable {
 		// Get the name of the folder we want to create
 		File folder = new File(Environment.getExternalStorageDirectory()
 				+ DancerDao.WORKING_DATA_FOLDER);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Folder where we will directory:"+folder.getAbsolutePath().toLowerCase());
 		boolean success = true;
-
-
-
 
 		// If it doesn't exist we try to make it.
 		if (!folder.exists()) {
@@ -323,7 +324,10 @@ public class DancerDao implements Serializable {
 
 			success = folder.mkdir();
 		}
-		if (success == false) {
+		else{
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Folder already exists:"+folder.getAbsolutePath());
+		}
+		if (!success) {
 			toastIt(context,"Folder " + DancerDao.WORKING_DATA_FOLDER + " cannot be created", Toast.LENGTH_LONG);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Directory "+ folder + " could not be created");
 		}
@@ -575,7 +579,7 @@ public class DancerDao implements Serializable {
 	public void getPerformanceForAVenue(String venueName) {
 		Intent intent=createIntentForPerformanceByVenueName(venueName);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		AppConstant.CONTEXT.startActivity(intent);
+		context.startActivity(intent);
 	}
 
 	public boolean isTableEmpty(String table_name){
@@ -586,5 +590,13 @@ public class DancerDao implements Serializable {
 		isEmpty= cursor.getInt(0) == 0;
 		cursor.close();
 		return isEmpty;
+	}
+
+	public Context getActivityContext() {
+		return activityContext;
+	}
+
+	public void setActivityContext(Context activityContext) {
+		this.activityContext = activityContext;
 	}
 }

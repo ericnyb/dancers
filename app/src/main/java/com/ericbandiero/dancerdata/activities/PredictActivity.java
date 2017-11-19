@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -51,9 +52,9 @@ public class PredictActivity extends AppCompatActivity {
 		DanceApp.app().basicComponent().inject(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		 listPredict=(ListView)findViewById(R.id.listViewPredict);
-	     textviewChild=(TextView)findViewById(R.id.textViewChild);
-	     textviewrecord=(TextView)findViewById(R.id.textViewRecordCountBase);
+		 listPredict= findViewById(R.id.listViewPredict);
+	     textviewChild= findViewById(R.id.textViewChild);
+	     textviewrecord= findViewById(R.id.textViewRecordCountBase);
 		//dancerDao=new DancerDao(this);
 		 listPredict.setOnItemClickListener(new OnItemClickListener() {
 	            @Override
@@ -61,7 +62,7 @@ public class PredictActivity extends AppCompatActivity {
 	                    int position, long id) {
 
 	                // View parentView = (View) view.getParent();
-	                 textviewChild = ((TextView) view.findViewById(R.id.textViewChild));
+	                 textviewChild = view.findViewById(R.id.textViewChild);
 	               
 	                //    String item = ((TextView) view).getText().toString();
 	               
@@ -106,8 +107,8 @@ public class PredictActivity extends AppCompatActivity {
 
 			textviewrecord.setText("Record count:"+cursor.getCount());
 	        //Date formatter
-	        SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)");
-	        SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd");
+	        SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)", Locale.US);
+	        SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd",Locale.US);
 	        
 	        //Create a date
 	        Calendar calendar=Calendar.getInstance();

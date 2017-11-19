@@ -159,17 +159,17 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		DanceApp.app().basicComponent().inject(this);
 
 		//We want a context that we can use
-		AppConstant.CONTEXT = this;
+		dancerDao.setActivityContext(this);
 
 		ButterKnife.bind(this);
 		// getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		//mSearchButton = (Button) findViewById(R.id.button1);
-		mInputEdit = (EditText) findViewById(R.id.editText1);
-		mradiogroup = (RadioGroup) findViewById(R.id.radioGroup1);
-		radioButton = (RadioButton) findViewById(R.id.radioDancer);
+		mInputEdit = findViewById(R.id.editText1);
+		mradiogroup = findViewById(R.id.radioGroup1);
+		radioButton = findViewById(R.id.radioDancer);
 		//textInfo = (TextView) findViewById(R.id.textViewRecordCount1);
-		listview = (ListView) findViewById(R.id.listViewDancer);
-		buttonPredict = (Button) findViewById(R.id.button_venues);
+		listview = findViewById(R.id.listViewDancer);
+		buttonPredict = findViewById(R.id.button_venues);
 
 		//Ask for permissions to use the app
 		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,1);
@@ -268,7 +268,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		Log.i("Restarted", "restarted");
 		// mInputEdit.setText("");
 		if (!DetailActivity.getDancerdetailid().equals("-1")) {
-			RadioButton b = (RadioButton) findViewById(R.id.radioDancer);
+			RadioButton b = findViewById(R.id.radioDancer);
 			b.setChecked(true);
 
 			//radioButton.setId(R.id.radioDancer);
@@ -325,7 +325,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 		else{
 			//We can do this
-			dancerDao.createMyWorkingDirectory();
+			boolean myWorkingDirectory = dancerDao.createMyWorkingDirectory();
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Was directory created?"+myWorkingDirectory);
 		}
 	}
 
@@ -664,7 +665,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	}
 
 	private void displayResultList() {
-		ListView listView = (ListView) findViewById(R.id.listViewDancer);
+		ListView listView = findViewById(R.id.listViewDancer);
 		listView.setAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, results));
 		listView.setTextFilterEnabled(true);
@@ -689,7 +690,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		// TODO Auto-generated method stub
-		radioButton = (RadioButton) findViewById(checkedId);
+		radioButton = findViewById(checkedId);
 		Log.i(TAG, radioButton.getText().toString());
 	}
 
