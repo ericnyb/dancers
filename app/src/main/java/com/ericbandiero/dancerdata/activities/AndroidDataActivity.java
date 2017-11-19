@@ -76,7 +76,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	private static final String TAG = "Droid Dancer";
 
 	//Test commit change.
-	ArrayList<String> results = new ArrayList<String>();
+	ArrayList<String> results = new ArrayList<>();
 	//transient Button mSearchButton;
 	transient EditText mInputEdit;
 	transient RadioGroup mradiogroup;
@@ -85,7 +85,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	//transient TextView textInfo;
 	transient ListView listview;
-	transient List<Integer> listOfDanceCode = new ArrayList<Integer>();
+	transient List<Integer> listOfDanceCode = new ArrayList<>();
 
 	final Context context = this;
 	transient private RadioButton radioButton;
@@ -97,7 +97,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	transient private String orderByFields;
 
 	// List of fields to get
-	transient List<String> listOfFieldsToGet = new ArrayList<String>();
+	transient List<String> listOfFieldsToGet = new ArrayList<>();
 
 	// String to get data
 	String sqlSearchString;
@@ -587,7 +587,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		switch (buttonId) {
 			case R.id.radioDancer:
 				Log.i(TAG, "dancer");
-				listOfFieldsToGet = new ArrayList<String>(Arrays.asList(
+				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
 						DancerDao.LAST_NAME, DancerDao.FIRST_NAME,
 						DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
@@ -612,7 +612,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				orderByFields = "LastName,FirstName,PerfDate Desc";
 				break;
 			case R.id.radioVenue:
-				listOfFieldsToGet = new ArrayList<String>(
+				listOfFieldsToGet = new ArrayList<>(
 						Collections.singletonList(DancerDao.VENUE));
 				sqlSearchString = DancerData.getUpperSearch(DancerDao.VENUE)
 						+ " LIKE ?";
@@ -623,7 +623,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				break;
 
 			case R.id.radioPeople:
-				listOfFieldsToGet = new ArrayList<String>(Arrays.asList(
+				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
 						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
 				sqlSearchString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
@@ -666,7 +666,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	private void displayResultList() {
 		ListView listView = findViewById(R.id.listViewDancer);
-		listView.setAdapter(new ArrayAdapter<String>(this,
+		listView.setAdapter(new ArrayAdapter<>(this,
 				android.R.layout.simple_list_item_1, results));
 		listView.setTextFilterEnabled(true);
 	}

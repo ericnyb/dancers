@@ -22,7 +22,7 @@ public class PrepareCursorData implements IPrepDataExpandableList {
 
 	/**
 	 * Return the list that we passed in - we do no work on it.
-	 * @return
+	 * @return List
 	 */
 	@Override
 	public List<Lib_ExpandableDataWithIds> prepData() {

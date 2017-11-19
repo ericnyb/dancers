@@ -429,7 +429,7 @@ public class DancerDao implements Serializable {
 
 		//First get venues
 		while (cursor.moveToNext()) {
-			venues.add(cursor.getString(3).toString());
+			venues.add(cursor.getString(3));
 			Lib_ExpandableDataWithIds lib_expandableDataWithIds=new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2));
 			lib_expandableDataWithIds.setAnyObject(cursor.getString(5));
 			//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));

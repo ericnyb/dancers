@@ -16,7 +16,7 @@ public class AndroidUtility {
 		    StringBuilder sb=new StringBuilder();
 		   
 		    for (String string : list) {
-		        sb.append(string+System.getProperty("line.separator"));
+		        sb.append(string).append(System.getProperty("line.separator"));
 		    }
 		    sb.setLength(sb.length() - 1);
 		    return sb.toString();
