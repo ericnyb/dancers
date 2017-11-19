@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -63,9 +62,9 @@ public class PredictActivity extends AppCompatActivity {
 
 	                // View parentView = (View) view.getParent();
 	                 textviewChild = view.findViewById(R.id.textViewChild);
-	               
+
 	                //    String item = ((TextView) view).getText().toString();
-	               
+
 	                 if(textviewChild.getVisibility()==View.VISIBLE){
 	                     textviewChild.setVisibility(View.GONE);
 	                 }
@@ -85,16 +84,16 @@ public class PredictActivity extends AppCompatActivity {
 
 	private void showData() throws ParseException {
 
-		/**
-		 * Key=Week number of year. Values holds list of previous performances during that week number.
+		/*
+		  Key=Week number of year. Values holds list of previous performances during that week number.
 		 */
-		Map<Integer,List<String>> mapData=new TreeMap<Integer,List<String>>();
+		Map<Integer,List<String>> mapData= new TreeMap<>();
 
 		//Get the current year - we don't want to include those
 		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
-		/**
-		 * List to hold the predicted date and frequence of past 
+		/*
+		  List to hold the predicted date and frequency of past
 		 */
 		Cursor cursor=dancerDao.runRawQuery("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from "+ SqlHelper.MAIN_TABLE_NAME +
 	                " where strftime('%Y',Perfdate)<>'"+currentYear+"' order by strftime('%W',Perfdate)");
@@ -120,49 +119,46 @@ public class PredictActivity extends AppCompatActivity {
 	        calendar.setMinimalDaysInFirstWeek(4);
 	        
 	        //List of maps - each will hold date for header and child row
-	        List<HashMap<String, String>> fillMaps = new ArrayList<HashMap<String, String>>();
-	        Map<String,List<String>> mapData2=new TreeMap<String,List<String>>();
+	        List<HashMap<String, String>> fillMaps = new ArrayList<>();
+	        Map<String,List<String>> mapData2= new TreeMap<>();
 	        
 	        
-	        List<String> tempList=new LinkedList<String>();
-	        
-	        if (cursor != null) {
+	       // List<String> tempList= new LinkedList<>();
 
-	            cursor.moveToFirst();
-	                                	       
+		cursor.moveToFirst();
+
 	            /* Check if at least one Result was returned. */
-	            if (cursor.isFirst()) {
-	                /* Loop through all Results */
-	                do {
-	                    calendar.setTime(df_yyyymmdd.parse(cursor.getString(0)));
-	                    int weekOfYear=calendar.get(Calendar.WEEK_OF_YEAR);
-	                    Log.d(TAG,"Week:"+weekOfYear+" Perf date:"+calendar.getTime());
-	                    tempList.add("Week:"+weekOfYear+" Perf date:"+calendar.getTime());
-	                    List<String> l = mapData.get(weekOfYear);
-	                        if (l == null){
-	                            mapData.put(weekOfYear, l=new ArrayList<String>());
-	                        }
-	                        l.add(cursor.getString(1));
-	                    int year=Calendar.getInstance().get(Calendar.YEAR);
-                        calendar.set(Calendar.YEAR, year);
-	                    calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
-	       	         
-	       	            //Tricky bit of code year - try to pull list from map.
-	                    //If we have entry we add to it - if not we create new entry, then add.
-	                    List<String> l2 = mapData2.get(df_MMddyyyyEEE.format(calendar.getTime()));
-	                    if (l2 == null){
-	                        mapData2.put(df_MMddyyyyEEE.format(calendar.getTime()), l2=new ArrayList<String>());
-	                    }
-	                    l2.add(cursor.getString(0)+":"+cursor.getString(1));
-	                   //End of additions to map.
+		if (cursor.isFirst()) {
+			/* Loop through all Results */
+			do {
+				calendar.setTime(df_yyyymmdd.parse(cursor.getString(0)));
+				int weekOfYear=calendar.get(Calendar.WEEK_OF_YEAR);
+				Log.d(TAG,"Week:"+weekOfYear+" Perf date:"+calendar.getTime());
+			//    tempList.add("Week:"+weekOfYear+" Perf date:"+calendar.getTime());
+				List<String> l = mapData.get(weekOfYear);
+					if (l == null){
+						mapData.put(weekOfYear, l= new ArrayList<>());
+					}
+					l.add(cursor.getString(1));
+				int year=Calendar.getInstance().get(Calendar.YEAR);
+				calendar.set(Calendar.YEAR, year);
+				calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
 
-	                } while (cursor.moveToNext());
-	            } else {
-	            	assert false;
-	            }
-	        }
-	       
-	        cursor.close();
+				   //Tricky bit of code year - try to pull list from map.
+				//If we have entry we add to it - if not we create new entry, then add.
+				List<String> l2 = mapData2.get(df_MMddyyyyEEE.format(calendar.getTime()));
+				if (l2 == null){
+					mapData2.put(df_MMddyyyyEEE.format(calendar.getTime()), l2= new ArrayList<>());
+				}
+				l2.add(cursor.getString(0)+":"+cursor.getString(1));
+			   //End of additions to map.
+
+			} while (cursor.moveToNext());
+		} else {
+			assert false;
+		}
+
+		cursor.close();
 	       
 	        for (Map.Entry<Integer, List<String>> e : mapData.entrySet()){
 	        	Log.d(TAG,"Key:"+e.getKey() + ": " + e.getValue());
@@ -179,7 +175,7 @@ public class PredictActivity extends AppCompatActivity {
 	         fillMaps.clear();
 	        
 	         for (Map.Entry<String, List<String>> e : mapData2.entrySet()){
-	              HashMap<String, String> map = new HashMap<String, String>();
+	              HashMap<String, String> map = new HashMap<>();
 				 if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Key:"+e.getKey());
 	              map.put("Parent", e.getKey() + e.getValue().size());
 	              map.put("Child", AndroidUtility.getStringFromList(e.getValue()));

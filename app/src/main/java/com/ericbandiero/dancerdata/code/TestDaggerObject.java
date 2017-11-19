@@ -28,7 +28,7 @@ public class TestDaggerObject {
 	}
 
 	public String getName() {
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","context:"+c.getPackageName().toString());
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","context:"+ c.getPackageName());
 		return name;
 	}
 }

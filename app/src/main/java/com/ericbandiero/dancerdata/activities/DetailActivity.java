@@ -35,9 +35,9 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	private TextView txtviewVenue;
 	private TextView txtviewDate;
 	private TextView txtviewTitle;
-	Set<String> setchoreos=new LinkedHashSet<String>();
-	Set<String> setdancers=new LinkedHashSet<String>();
-	Set<String> setids=new LinkedHashSet<String>();
+	Set<String> setchoreos= new LinkedHashSet<>();
+	Set<String> setdancers= new LinkedHashSet<>();
+	Set<String> setids= new LinkedHashSet<>();
 	
 	public static String dancerdetailid="-1";
 	Cursor cursorDanceInfo;
@@ -54,7 +54,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	}
 
 
-	List<String>listDancers=new ArrayList<String>();
+	List<String>listDancers= new ArrayList<>();
 	
 	public static int dance_id;
 	//SQLiteDatabase database;
@@ -140,7 +140,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 			}
 	
 			//This we moved here so that the data is already prepared.
-			ListAdapter listadapter= new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listDancers);
+			ListAdapter listadapter= new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDancers);
 			listviewdancers.setAdapter(listadapter);
 			
 		}
@@ -186,8 +186,8 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 		// TODO Auto-generated method stub
 	Log.i(TAG,"Position:"+position);	
 	Log.i(TAG,"Id:"+row_id);
-	Log.i(TAG,"Setid:"+new ArrayList<String>(setids).get(position));
-	DetailActivity.dancerdetailid=new ArrayList<String>(setids).get(position);
+	Log.i(TAG,"Setid:"+ new ArrayList<>(setids).get(position));
+	DetailActivity.dancerdetailid= new ArrayList<>(setids).get(position);
 		cursorDanceInfo.close();
 		NavUtils.navigateUpFromSameTask(this);
 	finish();

@@ -45,7 +45,7 @@ public class DancerData {
 
 	/**
 	 * SQLITE specific way to get the string version of the day of week.
-	 * @return
+	 * @return sql clause to get day of week
 	 */
 	public static String getDayOfWeekString() {
 		return ",case cast (strftime('%w', PerfDate) as integer)"

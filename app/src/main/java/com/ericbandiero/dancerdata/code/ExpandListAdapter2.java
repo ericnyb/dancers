@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by ${"Eric Bandiero"} on 4/19/2017.
+ * Created by Eric Bandiero on 4/19/2017.
  */
 
 public class ExpandListAdapter2 extends Lib_ExpandableListAdapter_With_Ids {

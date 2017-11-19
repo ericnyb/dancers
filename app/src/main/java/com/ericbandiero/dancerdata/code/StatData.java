@@ -237,7 +237,7 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 	}
 
 	public static int maxLengthOfValueFromMap(Map<String,Integer> stringIntegerMap){
-		Collection c = stringIntegerMap.values();
+		Collection<Integer> c = stringIntegerMap.values();
 		return (int) Collections.max(c);
 	}
 
