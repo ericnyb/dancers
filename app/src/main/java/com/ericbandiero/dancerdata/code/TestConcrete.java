@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.ericbandiero.librarymain.interfaces.ITestParce;
 
 /**
- * Created by ${"Eric Bandiero"} on 4/26/2017.
+ * Created by Eric Bandiero on 4/26/2017.
  */
 
 public class TestConcrete implements ITestParce,Parcelable {

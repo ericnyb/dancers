@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 
 /**
- * Created by ${"Eric Bandiero"} on 3/31/2017.
+ * Created by Eric Bandiero on 3/31/2017.
  */
 
 public class DancedAtVenue {

@@ -124,44 +124,41 @@ public class PredictActivity extends AppCompatActivity {
 	        
 	        
 	       // List<String> tempList= new LinkedList<>();
-	        
-	        if (cursor != null) {
 
-	            cursor.moveToFirst();
-	                                	       
+		cursor.moveToFirst();
+
 	            /* Check if at least one Result was returned. */
-	            if (cursor.isFirst()) {
-	                /* Loop through all Results */
-	                do {
-	                    calendar.setTime(df_yyyymmdd.parse(cursor.getString(0)));
-	                    int weekOfYear=calendar.get(Calendar.WEEK_OF_YEAR);
-	                    Log.d(TAG,"Week:"+weekOfYear+" Perf date:"+calendar.getTime());
-	                //    tempList.add("Week:"+weekOfYear+" Perf date:"+calendar.getTime());
-	                    List<String> l = mapData.get(weekOfYear);
-	                        if (l == null){
-	                            mapData.put(weekOfYear, l= new ArrayList<>());
-	                        }
-	                        l.add(cursor.getString(1));
-	                    int year=Calendar.getInstance().get(Calendar.YEAR);
-                        calendar.set(Calendar.YEAR, year);
-	                    calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
-	       	         
-	       	            //Tricky bit of code year - try to pull list from map.
-	                    //If we have entry we add to it - if not we create new entry, then add.
-	                    List<String> l2 = mapData2.get(df_MMddyyyyEEE.format(calendar.getTime()));
-	                    if (l2 == null){
-	                        mapData2.put(df_MMddyyyyEEE.format(calendar.getTime()), l2= new ArrayList<>());
-	                    }
-	                    l2.add(cursor.getString(0)+":"+cursor.getString(1));
-	                   //End of additions to map.
+		if (cursor.isFirst()) {
+			/* Loop through all Results */
+			do {
+				calendar.setTime(df_yyyymmdd.parse(cursor.getString(0)));
+				int weekOfYear=calendar.get(Calendar.WEEK_OF_YEAR);
+				Log.d(TAG,"Week:"+weekOfYear+" Perf date:"+calendar.getTime());
+			//    tempList.add("Week:"+weekOfYear+" Perf date:"+calendar.getTime());
+				List<String> l = mapData.get(weekOfYear);
+					if (l == null){
+						mapData.put(weekOfYear, l= new ArrayList<>());
+					}
+					l.add(cursor.getString(1));
+				int year=Calendar.getInstance().get(Calendar.YEAR);
+				calendar.set(Calendar.YEAR, year);
+				calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
 
-	                } while (cursor.moveToNext());
-	            } else {
-	            	assert false;
-	            }
-	        }
-	       
-	        cursor.close();
+				   //Tricky bit of code year - try to pull list from map.
+				//If we have entry we add to it - if not we create new entry, then add.
+				List<String> l2 = mapData2.get(df_MMddyyyyEEE.format(calendar.getTime()));
+				if (l2 == null){
+					mapData2.put(df_MMddyyyyEEE.format(calendar.getTime()), l2= new ArrayList<>());
+				}
+				l2.add(cursor.getString(0)+":"+cursor.getString(1));
+			   //End of additions to map.
+
+			} while (cursor.moveToNext());
+		} else {
+			assert false;
+		}
+
+		cursor.close();
 	       
 	        for (Map.Entry<Integer, List<String>> e : mapData.entrySet()){
 	        	Log.d(TAG,"Key:"+e.getKey() + ": " + e.getValue());
