@@ -50,6 +50,7 @@ public class StatData {
 		getChoreographerCount();
 		getSolos();
 		getMostShotVenue(true);
+		//getMostPiecesShotAtVenue();
 		getFirstAndLastPerformance();
 		getMostCommonName();
 		return dataHolderTwoFieldsList;
@@ -58,6 +59,12 @@ public class StatData {
 	public List<DataHolderTwoFields> runVenueStats() {
 		dataHolderTwoFieldsList.clear();
 		getMostShotVenue(false);
+		return dataHolderTwoFieldsList;
+	}
+
+	public List<DataHolderTwoFields> runVenueMostPiecesStats() {
+		dataHolderTwoFieldsList.clear();
+		getMostPiecesShotAtVenue();
 		return dataHolderTwoFieldsList;
 	}
 
@@ -180,6 +187,21 @@ public class StatData {
 //		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Venue most shot:",venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1))));
 	}
 
+private void getMostPiecesShotAtVenue(){
+	if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venues by dance pieces...");
+	int maxLengthOfVenueName=30;
+	String sql="Select "+DancerDao.VENUE+",count(distinct "+ DancerDao.DANCE_CODE+") as cnt from info group by "+DancerDao.VENUE +" order by cnt desc";
+	if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Sql:"+sql);
+	Cursor cursor = dancerDao.runRawQuery(sql);
+
+	while (cursor.moveToNext()){
+		String venueName=cursor.getString(0).trim();
+
+		DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(venueName.substring(0, (venueName.length() > maxLengthOfVenueName ? maxLengthOfVenueName : venueName.length()))+":",  String.valueOf(cursor.getString(1)));
+			dataHolderTwoFields.setId(venueName); //Want this for click event.
+			dataHolderTwoFieldsList.add(dataHolderTwoFields);
+		}
+}
 
 public static String formatStatData(Map<String,Integer> stringIntegerMap){
 	//if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());

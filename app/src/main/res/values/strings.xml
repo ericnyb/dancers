@@ -19,11 +19,20 @@
     <string name="textInfoRecords">Record count</string>
     <string name="ButttonGoPerf">Performances</string>
     <string name="title_activity_predict">Prediction Calendar</string>
-    <string name="prediction_Text">Prediction</string>
     <string name="textheader">Header</string>
     <string name="textviewchild">Child</string>
-    <string name="stats">Stats</string>
+    <string name="stats_activity_label">Stats</string>
     <string name="results_text">Records found:</string>
     <string name="button_venue_text">Venues</string>
+
+    //Custom Menu items
+    <string name="menu_prediction">Prediction</string>
+    <string name="menu_venue_by_dance_piece">Venue By Dance Piece Count</string>
+    <string name="menu_venue_by_performance">Venue By Count</string>
+    <string name="menu_gigs_by_year">Gigs By Year</string>
+    <string name="menu_stats">Stats</string>
+
+    //Custom controller names
+    <string name="controller_stats">Stats</string>
 
 </resources>

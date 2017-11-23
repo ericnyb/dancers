@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.activities.HandleListClickForVenueCount;
+import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.StatData;
@@ -53,7 +54,7 @@ public class AppModule {
 		return new StatData(dancerDao);
 	}
 
-	@Provides @Named ("stats")
+	@Provides @Named (AppConstant.DAG_CONTROLLER_STATS)
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity(StatData statData){
 		return new ControlStatsActivityBuilder("Shooting History Stats",
 				"Data",
@@ -61,7 +62,7 @@ public class AppModule {
 				statData.runStats(),null);
 	}
 
-	@Provides @Named ("stats_venues")
+	@Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM)
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(StatData statData){
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Shoots",
@@ -69,7 +70,15 @@ public class AppModule {
 				statData.runVenueStats(), provideHandleTestClick() );
 	}
 
-	@Provides @Named ("stats_gigs_by_year")
+	@Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity2(StatData statData){
+		return new ControlStatsActivityBuilder("Venue Stats",
+				"Venues By Dance Pieces Shots",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				statData.runVenueMostPiecesStats(), provideHandleTestClick() );
+	}
+
+	@Provides @Named (AppConstant.DAG_GIGS_PER_YEAR)
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivityGigs(StatData statData){
 		return new ControlStatsActivityBuilder("Gigs By Year",
 				"Gigs By Year",

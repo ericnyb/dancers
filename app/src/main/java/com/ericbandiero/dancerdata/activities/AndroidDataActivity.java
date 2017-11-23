@@ -130,15 +130,19 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
 
 	@Inject
-	@Named("stats")
+	@Named(AppConstant.DAG_CONTROLLER_STATS)
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
 
 	@Inject
-	@Named("stats_venues")
+	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM)
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderVenueCounts;
 
 	@Inject
-	@Named("stats_gigs_by_year")
+	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
+	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderVenueDances;
+
+	@Inject
+	@Named(AppConstant.DAG_GIGS_PER_YEAR)
 	Provider <ControlStatsActivityBuilder> controlStatsActivityGigsByYear;
 
 	@Inject
@@ -387,8 +391,10 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Title:"+item.getTitle().toString());
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Title:"+R.string.menu_venue_by_performance);
 
-		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_stats))) {
 
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
@@ -406,7 +412,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		}
 
-		if (item.getTitle() != null && item.getTitle().equals("Venue By Count")) {
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
@@ -423,7 +429,25 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		}
 
-		if (item.getTitle() != null && item.getTitle().equals("Gigs By Year")) {
+		//"Venue By Dance Piece Count"
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_dance_piece))) {
+			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+
+			//These are for the activity
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilderVenueDances.get());
+
+			//Builder is injected
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+
+			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+
+			startActivity(statIntent);
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
+
+		}
+
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_gigs_by_year))) {
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
@@ -441,7 +465,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		//Predictions
-		if (item.getTitle().equals(getResources().getString(R.string.prediction_Text))) {
+		if (item.getTitle().equals(getString(R.string.menu_prediction))) {
 			Intent intent = new Intent(this, PredictActivity.class);
 			startActivity(intent);
 		}
@@ -527,10 +551,11 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		// the menu option text is defined as constant String
 		menu.add("Import Data");
-		menu.add("Stats");
-		menu.add("Gigs By Year");
-		menu.add("Venue By Count");
-		menu.add(getResources().getString(R.string.prediction_Text));
+		menu.add(R.string.menu_stats);
+		menu.add(R.string.menu_gigs_by_year);
+		menu.add(R.string.menu_venue_by_performance);
+		menu.add(R.string.menu_venue_by_dance_piece);
+		menu.add(getResources().getString(R.string.menu_prediction));
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);
 

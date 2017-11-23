@@ -61,7 +61,7 @@
 
         <activity
             android:name="com.ericbandiero.librarymain.Lib_StatsActivity"
-            android:label="@string/stats"
+            android:label="@string/stats_activity_label"
             android:parentActivityName=".activities.AndroidDataActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
