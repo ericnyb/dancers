@@ -217,7 +217,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		});
 
-		new TestRxJava();
+		//new TestRxJava();
 	}
 
 	// /End of main
