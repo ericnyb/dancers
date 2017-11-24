@@ -34,5 +34,6 @@
 
     //Custom controller names
     <string name="controller_stats">Stats</string>
+    <string name="menu_dancer_counts">Dancer Count By Piece</string>
 
 </resources>

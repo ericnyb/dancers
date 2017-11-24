@@ -78,12 +78,20 @@ public class AppModule {
 				statData.runVenueMostPiecesStats(), provideHandleTestClick() );
 	}
 
-	@Provides @Named (AppConstant.DAG_GIGS_PER_YEAR)
+	@Provides @Named (AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivityGigs(StatData statData){
 		return new ControlStatsActivityBuilder("Gigs By Year",
 				"Gigs By Year",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
 				statData.runGigsByYear(), null);
+	}
+
+	@Provides @Named (AppConstant.DAG_CONTROLLER_DANCER_COUNT)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivityDancerCounts(StatData statData){
+		return new ControlStatsActivityBuilder("Dancer Stats",
+				"Dancers by performance",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				statData.runDancersCountByWorks(), null);
 	}
 
 	@Singleton @Provides
@@ -94,6 +102,9 @@ public class AppModule {
 				ContextCompat.getColor(context,R.color.LightGreen),
 				false);
 	}
+
+
+
 
 	@Singleton
 	@Provides

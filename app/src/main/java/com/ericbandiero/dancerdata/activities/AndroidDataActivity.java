@@ -142,8 +142,12 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderVenueDances;
 
 	@Inject
-	@Named(AppConstant.DAG_GIGS_PER_YEAR)
+	@Named(AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
 	Provider <ControlStatsActivityBuilder> controlStatsActivityGigsByYear;
+
+	@Inject
+	@Named(AppConstant.DAG_CONTROLLER_DANCER_COUNT)
+	Provider <ControlStatsActivityBuilder> controlStatsActivityDancersByWorks;
 
 	@Inject
 	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
@@ -412,6 +416,25 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		}
 
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_dancer_counts))) {
+			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+
+			//These are for the activity
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityDancersByWorks.get());
+
+			//Builder is injected
+			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+
+			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+
+			startActivity(statIntent);
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
+
+		}
+
+
+
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
@@ -552,6 +575,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		// the menu option text is defined as constant String
 		menu.add("Import Data");
 		menu.add(R.string.menu_stats);
+		menu.add(R.string.menu_dancer_counts);
 		menu.add(R.string.menu_gigs_by_year);
 		menu.add(R.string.menu_venue_by_performance);
 		menu.add(R.string.menu_venue_by_dance_piece);

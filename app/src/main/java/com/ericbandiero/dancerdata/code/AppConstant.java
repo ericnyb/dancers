@@ -10,5 +10,6 @@ public class AppConstant {
 	public static final String DAG_CONTROLLER_STATS="stats";
 	public static final String DAG_CONTROLLER_VENUE_BY_PERFORM="venue_by_perform";
 	public static final String DAG_CONTROLLER_VENUE_BY_DANCE="venue_by_dance";
-	public static final String DAG_GIGS_PER_YEAR="gigs_per_year";
+	public static final String DAG_CONTROLLER_GIGS_PER_YEAR ="gigs_per_year";
+	public static final String DAG_CONTROLLER_DANCER_COUNT="dancer_count";
 }

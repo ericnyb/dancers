@@ -74,6 +74,12 @@ public class StatData {
 		return dataHolderTwoFieldsList;
 	}
 
+	public List<DataHolderTwoFields> runDancersCountByWorks() {
+		dataHolderTwoFieldsList.clear();
+		getDancerByWorks();
+		return dataHolderTwoFieldsList;
+	}
+
 	private void getGigsByYear() {
 		Cursor cursor = dancerDao.runRawQuery("Select "+ "strftime('%Y',"+DancerDao.PERF_DATE+") as year," +
 				"count(distinct "+DancerDao.PERF_CODE+")" +
@@ -203,6 +209,31 @@ private void getMostPiecesShotAtVenue(){
 		}
 }
 
+	private void getDancerByWorks() {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancers by dance pieces...");
+		int maxLengthOfFieldOne=30;
+		String sql="Select "+DancerDao.FIRST_NAME+
+				","+
+				DancerDao.LAST_NAME+
+				",count(distinct "+
+				DancerDao.DANCE_CODE+") as cnt" +
+				" from info group by 1,2, "
+				+DancerDao.CODE +" order by cnt desc";
+		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Sql:"+sql);
+		Cursor cursor = dancerDao.runRawQuery(sql);
+
+		while (cursor.moveToNext()){
+			String fieldOne=getSubStringForField(cursor.getString(1).trim()+","+cursor.getString(0).trim(),maxLengthOfFieldOne);
+			DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(fieldOne,cursor.getString(2).trim());
+			//dataHolderTwoFields.setId(venueName); //Want this for click event.
+			dataHolderTwoFieldsList.add(dataHolderTwoFields);
+		}
+	}
+private String getSubStringForField(String stringToShorten,int maxLength){
+	int stringLength=stringToShorten.length();
+	return (stringToShorten.length()>maxLength)?stringToShorten.substring(0,maxLength):stringToShorten;
+}
+
 public static String formatStatData(Map<String,Integer> stringIntegerMap){
 	//if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
 	StringBuilder stringBuilder=new StringBuilder();
@@ -262,6 +293,7 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 		Collection<Integer> c = stringIntegerMap.values();
 		return (int) Collections.max(c);
 	}
+
 
 
 }
