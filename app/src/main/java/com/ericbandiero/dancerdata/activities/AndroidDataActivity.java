@@ -214,7 +214,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 				return false;
 			}
-
 		});
 
 		//new TestRxJava();
