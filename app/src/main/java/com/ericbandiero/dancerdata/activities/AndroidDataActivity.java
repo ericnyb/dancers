@@ -76,6 +76,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -250,6 +251,38 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		disposable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> textInfo.setText(s), s -> System.out.println(s), () -> System.out.println("Done"));
 
+		Observer<String> sub3=new Observer<String>() {
+			/**
+			 * Provides the Observer with the means of cancelling (disposing) the
+			 * connection (channel) with the Observable in both
+			 * synchronous (from within {@link #onNext(Object)}) and asynchronous manner.
+			 *
+			 * @param d the Disposable instance whose {@link Disposable#dispose()} can
+			 *          be called anytime to cancel the connection
+			 * @since 2.0
+			 */
+			@Override
+			public void onSubscribe(Disposable d) {
+
+			}
+
+			@Override
+			public void onNext(String t) {
+				System.out.println("Other observer on next:"+t);
+			}
+
+			@Override
+			public void onError(Throwable t) {
+				t.printStackTrace();
+			}
+
+			@Override
+			public void onComplete() {
+				System.out.println("Done 2");
+			}
+		};
+
+		observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(sub3);
 		//done.dispose();
 	}
 
