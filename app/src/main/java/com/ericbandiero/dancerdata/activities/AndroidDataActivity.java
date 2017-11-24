@@ -33,14 +33,14 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AppConstant;
-import com.ericbandiero.dancerdata.code.SqlHelper;
-import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
+import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -49,7 +49,6 @@ import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,12 +61,6 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -220,50 +213,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			}
 
 		});
-
-
-
-		///Testing RXJAVA
-		Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
-															   @Override
-
-															   public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-																   //Use onNext to emit each item in the stream//
-																   e.onNext(1);
-																   e.onNext(2);
-																   e.onNext(3);
-																   e.onNext(4);
-
-																   //Once the Observable has emitted all items in the sequence, call onComplete//
-																   e.onComplete();
-															   }
-														   }
-		);
-
-		Observer<Integer> observer = new Observer<Integer>() {
-			@Override
-			public void onSubscribe(Disposable d) {
-				Log.e(TAG, "onSubscribe: ");
-			}
-
-			@Override
-			public void onNext(Integer value) {
-				Log.e(TAG, "onNext: " + value);
-			}
-
-			@Override
-			public void onError(Throwable e) {
-				Log.e(TAG, "onError: ");
-			}
-
-			@Override
-			public void onComplete() {
-				Log.e(TAG, "onComplete: All Done!");
-			}
-		};
-
-//Create our subscription//
-		observable.subscribe(observer);
 	}
 
 	// /End of main
