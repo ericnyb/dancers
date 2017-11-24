@@ -50,6 +50,16 @@ import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,6 +71,15 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -213,10 +232,40 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			}
 
 		});
+
+		Observable<String> observable = Observable.create(new ObservableOnSubscribe<String>() {
+															   @Override
+															   public void subscribe(ObservableEmitter<String> e) throws Exception {
+																   //Use onNext to emit each item in the stream//
+																	   e.onNext(testNetwork());
+																	   //Once the Observable has emitted all items in the sequence, call onComplete//
+																	   e.onComplete();
+															   }
+														   }
+		);
+
+		observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> System.out.println(s),s-> System.out.println(s),()->System.out.println("Done"));
+		//done.dispose();
 	}
 
 	// /End of main
 
+
+private String testNetwork() throws Exception {
+	String webPage = "", data = "";
+
+	if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Network call made...");
+	String link = "http://www.google.com";
+	URL url = new URL(link);
+	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	conn.connect();
+	InputStream is = conn.getInputStream();
+	BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+	while ((data = reader.readLine()) != null) {
+		webPage += data + "\n";
+	}
+		return webPage;
+}
 
 	@Override
 	protected void onRestart() {
