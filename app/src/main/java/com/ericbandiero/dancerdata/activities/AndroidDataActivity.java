@@ -218,10 +218,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		});
 
 		new TestRxJava();
-
-
-
-		//done.dispose();
 	}
 
 	// /End of main
