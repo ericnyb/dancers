@@ -84,6 +84,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		OnItemClickListener, OnCheckedChangeListener,ITest {
+
 	private static final int ID_MENU_EXIT = 0;
 	private static final String TAG = "Droid Dancer";
 
@@ -244,7 +245,12 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 														   }
 		);
 
-		observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> System.out.println(s),s-> System.out.println(s),()->System.out.println("Done"));
+		Disposable disposable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> textInfo.setText(s), s -> System.out.println(s), () -> System.out.println("Done"));
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		//done.dispose();
 	}
 
@@ -264,7 +270,7 @@ private String testNetwork() throws Exception {
 	while ((data = reader.readLine()) != null) {
 		webPage += data + "\n";
 	}
-		return webPage;
+		return "We did a network call..";
 }
 
 	@Override
