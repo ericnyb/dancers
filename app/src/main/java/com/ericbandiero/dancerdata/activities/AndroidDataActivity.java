@@ -41,6 +41,7 @@ import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
+import com.ericbandiero.dancerdata.test_code.TestRxJava;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -50,21 +51,10 @@ import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -72,17 +62,6 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.Scheduler;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -172,7 +151,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Inject
 	@Named(HandleAChildClick.GET_PERFORMANCE_FROM_CLICK)
 	HandleAChildClick handleAChildClickVenues;
-	private Disposable disposable;
+
 
 
 	@Override
@@ -238,72 +217,17 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		});
 
-		Observable<String> observable = Observable.create(new ObservableOnSubscribe<String>() {
-															   @Override
-															   public void subscribe(ObservableEmitter<String> e) throws Exception {
-																   //Use onNext to emit each item in the stream//
-																	   e.onNext(testNetwork());
-																	   //Once the Observable has emitted all items in the sequence, call onComplete//
-																	   e.onComplete();
-															   }
-														   }
-		);
+		new TestRxJava();
 
-		disposable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> textInfo.setText(s), s -> System.out.println(s), () -> System.out.println("Done"));
 
-		Observer<String> sub3=new Observer<String>() {
-			/**
-			 * Provides the Observer with the means of cancelling (disposing) the
-			 * connection (channel) with the Observable in both
-			 * synchronous (from within {@link #onNext(Object)}) and asynchronous manner.
-			 *
-			 * @param d the Disposable instance whose {@link Disposable#dispose()} can
-			 *          be called anytime to cancel the connection
-			 * @since 2.0
-			 */
-			@Override
-			public void onSubscribe(Disposable d) {
 
-			}
-
-			@Override
-			public void onNext(String t) {
-				System.out.println("Other observer on next:"+t);
-			}
-
-			@Override
-			public void onError(Throwable t) {
-				t.printStackTrace();
-			}
-
-			@Override
-			public void onComplete() {
-				System.out.println("Done 2");
-			}
-		};
-
-		observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(sub3);
 		//done.dispose();
 	}
 
 	// /End of main
 
 
-private String testNetwork() throws Exception {
-	String webPage = "", data = "";
 
-	if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Network call made...");
-	String link = "http://www.google.com";
-	URL url = new URL(link);
-	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	conn.connect();
-	InputStream is = conn.getInputStream();
-	BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-	while ((data = reader.readLine()) != null) {
-		webPage += data + "\n";
-	}
-		return "We did a network call..";
-}
 
 	@Override
 	protected void onRestart() {
@@ -624,9 +548,6 @@ private String testNetwork() throws Exception {
 	protected void onDestroy() {
 		super.onDestroy();
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","In on destroy...");
-		if (disposable!=null){
-			disposable.dispose();
-		}
 	}
 
 	private void getDataAndShowIt(String dataToGet) {
