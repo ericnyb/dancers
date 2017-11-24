@@ -395,8 +395,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Title:"+item.getTitle().toString());
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Title:"+R.string.menu_venue_by_performance);
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_stats))) {
 
@@ -579,7 +577,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		menu.add(R.string.menu_gigs_by_year);
 		menu.add(R.string.menu_venue_by_performance);
 		menu.add(R.string.menu_venue_by_dance_piece);
-		menu.add(getResources().getString(R.string.menu_prediction));
+		menu.add(R.string.menu_prediction);
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);
 
