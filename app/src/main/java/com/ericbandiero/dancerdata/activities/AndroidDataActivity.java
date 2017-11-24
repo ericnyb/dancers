@@ -169,6 +169,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Inject
 	@Named(HandleAChildClick.GET_PERFORMANCE_FROM_CLICK)
 	HandleAChildClick handleAChildClickVenues;
+	private Disposable disposable;
 
 
 	@Override
@@ -245,8 +246,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 														   }
 		);
 
-		Disposable disposable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> textInfo.setText(s), s -> System.out.println(s), () -> System.out.println("Done"));
-		try {
+		disposable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> textInfo.setText(s), s -> System.out.println(s), () -> System.out.println("Done"));
+
+			try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -586,6 +588,15 @@ private String testNetwork() throws Exception {
 		//UtilsShared.removeMenuItems(menu,88);
 
 		return true;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","In on destroy...");
+		if (disposable!=null){
+			disposable.dispose();
+		}
 	}
 
 	private void getDataAndShowIt(String dataToGet) {
