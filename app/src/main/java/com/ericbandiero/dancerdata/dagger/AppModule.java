@@ -29,6 +29,7 @@ import dagger.Provides;
 public class AppModule {
 	private Context context;
 
+
 	public AppModule(Context context) {
 		this.context = context;
 	}
@@ -45,8 +46,8 @@ public class AppModule {
 	}
 
 	@Singleton @Provides
-	public HandleListClickForVenueCountOrDancerCount provideHandleTestClick(){
-		return new HandleListClickForVenueCountOrDancerCount(HandleListClickForVenueCountOrDancerCount.VENUE_COUNT);
+	public HandleListClickForVenueCountOrDancerCount provideHandleTestClick(String v){
+		return new HandleListClickForVenueCountOrDancerCount(v);
 	}
 /*
 
@@ -74,7 +75,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueStats(), provideHandleTestClick());
+				statData.runVenueStats(), provideHandleTestClick(HandleListClickForVenueCountOrDancerCount.VENUE_COUNT));
 	}
 
 	@Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
@@ -82,7 +83,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Dance Pieces Shots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueMostPiecesStats(), provideHandleTestClick());
+				statData.runVenueMostPiecesStats(), provideHandleTestClick(HandleListClickForVenueCountOrDancerCount.VENUE_COUNT));
 	}
 
 	@Provides @Named (AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
@@ -93,13 +94,12 @@ public class AppModule {
 				statData.runGigsByYear(), null);
 	}
 
-	//TODO Fix this so we can call from dagger provider
 	@Provides @Named (AppConstant.DAG_CONTROLLER_DANCER_COUNT)
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivityDancerCounts(StatData statData){
 		return new ControlStatsActivityBuilder("Dancer Stats",
 				"Dancers by performance",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runDancersCountByWorks(), new HandleListClickForVenueCountOrDancerCount(HandleListClickForVenueCountOrDancerCount.DANCER_COUNT));
+				statData.runDancersCountByWorks(), provideHandleTestClick(HandleListClickForVenueCountOrDancerCount.DANCER_COUNT));
 	}
 
 	@Singleton @Provides
