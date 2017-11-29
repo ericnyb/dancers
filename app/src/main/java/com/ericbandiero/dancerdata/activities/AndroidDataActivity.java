@@ -41,7 +41,6 @@ import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.dancerdata.test_code.TestRxJava;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -100,12 +99,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	//For parameters
 	String[] selectionArgs;
 
-	//data access class
-	@Inject
-	DancerDao dancerDao;
-
-	@Inject
-	HandleListClickForVenueCount venueClickGetPerformance;
 
 	//Permission request integer
 	public static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
@@ -120,6 +113,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Named("stats")
 	ControlStatsActivityBuilder controlStatsActivityBuilder;
 */
+//data access class
+	@Inject
+	DancerDao dancerDao;
 
 	@Inject
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
