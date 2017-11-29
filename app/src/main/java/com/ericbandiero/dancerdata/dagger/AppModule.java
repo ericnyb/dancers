@@ -93,12 +93,13 @@ public class AppModule {
 				statData.runGigsByYear(), null);
 	}
 
+	//TODO Fix this so we can call from dagger provider
 	@Provides @Named (AppConstant.DAG_CONTROLLER_DANCER_COUNT)
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivityDancerCounts(StatData statData){
 		return new ControlStatsActivityBuilder("Dancer Stats",
 				"Dancers by performance",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runDancersCountByWorks(), null);
+				statData.runDancersCountByWorks(), new HandleListClickForVenueCountOrDancerCount(HandleListClickForVenueCountOrDancerCount.DANCER_COUNT));
 	}
 
 	@Singleton @Provides

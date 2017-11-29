@@ -1,5 +1,8 @@
 package com.ericbandiero.dancerdata.activities;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,11 +41,10 @@ public class HandleListClickForVenueCountOrDancerCount implements IHandleListVie
 				dancerDao.getPerformanceForAVenue(dataHolderTwoFields.getId());
 				break;
 			case DANCER_COUNT:
-				System.out.println("Id for dance:"+dataHolderTwoFields.getId());
+				System.out.println("Id for dancer:"+dataHolderTwoFields.getId());
+				DetailActivity.setDancerdetailid(dataHolderTwoFields.getId().toString());
+				NavUtils.navigateUpFromSameTask((Activity) adapterView.getContext());
 			break;
 		}
-
 	}
-
-
 }
