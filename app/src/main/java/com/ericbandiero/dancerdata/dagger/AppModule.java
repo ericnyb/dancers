@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 
 import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.activities.HandleListClickForVenueCount;
+import com.ericbandiero.dancerdata.activities.HandleListClickForVenueCountOrDancerCount;
 import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
@@ -29,6 +29,7 @@ import dagger.Provides;
 public class AppModule {
 	private Context context;
 
+
 	public AppModule(Context context) {
 		this.context = context;
 	}
@@ -45,9 +46,16 @@ public class AppModule {
 	}
 
 	@Singleton @Provides
-	public HandleListClickForVenueCount provideHandleTestClick(){
-		return new HandleListClickForVenueCount();
+	public HandleListClickForVenueCountOrDancerCount provideHandleTestClick(String v){
+		return new HandleListClickForVenueCountOrDancerCount(v);
 	}
+/*
+
+	@Singleton @Provides @Named("dance")
+	public HandleListClickForVenueCountOrDancerCount provideHandleClickDancer(){
+		return new HandleListClickForVenueCountOrDancerCount(HandleListClickForVenueCountOrDancerCount.DANCER_COUNT);
+	}
+*/
 
 	@Singleton @Provides
 	public StatData provideStatData(DancerDao dancerDao){
@@ -67,7 +75,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueStats(), provideHandleTestClick() );
+				statData.runVenueStats(), provideHandleTestClick(HandleListClickForVenueCountOrDancerCount.VENUE_COUNT));
 	}
 
 	@Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
@@ -75,7 +83,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Dance Pieces Shots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueMostPiecesStats(), provideHandleTestClick() );
+				statData.runVenueMostPiecesStats(), provideHandleTestClick(HandleListClickForVenueCountOrDancerCount.VENUE_COUNT));
 	}
 
 	@Provides @Named (AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
@@ -91,7 +99,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Dancer Stats",
 				"Dancers by performance",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runDancersCountByWorks(), null);
+				statData.runDancersCountByWorks(), provideHandleTestClick(HandleListClickForVenueCountOrDancerCount.DANCER_COUNT));
 	}
 
 	@Singleton @Provides

@@ -41,7 +41,6 @@ import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.dancerdata.test_code.TestRxJava;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -50,6 +49,7 @@ import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
+import com.ericbandiero.librarymain.interfaces.IReturnDialogInt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,12 +100,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	//For parameters
 	String[] selectionArgs;
 
-	//data access class
-	@Inject
-	DancerDao dancerDao;
-
-	@Inject
-	HandleListClickForVenueCount venueClickGetPerformance;
 
 	//Permission request integer
 	public static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
@@ -120,6 +114,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Named("stats")
 	ControlStatsActivityBuilder controlStatsActivityBuilder;
 */
+//data access class
+	@Inject
+	DancerDao dancerDao;
 
 	@Inject
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
@@ -221,8 +218,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	// /End of main
 
-
-
+	@Override
+	public void onBackPressed() {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Back pressed!");
+		UtilsShared.AlertMessageSimpleYesNo(this, "Confirm Exit App", "Do you want to exit the app?", new IReturnDialogInt() {
+			@Override
+			public void execute(int i) {
+				if (i == AlertDialog.BUTTON_POSITIVE) {
+					finish();
+				}
+			}
+		});
+	}
 
 	@Override
 	protected void onRestart() {
