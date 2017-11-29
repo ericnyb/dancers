@@ -149,13 +149,11 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Named(HandleAChildClick.GET_PERFORMANCE_FROM_CLICK)
 	HandleAChildClick handleAChildClickVenues;
 
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		confirmExitOnBackPress=true;
 		//Dagger
 		DanceApp.app().basicComponent().inject(this);
 
@@ -217,6 +215,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	}
 
 	// /End of main
+/*
 
 	@Override
 	public void onBackPressed() {
@@ -230,6 +229,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			}
 		});
 	}
+*/
 
 	@Override
 	protected void onRestart() {

@@ -1,4 +1,4 @@
-package com.ericbandiero.dancerdata.activities;
+package com.ericbandiero.dancerdata.code;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.ericbandiero.dancerdata.activities.DetailActivity;
 import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
@@ -17,7 +18,7 @@ import java.io.Serializable;
 
 import javax.inject.Inject;
 
-public class HandleListClickForVenueCountOrDancerCount implements IHandleListViewClicks,Serializable {
+public class HandleClickForVenueOrDancerCount implements IHandleListViewClicks,Serializable {
 
 	@Inject
 	DancerDao dancerDao;
@@ -27,7 +28,7 @@ public class HandleListClickForVenueCountOrDancerCount implements IHandleListVie
 	private String clickForWhat;
 	private static final long serialVersionUID = -5001699047268760417L;
 
-	public HandleListClickForVenueCountOrDancerCount(String clickForWhat) {
+	public HandleClickForVenueOrDancerCount(String clickForWhat) {
 		this.clickForWhat = clickForWhat;
 	}
 
