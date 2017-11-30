@@ -137,6 +137,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 				} while (cursorDanceInfo.moveToNext());
 				txtviewChoreos.setText("Choreographers: "+setchoreos.toString());
 				listDancers.addAll(setdancers);
+				cursorDanceInfo.close();
 			}
 	
 			//This we moved here so that the data is already prepared.
