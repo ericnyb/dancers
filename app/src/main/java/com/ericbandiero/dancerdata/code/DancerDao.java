@@ -189,16 +189,16 @@ public class DancerDao implements Serializable {
 				open();
 			}
 
-			Observable<Cursor> ob=Observable.fromCallable(new Callable<Cursor>() {
+			Single<Cursor> ob=Single.fromCallable(new Callable<Cursor>() {
 				@Override
 				public Cursor call() throws Exception {
 					System.out.println("Thread we are running on:"+Thread.currentThread().getName());
-					return database.rawQuery(sql+1, null);
+					return database.rawQuery(sql, null);
 				}
 			}).subscribeOn(Schedulers.io());
 
 
-			cursorTest=ob.blockingFirst();
+			cursorTest=ob.blockingGet();
 
 			System.out.println("Cursor results from test:"+cursorTest.getCount());
 			//cursor= getObservable(sql).blockingLast();
