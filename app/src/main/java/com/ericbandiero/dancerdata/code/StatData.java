@@ -28,8 +28,8 @@ public class StatData {
 
 	List<DataHolderTwoFields> dataHolderTwoFieldsList=new ArrayList<>();
 
-	@Inject
-	TestDaggerObject testDaggerObject;
+	//@Inject
+	//TestDaggerObject testDaggerObject;
 
 	private TestObjectComponent testObjectComponent;
 
@@ -37,7 +37,7 @@ public class StatData {
 		//DanceApp.app().testObjectComponent().inject(this);
 		DaggerTestObjectComponent.create().inject(this);
 		//testObjectComponent.inject(this);
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
+		//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
 		dancerDao=sqLiteDatabase;
 	}
 

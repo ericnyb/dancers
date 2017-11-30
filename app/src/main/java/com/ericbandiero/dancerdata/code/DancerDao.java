@@ -164,41 +164,40 @@ public class DancerDao implements Serializable {
 		}
 	}
 	public Observable<Cursor> getObservable(String s) {
-
+		Observable<Cursor> firstTimeObservable=null;
 		try {
 			if (database == null || !database.isOpen()) {
 				open();
 			}
+			firstTimeObservable =
+					Observable.fromCallable(new Callable<Cursor>() {
+						@Override
+						public Cursor call() throws Exception {
+							System.out.println("Thread name:" + Thread.currentThread().getName());
+							return database.rawQuery(s, null);
+						}
+					}).subscribeOn(Schedulers.io());
+			return firstTimeObservable;
+		} catch (SQLiteException ex) {
+
 		}
-			catch(SQLiteException ex){
-
-			}
-
-		Observable<Cursor> firstTimeObservable =
-				Observable.fromCallable(new Callable<Cursor>() {
-					@Override
-					public Cursor call() throws Exception {
-						System.out.println("Thread name:"+Thread.currentThread().getName());
-						return database.rawQuery(s,null);
-					}
-				}).subscribeOn(Schedulers.io());
-
 		return firstTimeObservable;
 	}
 
+
 	public Cursor runRawQuery(String sql) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
-		Cursor cursor=null;
+		//Cursor cursor=null;
 
-		Cursor c= getObservable(sql).blockingLast();
-		System.out.println("Count:"+c.getCount());
+		Cursor cursor= getObservable(sql).blockingLast();
+		System.out.println("Count:"+cursor.getCount());
 
 		try {
 			if (database == null || !database.isOpen()) {
 				open();
 			}
 		//Sql cursor never comes back null
-		cursor = database.rawQuery(sql, null);
+		//cursor = database.rawQuery(sql, null);
 
 		//if (cursor != null &cursor.isBeforeFirst()) {
 			//Return true or fa;se = no error
