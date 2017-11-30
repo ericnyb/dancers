@@ -168,17 +168,6 @@ public class DancerDao implements Serializable {
 				Log.e(this.getClass().getSimpleName() + ">", "Could not delete from table:" + e.getMessage());
 		}
 	}
-	public Observable<Cursor> getObservable(String s) {
-		Observable<Cursor> firstTimeObservable=null;
-
-			firstTimeObservable =
-					Observable.fromCallable(() -> {
-						System.out.println("Thread name:" + Thread.currentThread().getName());
-						return database.rawQuery(s, null);
-					}).subscribeOn(Schedulers.io());
-			return firstTimeObservable;
-	}
-
 
 	public Cursor runRawQuery(String sql) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
@@ -197,13 +186,7 @@ public class DancerDao implements Serializable {
 				}
 			}).subscribeOn(Schedulers.io());
 
-
 			cursorTest=ob.blockingGet();
-
-			System.out.println("Cursor results from test:"+cursorTest.getCount());
-			//cursor= getObservable(sql).blockingLast();
-			//System.out.println("Count:"+cursor.getCount());
-		//Sql cursor never comes back null
 			return cursorTest;
 	}
 	catch(SQLiteException ex)
