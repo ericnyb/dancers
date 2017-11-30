@@ -47,9 +47,12 @@ import javax.inject.Named;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.internal.operators.completable.CompletableFromSingle;
 import io.reactivex.schedulers.Schedulers;
 
@@ -100,6 +103,8 @@ public class DancerDao implements Serializable {
 	@Inject
 	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
 	HandleAChildClick handleAChildClick;
+
+	Cursor cursorTest;
 
 	public DancerDao(Context context) {
 		//Setup
@@ -183,17 +188,30 @@ public class DancerDao implements Serializable {
 			if (database == null || !database.isOpen()) {
 				open();
 			}
-			cursor= getObservable(sql).blockingLast();
-			System.out.println("Count:"+cursor.getCount());
+
+			Observable<Cursor> ob=Observable.fromCallable(new Callable<Cursor>() {
+				@Override
+				public Cursor call() throws Exception {
+					System.out.println("Thread we are running on:"+Thread.currentThread().getName());
+					return database.rawQuery(sql+1, null);
+				}
+			}).subscribeOn(Schedulers.io());
+
+
+			cursorTest=ob.blockingFirst();
+
+			System.out.println("Cursor results from test:"+cursorTest.getCount());
+			//cursor= getObservable(sql).blockingLast();
+			//System.out.println("Count:"+cursor.getCount());
 		//Sql cursor never comes back null
-			return cursor;
+			return cursorTest;
 	}
 	catch(SQLiteException ex)
 	{
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error!");
 		//UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error getting data!"+"Data error:" + ex.getMessage());
-		return cursor;
+		return cursorTest;
 	}
 }
 
