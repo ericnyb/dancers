@@ -40,9 +40,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.internal.operators.completable.CompletableFromSingle;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
 
@@ -154,10 +163,35 @@ public class DancerDao implements Serializable {
 				Log.e(this.getClass().getSimpleName() + ">", "Could not delete from table:" + e.getMessage());
 		}
 	}
+	public Observable<Cursor> getObservable(String s) {
+
+		try {
+			if (database == null || !database.isOpen()) {
+				open();
+			}
+		}
+			catch(SQLiteException ex){
+
+			}
+
+		Observable<Cursor> firstTimeObservable =
+				Observable.fromCallable(new Callable<Cursor>() {
+					@Override
+					public Cursor call() throws Exception {
+						System.out.println("Thread name:"+Thread.currentThread().getName());
+						return database.rawQuery(s,null);
+					}
+				}).subscribeOn(Schedulers.io());
+
+		return firstTimeObservable;
+	}
 
 	public Cursor runRawQuery(String sql) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
 		Cursor cursor=null;
+
+		Cursor c= getObservable(sql).blockingLast();
+		System.out.println("Count:"+c.getCount());
 
 		try {
 			if (database == null || !database.isOpen()) {
