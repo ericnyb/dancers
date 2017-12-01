@@ -25,6 +25,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class TestRxJava {
 	private Disposable disposable;
+	String test="1";
 	public TestRxJava() {
 		runner();
 	}
@@ -41,6 +42,8 @@ public class TestRxJava {
 															  }
 														  }
 		);
+
+
 
 		Observer<String> sub3=new Observer<String>() {
 			/**
@@ -70,14 +73,20 @@ public class TestRxJava {
 			@Override
 			public void onComplete() {
 				System.out.println("Done with observable...");
+				test="2";
+				testValueShower(test);
 			}
 		};
 
 		//disposable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> System.out.println("Result:"+s), s -> System.out.println(s), () -> System.out.println("Done"));
 		observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(sub3);
+		//System.out.println("Test value:"+test);
 		//disposable.dispose();
 	}
 
+	private void testValueShower(String testp){
+		System.out.println("Test value:"+testp);
+	}
 	private String testNetwork() throws IOException {
 		String webPage = "", data = "";
 

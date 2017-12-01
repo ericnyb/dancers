@@ -41,6 +41,7 @@ import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
+import com.ericbandiero.dancerdata.test_code.TestRxJava;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -359,6 +360,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		super.onOptionsItemSelected(item);
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_stats))) {
+
+			//TestRxJava  testRxJava=new TestRxJava();
+
 
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
