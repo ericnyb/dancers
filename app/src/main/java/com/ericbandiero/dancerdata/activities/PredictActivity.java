@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import com.ericbandiero.dancerdata.code.AndroidUtility;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AppConstant;
+import com.ericbandiero.dancerdata.code.IProcessCursor;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.SqlHelper;
@@ -42,16 +44,18 @@ public class PredictActivity extends AppCompatActivity {
 
 	@Inject
 	DancerDao dancerDao;
-	
+
+	Context activityContext;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_predict);
 		//Dagger
 		DanceApp.app().basicComponent().inject(this);
-
+		activityContext=this;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		 listPredict= findViewById(R.id.listViewPredict);
+		 listPredict.setVisibility(View.INVISIBLE);
 	     textviewChild= findViewById(R.id.textViewChild);
 	     textviewrecord= findViewById(R.id.textViewRecordCountBase);
 		//dancerDao=new DancerDao(this);
@@ -95,96 +99,111 @@ public class PredictActivity extends AppCompatActivity {
 		/*
 		  List to hold the predicted date and frequency of past
 		 */
+		/*
 		Cursor cursor=dancerDao.runRawQuery("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from "+ SqlHelper.MAIN_TABLE_NAME +
 	                " where strftime('%Y',Perfdate)<>'"+currentYear+"' order by strftime('%W',Perfdate)");
-	        try{
-	        Log.i(TAG,"Count:"+    cursor.getCount());
-	        }
-	        catch(SQLiteException e){
-	            Log.e(TAG,"Error"+    e.getMessage());
-	        }
+*/
+	     dancerDao.runRawQueryWithRxJava("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from " + SqlHelper.MAIN_TABLE_NAME +
+				 " where strftime('%Y',Perfdate)<>'" + currentYear + "' order by strftime('%W',Perfdate)", new IProcessCursor() {
+			 @Override
+			 public void test(Cursor cursor) {
+				 try{
+					 Log.i(TAG,"Count:"+    cursor.getCount());
+				 }
+				 catch(SQLiteException e){
+					 Log.e(TAG,"Error"+    e.getMessage());
+				 }
 
-			textviewrecord.setText("Record count:"+cursor.getCount());
-	        //Date formatter
-	        SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)", Locale.US);
-	        SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd",Locale.US);
-	        
-	        //Create a date
-	        Calendar calendar=Calendar.getInstance();
-	       
-	        //We use Monday as first day of week...want weekend to fall in same week.
-	        calendar.setFirstDayOfWeek(Calendar.MONDAY);
-	       
-	        //We use Thursday
-	        calendar.setMinimalDaysInFirstWeek(4);
-	        
-	        //List of maps - each will hold date for header and child row
-	        List<HashMap<String, String>> fillMaps = new ArrayList<>();
-	        Map<String,List<String>> mapData2= new TreeMap<>();
-	        
-	        
-	       // List<String> tempList= new LinkedList<>();
+				 textviewrecord.setText("Record count:"+cursor.getCount());
+				 //Date formatter
+				 SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)", Locale.US);
+				 SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd",Locale.US);
 
-		cursor.moveToFirst();
+				 //Create a date
+				 Calendar calendar=Calendar.getInstance();
+
+				 //We use Monday as first day of week...want weekend to fall in same week.
+				 calendar.setFirstDayOfWeek(Calendar.MONDAY);
+
+				 //We use Thursday
+				 calendar.setMinimalDaysInFirstWeek(4);
+
+				 //List of maps - each will hold date for header and child row
+				 List<HashMap<String, String>> fillMaps = new ArrayList<>();
+				 Map<String,List<String>> mapData2= new TreeMap<>();
+
+
+				 // List<String> tempList= new LinkedList<>();
+
+				 cursor.moveToFirst();
 
 	            /* Check if at least one Result was returned. */
-		if (cursor.isFirst()) {
+				 if (cursor.isFirst()) {
 			/* Loop through all Results */
-			do {
-				calendar.setTime(df_yyyymmdd.parse(cursor.getString(0)));
-				int weekOfYear=calendar.get(Calendar.WEEK_OF_YEAR);
-				Log.d(TAG,"Week:"+weekOfYear+" Perf date:"+calendar.getTime());
-			//    tempList.add("Week:"+weekOfYear+" Perf date:"+calendar.getTime());
-				List<String> l = mapData.get(weekOfYear);
-					if (l == null){
-						mapData.put(weekOfYear, l= new ArrayList<>());
-					}
-					l.add(cursor.getString(1));
-				int year=Calendar.getInstance().get(Calendar.YEAR);
-				calendar.set(Calendar.YEAR, year);
-				calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
+					 do {
+						 try {
+							 calendar.setTime(df_yyyymmdd.parse(cursor.getString(0)));
+						 } catch (ParseException e) {
+							 e.printStackTrace();
+						 }
+						 int weekOfYear=calendar.get(Calendar.WEEK_OF_YEAR);
+						 Log.d(TAG,"Week:"+weekOfYear+" Perf date:"+calendar.getTime());
+						 //    tempList.add("Week:"+weekOfYear+" Perf date:"+calendar.getTime());
+						 List<String> l = mapData.get(weekOfYear);
+						 if (l == null){
+							 mapData.put(weekOfYear, l= new ArrayList<>());
+						 }
+						 l.add(cursor.getString(1));
+						 int year=Calendar.getInstance().get(Calendar.YEAR);
+						 calendar.set(Calendar.YEAR, year);
+						 calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
 
-				   //Tricky bit of code year - try to pull list from map.
-				//If we have entry we add to it - if not we create new entry, then add.
-				List<String> l2 = mapData2.get(df_MMddyyyyEEE.format(calendar.getTime()));
-				if (l2 == null){
-					mapData2.put(df_MMddyyyyEEE.format(calendar.getTime()), l2= new ArrayList<>());
-				}
-				l2.add(cursor.getString(0)+":"+cursor.getString(1));
-			   //End of additions to map.
+						 //Tricky bit of code year - try to pull list from map.
+						 //If we have entry we add to it - if not we create new entry, then add.
+						 List<String> l2 = mapData2.get(df_MMddyyyyEEE.format(calendar.getTime()));
+						 if (l2 == null){
+							 mapData2.put(df_MMddyyyyEEE.format(calendar.getTime()), l2= new ArrayList<>());
+						 }
+						 l2.add(cursor.getString(0)+":"+cursor.getString(1));
+						 //End of additions to map.
 
-			} while (cursor.moveToNext());
-		} else {
-			assert false;
-		}
+					 } while (cursor.moveToNext());
+				 } else {
+					 assert false;
+				 }
 
-		cursor.close();
-	       
-	        for (Map.Entry<Integer, List<String>> e : mapData.entrySet()){
-	        	Log.d(TAG,"Key:"+e.getKey() + ": " + e.getValue());
-	        }
-	     
-	       
-	         SimpleAdapter adapter;
-	        
-	         
-	         String[] from = new String[] {"Parent", "Child"};
-	         int[] to = new int[] { R.id.textViewHeader, R.id.textViewChild};
+				 cursor.close();
 
- 	         //Clear out fillmaps from previous - try this instead
-	         fillMaps.clear();
-	        
-	         for (Map.Entry<String, List<String>> e : mapData2.entrySet()){
-	              HashMap<String, String> map = new HashMap<>();
-				 if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Key:"+e.getKey());
-	              map.put("Parent", e.getKey() + e.getValue().size());
-	              map.put("Child", AndroidUtility.getStringFromList(e.getValue()));
-	              fillMaps.add(map);
-	         }
-	         
-	         adapter = new SimpleAdapter(this, fillMaps, R.layout.expandertexts, from, to);
-	         listPredict.setAdapter(adapter);
+				 for (Map.Entry<Integer, List<String>> e : mapData.entrySet()){
+					 Log.d(TAG,"Key:"+e.getKey() + ": " + e.getValue());
+				 }
+
+
+				 SimpleAdapter adapter;
+
+
+				 String[] from = new String[] {"Parent", "Child"};
+				 int[] to = new int[] { R.id.textViewHeader, R.id.textViewChild};
+
+				 //Clear out fillmaps from previous - try this instead
+				 fillMaps.clear();
+
+				 for (Map.Entry<String, List<String>> e : mapData2.entrySet()){
+					 HashMap<String, String> map = new HashMap<>();
+					 if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Key:"+e.getKey());
+					 map.put("Parent", e.getKey() + e.getValue().size());
+					 map.put("Child", AndroidUtility.getStringFromList(e.getValue()));
+					 fillMaps.add(map);
+				 }
+
+				 adapter = new SimpleAdapter(activityContext, fillMaps, R.layout.expandertexts, from, to);
+				 listPredict.setAdapter(adapter);
+				 listPredict.setVisibility(View.VISIBLE);
+			 }
+		 });
 	}
+
+
 
 	   public void onClickHeader(View v) {
          Log.d(TAG,"Text clicked");
@@ -202,4 +221,6 @@ public class PredictActivity extends AppCompatActivity {
 		super.onDestroy();
 		dancerDao.close();
 	}
+
+
 }

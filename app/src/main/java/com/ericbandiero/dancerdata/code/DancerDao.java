@@ -201,7 +201,7 @@ public class DancerDao implements Serializable {
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error:"+ex.getMessage());
 		}
 		Observable<Cursor> cursorObservable = getCursor(sql).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-		cursorObservable.subscribe(cursor -> iProcessCursor.test(cursor));
+		cursorObservable.subscribe(cursor -> {iProcessCursor.test(cursor);});
 	}
 
 	private void doSomethingWithCursor(Cursor c) {
@@ -213,6 +213,7 @@ public class DancerDao implements Serializable {
 
 	public Observable<Cursor> getCursor(String sql) {
 		return Observable.defer(() -> {
+			System.out.println(Thread.currentThread().getName());
 			return Observable.just(database.rawQuery(sql, null));
 		});
 	}
