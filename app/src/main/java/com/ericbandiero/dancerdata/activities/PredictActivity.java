@@ -87,7 +87,6 @@ public class PredictActivity extends AppCompatActivity {
 	}
 
 	private void showData() throws ParseException {
-
 		/*
 		  Key=Week number of year. Values holds list of previous performances during that week number.
 		 */
@@ -96,13 +95,25 @@ public class PredictActivity extends AppCompatActivity {
 		//Get the current year - we don't want to include those
 		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
-		/*
-		  List to hold the predicted date and frequency of past
-		 */
-		/*
-		Cursor cursor=dancerDao.runRawQuery("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from "+ SqlHelper.MAIN_TABLE_NAME +
-	                " where strftime('%Y',Perfdate)<>'"+currentYear+"' order by strftime('%W',Perfdate)");
-*/
+		//Date formatter
+		SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)", Locale.US);
+		SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd",Locale.US);
+
+		//Create a date
+		Calendar calendar=Calendar.getInstance();
+
+		//We use Monday as first day of week...want weekend to fall in same week.
+		calendar.setFirstDayOfWeek(Calendar.MONDAY);
+
+		//We use Thursday
+		calendar.setMinimalDaysInFirstWeek(4);
+
+		//List of maps - each will hold date for header and child row
+		List<HashMap<String, String>> fillMaps = new ArrayList<>();
+		Map<String,List<String>> mapData2= new TreeMap<>();
+
+
+
 	     dancerDao.runRawQueryWithRxJava("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from " + SqlHelper.MAIN_TABLE_NAME +
 				 " where strftime('%Y',Perfdate)<>'" + currentYear + "' order by strftime('%W',Perfdate)", new IProcessCursor() {
 			 @Override
@@ -115,25 +126,6 @@ public class PredictActivity extends AppCompatActivity {
 				 }
 
 				 textviewrecord.setText("Record count:"+cursor.getCount());
-				 //Date formatter
-				 SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)", Locale.US);
-				 SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd",Locale.US);
-
-				 //Create a date
-				 Calendar calendar=Calendar.getInstance();
-
-				 //We use Monday as first day of week...want weekend to fall in same week.
-				 calendar.setFirstDayOfWeek(Calendar.MONDAY);
-
-				 //We use Thursday
-				 calendar.setMinimalDaysInFirstWeek(4);
-
-				 //List of maps - each will hold date for header and child row
-				 List<HashMap<String, String>> fillMaps = new ArrayList<>();
-				 Map<String,List<String>> mapData2= new TreeMap<>();
-
-
-				 // List<String> tempList= new LinkedList<>();
 
 				 cursor.moveToFirst();
 
