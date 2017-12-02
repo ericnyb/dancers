@@ -211,7 +211,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		});
 
 		//new TestRxJava();
-		dancerDao.testCursor(new IProcessCursor() {
+		String sql="select * from Info";
+		dancerDao.runRawQueryWithRxJava(sql,new IProcessCursor() {
 			@Override
 			public void test(Cursor c) {
 				System.out.println("Test cursor:"+c.getCount());
@@ -220,21 +221,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	}
 
 	// /End of main
-/*
-
-	@Override
-	public void onBackPressed() {
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Back pressed!");
-		UtilsShared.AlertMessageSimpleYesNo(this, "Confirm Exit App", "Do you want to exit the app?", new IReturnDialogInt() {
-			@Override
-			public void execute(int i) {
-				if (i == AlertDialog.BUTTON_POSITIVE) {
-					finish();
-				}
-			}
-		});
-	}
-*/
 
 	@Override
 	protected void onRestart() {

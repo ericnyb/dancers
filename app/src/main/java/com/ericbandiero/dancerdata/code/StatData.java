@@ -14,8 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 /**
  * Created by Eric Bandiero on 10/25/2017.
  */
@@ -93,11 +91,17 @@ public class StatData {
 	}
 
 	private void getDancerCount() {
-		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancer count"+cursor.getCount());
-		//dataMap.put("Dancers",cursor.getCount());
-		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Dancers:",String.valueOf(cursor.getCount())));
-		cursor.close();
+		//Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
+
+		dancerDao.runRawQueryWithRxJava("Select distinct " + DancerDao.CODE + " from info", new IProcessCursor() {
+			@Override
+			public void test(Cursor cursor) {
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancer count"+cursor.getCount());
+				//dataMap.put("Dancers",cursor.getCount());
+				dataHolderTwoFieldsList.add(new DataHolderTwoFields("Dancers:",String.valueOf(cursor.getCount())));
+				cursor.close();
+			}
+		});
 	}
 
 

@@ -7,5 +7,5 @@ import android.database.Cursor;
  */
 
 public interface IProcessCursor {
-	void test(Cursor c);
+	void test(Cursor cursor);
 }

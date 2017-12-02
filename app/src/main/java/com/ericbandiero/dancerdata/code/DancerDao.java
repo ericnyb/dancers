@@ -191,15 +191,16 @@ public class DancerDao implements Serializable {
 		}
 	}
 
-	public void testCursor(IProcessCursor iProcessCursor) {
+	public void runRawQueryWithRxJava(String sql, IProcessCursor iProcessCursor) {
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
 		try {
 			if (database == null || !database.isOpen()) {
 				open();
 			}
 		} catch (SQLiteException ex) {
-
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error:"+ex.getMessage());
 		}
-		Observable<Cursor> cursorObservable = getCursor("select * from Info").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+		Observable<Cursor> cursorObservable = getCursor(sql).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 		cursorObservable.subscribe(cursor -> iProcessCursor.test(cursor));
 	}
 
