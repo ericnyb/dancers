@@ -36,12 +36,11 @@ import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
-import com.ericbandiero.dancerdata.code.ITest;
+import com.ericbandiero.dancerdata.code.IProcessCursor;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.dancerdata.test_code.TestRxJava;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -50,7 +49,6 @@ import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
-import com.ericbandiero.librarymain.interfaces.IReturnDialogInt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +64,7 @@ import butterknife.ButterKnife;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
-		OnItemClickListener, OnCheckedChangeListener,ITest {
+		OnItemClickListener, OnCheckedChangeListener {
 
 	private static final int ID_MENU_EXIT = 0;
 	private static final String TAG = "Droid Dancer";
@@ -213,7 +211,12 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		});
 
 		//new TestRxJava();
-		dancerDao.testCursor();
+		dancerDao.testCursor(new IProcessCursor() {
+			@Override
+			public void test(Cursor c) {
+				System.out.println("Test cursor:"+c.getCount());
+			}
+		});
 	}
 
 	// /End of main
@@ -714,10 +717,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		Log.i(TAG, radioButton.getText().toString());
 	}
 
-	@Override
-	public void test() {
-
-	}
 	private class My extends TestConcrete{
 
 		@Override

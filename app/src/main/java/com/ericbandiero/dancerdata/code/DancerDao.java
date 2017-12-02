@@ -26,9 +26,6 @@ import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 import com.ericbandiero.myframework.Utility;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -44,16 +41,13 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
@@ -197,7 +191,7 @@ public class DancerDao implements Serializable {
 		}
 	}
 
-	public void testCursor() {
+	public void testCursor(IProcessCursor iProcessCursor) {
 		try {
 			if (database == null || !database.isOpen()) {
 				open();
@@ -206,7 +200,7 @@ public class DancerDao implements Serializable {
 
 		}
 		Observable<Cursor> cursorObservable = getCursor("select * from Info").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-		cursorObservable.subscribe(cursor -> doSomethingWithCursor(cursor));
+		cursorObservable.subscribe(cursor -> iProcessCursor.test(cursor));
 	}
 
 	private void doSomethingWithCursor(Cursor c) {
