@@ -66,15 +66,15 @@ public class StatData {
 		return dataHolderTwoFieldsList;
 	}
 
-	public List<DataHolderTwoFields> runGigsByYear() {
-		dataHolderTwoFieldsList.clear();
-		getGigsByYear();
-		return dataHolderTwoFieldsList;
-	}
-
 	public List<DataHolderTwoFields> runDancersCountByWorks() {
 		dataHolderTwoFieldsList.clear();
 		getDancerByWorks();
+		return dataHolderTwoFieldsList;
+	}
+
+	public List<DataHolderTwoFields> runGigsByYear() {
+		dataHolderTwoFieldsList.clear();
+		getGigsByYear();
 		return dataHolderTwoFieldsList;
 	}
 
@@ -92,7 +92,6 @@ public class StatData {
 
 	private void getDancerCount() {
 		//Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
-
 		dancerDao.runRawQueryWithRxJava("Select distinct " + DancerDao.CODE + " from info", new IProcessCursor() {
 			@Override
 			public void test(Cursor cursor) {
