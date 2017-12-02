@@ -214,7 +214,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		//new TestRxJava();
 		dancerDao.testCursor();
-		//System.out.println("Another test cursor - count:"+cursor.getCount());
 	}
 
 	// /End of main
