@@ -38,24 +38,24 @@ import javax.inject.Inject;
 public class PredictActivity extends AppCompatActivity implements IProcessCursor {
 
 	private static final String TAG = "PREDICT";
-	ListView listPredict;
-	TextView textViewChild;
-	TextView textViewRecord;
-	Map<Integer, List<String>> mapData = new TreeMap<>();
+	private ListView listPredict;
+	private TextView textViewChild;
+	private TextView textViewRecord;
+	private Map<Integer, List<String>> mapData = new TreeMap<>();
 
 	//Get the current year - we don't want to include those
-	final int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+	private final int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
 	//Date formatter
-	final SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)", Locale.US);
-	final SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	private final SimpleDateFormat df_MMddyyyyEEE = new SimpleDateFormat("MM-dd-yyyy (EEE)", Locale.US);
+	private final SimpleDateFormat df_yyyymmdd = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
 	//Create a date
-	final Calendar calendar = Calendar.getInstance();
+	private final Calendar calendar = Calendar.getInstance();
 	@Inject
 	DancerDao dancerDao;
 
-	Context activityContext;
+	private Context activityContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,26 +94,18 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 				}
 			}
 		});
-
-		try {
 			showData();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private void showData() throws ParseException {
-		/*
-		  Key=Week number of year. Values holds list of previous performances during that week number.
-		 */
-
-
+	private void showData() {
 		dancerDao.runRawQueryWithRxJava("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from " + SqlHelper.MAIN_TABLE_NAME +
 				" where strftime('%Y',Perfdate)<>'" + currentYear + "' order by strftime('%W',Perfdate)", this);
 	}
 
 	private void setUpDataFromCursor(Cursor cursor) {
+			/*
+		  Key=Week number of year. Values holds list of previous performances during that week number.
+		 */
 		//List of maps - each will hold date for header and child row
 		List<HashMap<String, String>> fillMaps = new ArrayList<>();
 		Map<String, List<String>> mapData2 = new TreeMap<>();
@@ -124,7 +116,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 			Log.e(TAG, "Error" + e.getMessage());
 		}
 
-		textViewRecord.setText("Record count:" + cursor.getCount());
+		textViewRecord.setText(String.format("%s%d", getString(R.string.results_text), cursor.getCount()));
 
 		cursor.moveToFirst();
 
@@ -159,8 +151,6 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 				//End of additions to map.
 
 			} while (cursor.moveToNext());
-		} else {
-			assert false;
 		}
 
 		cursor.close();
@@ -169,9 +159,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 			Log.d(TAG, "Key:" + e.getKey() + ": " + e.getValue());
 		}
 
-
 		SimpleAdapter adapter;
-
 
 		String[] from = new String[]{"Parent", "Child"};
 		int[] to = new int[]{R.id.textViewHeader, R.id.textViewChild};
