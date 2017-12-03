@@ -1,5 +1,25 @@
 package com.ericbandiero.dancerdata.activities;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+
+import com.ericbandiero.dancerdata.R;
+import com.ericbandiero.dancerdata.code.AndroidUtility;
+import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.IProcessCursor;
+import com.ericbandiero.dancerdata.code.SqlHelper;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,28 +30,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteException;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-
-import com.ericbandiero.dancerdata.code.AndroidUtility;
-import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.code.AppConstant;
-import com.ericbandiero.dancerdata.code.IProcessCursor;
-import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.dancerdata.code.DancerDao;
-import com.ericbandiero.dancerdata.code.SqlHelper;
-
 import javax.inject.Inject;
 
 
@@ -41,7 +39,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 	private ListView listPredict;
 	private TextView textViewChild;
 	private TextView textViewRecord;
-	private Map<Integer, List<String>> mapData = new TreeMap<>();
+	//private Map<Integer, List<String>> mapData = new TreeMap<>();
 
 	//Get the current year - we don't want to include those
 	private final int currentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -98,6 +96,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 				" where strftime('%Y',Perfdate)<>'" + currentYear + "' order by strftime('%W',Perfdate)", this);
 	}
 
+	@SuppressLint("DefaultLocale")
 	private void setUpDataFromCursor(Cursor cursor) {
 			/*
 		  Key=Week number of year. Values holds list of previous performances during that week number.
