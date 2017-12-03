@@ -77,21 +77,17 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		//We use Thursday
 		calendar.setMinimalDaysInFirstWeek(4);
 		//dancerDao=new DancerDao(this);
-		listPredict.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-									int position, long id) {
+		listPredict.setOnItemClickListener((parent, view, position, id) -> {
 
-				// View parentView = (View) view.getParent();
-				textViewChild = view.findViewById(R.id.textViewChild);
+			// View parentView = (View) view.getParent();
+			textViewChild = view.findViewById(R.id.textViewChild);
 
-				//    String item = ((TextView) view).getText().toString();
+			//    String item = ((TextView) view).getText().toString();
 
-				if (textViewChild.getVisibility() == View.VISIBLE) {
-					textViewChild.setVisibility(View.GONE);
-				} else {
-					textViewChild.setVisibility(View.VISIBLE);
-				}
+			if (textViewChild.getVisibility() == View.VISIBLE) {
+				textViewChild.setVisibility(View.GONE);
+			} else {
+				textViewChild.setVisibility(View.VISIBLE);
 			}
 		});
 			showData();
@@ -130,7 +126,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 					e.printStackTrace();
 				}
 				int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
-				Log.d(TAG, "Week:" + weekOfYear + " Perf date:" + calendar.getTime());
+				//Log.d(TAG, "Week:" + weekOfYear + " Perf date:" + calendar.getTime());
 				//    tempList.add("Week:"+weekOfYear+" Perf date:"+calendar.getTime());
 				List<String> l = mapData.get(weekOfYear);
 				if (l == null) {
@@ -155,10 +151,11 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 
 		cursor.close();
 
+		/*
 		for (Map.Entry<Integer, List<String>> e : mapData.entrySet()) {
-			Log.d(TAG, "Key:" + e.getKey() + ": " + e.getValue());
+			*//* Log.d(TAG, "Key:" + e.getKey() + ": " + e.getValue()); *//*
 		}
-
+*/
 		SimpleAdapter adapter;
 
 		String[] from = new String[]{"Parent", "Child"};
@@ -169,8 +166,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 
 		for (Map.Entry<String, List<String>> e : mapData2.entrySet()) {
 			HashMap<String, String> map = new HashMap<>();
-			if (AppConstant.DEBUG)
-				Log.d(this.getClass().getSimpleName() + ">", "Key:" + e.getKey());
+			//if (AppConstant.DEBUG)Log.d(this.getClass().getSimpleName() + ">", "Key:" + e.getKey());
 			map.put("Parent", e.getKey() + e.getValue().size());
 			map.put("Child", AndroidUtility.getStringFromList(e.getValue()));
 			fillMaps.add(map);
