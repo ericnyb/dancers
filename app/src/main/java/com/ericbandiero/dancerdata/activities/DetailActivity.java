@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.ericbandiero.dancerdata.*;
 import com.ericbandiero.dancerdata.code.AppConstant;
+import com.ericbandiero.dancerdata.code.IProcessCursor;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 
@@ -29,7 +30,7 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-public class DetailActivity extends AppCompatActivity implements OnItemClickListener{
+public class DetailActivity extends AppCompatActivity implements OnItemClickListener,IProcessCursor{
 
 	private static final String TAG = "DetailActivity";
 	private TextView txtviewVenue;
@@ -105,46 +106,9 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 				 DancerDao.CLAST_NAME+", "+ DancerDao.CFIRST_NAME;
 		 
 		//Cursor c=sql_database.rawQuery("select * from Info where "+DancerData.DANCE_CODE+"="+dance_id,null);
-		cursorDanceInfo= dancerDao.runRawQuery(sqlString);
+		dancerDao.runRawQueryWithRxJava(sqlString,this);
 
-		cursorDanceInfo.moveToFirst(); // it's very important to do this action otherwise
-		// your Cursor object did not get work
 
-		Log.d(TAG,"Dance id:"+ DetailActivity.dance_id);
-		
-		/* Check if at least one Result was returned. */
-		if (cursorDanceInfo != null) {
-			
-			cursorDanceInfo.moveToFirst(); // it's very important to do this action otherwise
-								// your Cursor object did not get work
-			Log.i(TAG,cursorDanceInfo.getColumnName(0));
-			/* Check if at least one Result was returned. */
-			if (cursorDanceInfo.isFirst()) {
-				int i = 0;
-				/* Loop through all Results */
-				txtviewVenue.setText("Venue: "+cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.VENUE)));
-				txtviewDate.setText("Date: "+cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.PERF_DATE)));
-				txtviewTitle.setText("Title: "+cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.TITLE)));
-				do {
-					setdancers.add(cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.FIRST_NAME))+" "+
-							cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.LAST_NAME)));
-					
-					setchoreos.add(cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.CFIRST_NAME))+" "+
-							cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.CLAST_NAME)));
-					
-					setids.add(cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.CODE)));
-					
-				} while (cursorDanceInfo.moveToNext());
-				txtviewChoreos.setText("Choreographers: "+setchoreos.toString());
-				listDancers.addAll(setdancers);
-				cursorDanceInfo.close();
-			}
-	
-			//This we moved here so that the data is already prepared.
-			ListAdapter listadapter= new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDancers);
-			listviewdancers.setAdapter(listadapter);
-			
-		}
 	}
 
 	/**
@@ -192,5 +156,52 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 		cursorDanceInfo.close();
 		NavUtils.navigateUpFromSameTask(this);
 	finish();
+	}
+
+	private void setUpDataFromCursor(Cursor cursor){
+		cursorDanceInfo=cursor;
+		cursorDanceInfo.moveToFirst(); // it's very important to do this action otherwise
+		// your Cursor object did not get work
+
+		Log.d(TAG,"Dance id:"+ DetailActivity.dance_id);
+
+		/* Check if at least one Result was returned. */
+		if (cursorDanceInfo != null) {
+
+			cursorDanceInfo.moveToFirst(); // it's very important to do this action otherwise
+			// your Cursor object did not get work
+			Log.i(TAG,cursorDanceInfo.getColumnName(0));
+			/* Check if at least one Result was returned. */
+			if (cursorDanceInfo.isFirst()) {
+				int i = 0;
+				/* Loop through all Results */
+				txtviewVenue.setText("Venue: "+cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.VENUE)));
+				txtviewDate.setText("Date: "+cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.PERF_DATE)));
+				txtviewTitle.setText("Title: "+cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.TITLE)));
+				do {
+					setdancers.add(cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.FIRST_NAME))+" "+
+							cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.LAST_NAME)));
+
+					setchoreos.add(cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.CFIRST_NAME))+" "+
+							cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.CLAST_NAME)));
+
+					setids.add(cursorDanceInfo.getString( cursorDanceInfo.getColumnIndex(DancerDao.CODE)));
+
+				} while (cursorDanceInfo.moveToNext());
+				txtviewChoreos.setText("Choreographers: "+setchoreos.toString());
+				listDancers.addAll(setdancers);
+				cursorDanceInfo.close();
+			}
+
+			//This we moved here so that the data is already prepared.
+			ListAdapter listadapter= new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDancers);
+			listviewdancers.setAdapter(listadapter);
+
+		}
+	}
+
+	@Override
+	public void test(Cursor cursor) {
+		setUpDataFromCursor(cursor);
 	}
 }
