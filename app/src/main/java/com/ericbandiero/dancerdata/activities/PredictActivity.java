@@ -128,11 +128,16 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 				int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
 				//Log.d(TAG, "Week:" + weekOfYear + " Perf date:" + calendar.getTime());
 				//    tempList.add("Week:"+weekOfYear+" Perf date:"+calendar.getTime());
+
+				/*
 				List<String> l = mapData.get(weekOfYear);
 				if (l == null) {
 					mapData.put(weekOfYear, l = new ArrayList<>());
 				}
+
 				l.add(cursor.getString(1));
+				*/
+
 				int year = Calendar.getInstance().get(Calendar.YEAR);
 				calendar.set(Calendar.YEAR, year);
 				calendar.set(Calendar.WEEK_OF_YEAR, weekOfYear);
