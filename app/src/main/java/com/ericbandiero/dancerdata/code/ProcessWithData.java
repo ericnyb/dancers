@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Eric Bandiero on 12/2/2017.
  */
 
-public class ProcessWithData implements IProcessCursorToData {
+public class ProcessWithData implements IProcessCursorToDataHolderList {
 	@Override
 	public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
 		return null;

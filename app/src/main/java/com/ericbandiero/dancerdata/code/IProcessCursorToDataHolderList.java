@@ -10,6 +10,6 @@ import java.util.List;
  * Created by Eric Bandiero on 12/2/2017.
  */
 
-public interface IProcessCursorToData {
+public interface IProcessCursorToDataHolderList {
 	List<DataHolderTwoFields> createListFromCursor(Cursor cursor);
 }
