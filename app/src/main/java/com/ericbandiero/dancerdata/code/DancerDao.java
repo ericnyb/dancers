@@ -178,6 +178,7 @@ public class DancerDao implements Serializable {
 			}).subscribeOn(Schedulers.io());
 
 			cursorRxJava = ob.blockingGet();
+			ob.unsubscribeOn(Schedulers.io());
 			return cursorRxJava;
 		} catch (SQLiteException ex) {
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Error!");
@@ -199,6 +200,7 @@ public class DancerDao implements Serializable {
 
 		cursorObservable.subscribe(cursor -> {
 			iProcessCursorAble.processCursor(cursor);});
+		cursorObservable.unsubscribeOn(Schedulers.io());
 	}
 
 	private void checkDataIsOpen() {
