@@ -80,7 +80,7 @@ public class TestRxJava {
 
 		//disposable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> System.out.println("Result:"+s), s -> System.out.println(s), () -> System.out.println("Done"));
 		observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(sub3);
-		//System.out.println("Test value:"+test);
+		//System.out.println("Test value:"+processCursor);
 		//disposable.dispose();
 	}
 

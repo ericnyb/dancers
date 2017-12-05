@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.ericbandiero.dancerdata.*;
 import com.ericbandiero.dancerdata.code.AppConstant;
-import com.ericbandiero.dancerdata.code.IProcessCursor;
+import com.ericbandiero.dancerdata.code.IProcessCursorAble;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 
@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-public class DetailActivity extends AppCompatActivity implements OnItemClickListener,IProcessCursor{
+public class DetailActivity extends AppCompatActivity implements OnItemClickListener,IProcessCursorAble {
 
 	private static final String TAG = "DetailActivity";
 	private TextView txtviewVenue;
@@ -201,7 +201,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	}
 
 	@Override
-	public void test(Cursor cursor) {
+	public void processCursor(Cursor cursor) {
 		setUpDataFromCursor(cursor);
 	}
 }

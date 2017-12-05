@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AndroidUtility;
 import com.ericbandiero.dancerdata.code.DancerDao;
-import com.ericbandiero.dancerdata.code.IProcessCursor;
+import com.ericbandiero.dancerdata.code.IProcessCursorAble;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 
@@ -33,7 +33,7 @@ import java.util.TreeMap;
 import javax.inject.Inject;
 
 
-public class PredictActivity extends AppCompatActivity implements IProcessCursor {
+public class PredictActivity extends AppCompatActivity implements IProcessCursorAble {
 
 	private static final String TAG = "PREDICT";
 	private ListView listPredict;
@@ -201,7 +201,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 
 
 	@Override
-	public void test(Cursor cursor) {
+	public void processCursor(Cursor cursor) {
 		setUpDataFromCursor(cursor);
 	}
 }

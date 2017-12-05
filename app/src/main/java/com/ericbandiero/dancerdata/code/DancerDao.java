@@ -191,7 +191,7 @@ public class DancerDao implements Serializable {
 		}
 	}
 
-	public void runRawQueryWithRxJava(String sql, IProcessCursor iProcessCursor) {
+	public void runRawQueryWithRxJava(String sql, IProcessCursorAble iProcessCursorAble) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
 		try {
 			if (database == null || !database.isOpen()) {
@@ -201,7 +201,8 @@ public class DancerDao implements Serializable {
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error:"+ex.getMessage());
 		}
 		Observable<Cursor> cursorObservable = getCursor(sql).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-		cursorObservable.subscribe(cursor -> {iProcessCursor.test(cursor);});
+		cursorObservable.subscribe(cursor -> {
+			iProcessCursorAble.processCursor(cursor);});
 	}
 
 	private void doSomethingWithCursor(Cursor c) {
@@ -259,8 +260,8 @@ public class DancerDao implements Serializable {
 		try {
 			//Test of from assets
 			if (false) {
-				//toastIt(context,"reading a test file...",Toast.LENGTH_SHORT);
-				UtilsShared.AlertMessageSimple(context, "Import Message", "Using test data");
+				//toastIt(context,"reading a processCursor file...",Toast.LENGTH_SHORT);
+				UtilsShared.AlertMessageSimple(context, "Import Message", "Using processCursor data");
 				AssetManager am = context.getAssets();
 				dancerDataAssets = am.open("dancers.txt", AssetManager.ACCESS_BUFFER);
 				br = new BufferedReader(new InputStreamReader(dancerDataAssets));

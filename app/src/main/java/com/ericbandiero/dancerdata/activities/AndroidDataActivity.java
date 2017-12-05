@@ -36,7 +36,7 @@ import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
-import com.ericbandiero.dancerdata.code.IProcessCursor;
+import com.ericbandiero.dancerdata.code.IProcessCursorAble;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
@@ -212,9 +212,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		//new TestRxJava();
 		String sql="select * from Info";
-		dancerDao.runRawQueryWithRxJava(sql,new IProcessCursor() {
+		dancerDao.runRawQueryWithRxJava(sql,new IProcessCursorAble() {
 			@Override
-			public void test(Cursor c) {
+			public void processCursor(Cursor c) {
 				System.out.println("Test cursor:"+c.getCount());
 			}
 		});
@@ -337,7 +337,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 				//ITestParce t1= new My();
 				//t1.doSomething();
-				//intent.putExtra("test", t1);
+				//intent.putExtra("processCursor", t1);
 				break;
 			default:
 				break;
