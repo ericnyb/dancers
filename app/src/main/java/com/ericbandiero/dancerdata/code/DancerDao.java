@@ -98,7 +98,7 @@ public class DancerDao implements Serializable {
 	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
 	HandleAChildClick handleAChildClick;
 
-	Cursor cursorTest;
+	private Cursor cursorRxJava;
 
 	public DancerDao(Context context) {
 		//Setup
@@ -163,6 +163,9 @@ public class DancerDao implements Serializable {
 		}
 	}
 
+	/*
+		This isn't the greatest. We do run the query off the UI thread, but the block the UI thread by using blockingGet().
+	 */
 	public Cursor runRawQuery(String sql) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Sql passed in:" + sql);
 		Cursor cursor = null;
@@ -180,14 +183,14 @@ public class DancerDao implements Serializable {
 				}
 			}).subscribeOn(Schedulers.io());
 
-			cursorTest = ob.blockingGet();
-			return cursorTest;
+			cursorRxJava = ob.blockingGet();
+			return cursorRxJava;
 		} catch (SQLiteException ex) {
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Error!");
 			//UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
 			if (AppConstant.DEBUG)
 				Log.d(this.getClass().getSimpleName() + ">", "Error getting data!" + "Data error:" + ex.getMessage());
-			return cursorTest;
+			return cursorRxJava;
 		}
 	}
 
