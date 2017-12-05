@@ -152,9 +152,7 @@ public class DancerDao implements Serializable {
 	private void deleteAllFromTable(String tableNameToDrop) {
 		//Drop table
 		try {
-			if (database == null || !database.isOpen()) {
-				open();
-			}
+			checkDataIsOpen();
 			database.execSQL("delete from " + tableNameToDrop);
 			database.close();
 		} catch (SQLiteException e) {
@@ -169,12 +167,8 @@ public class DancerDao implements Serializable {
 	public Cursor runRawQuery(String sql) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Sql passed in:" + sql);
 		Cursor cursor = null;
-
+		checkDataIsOpen();
 		try {
-			if (database == null || !database.isOpen()) {
-				open();
-			}
-
 			Single<Cursor> ob = Single.fromCallable(new Callable<Cursor>() {
 				@Override
 				public Cursor call() throws Exception {
@@ -196,6 +190,18 @@ public class DancerDao implements Serializable {
 
 	public void runRawQueryWithRxJava(String sql, IProcessCursorAble iProcessCursorAble) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Sql passed in:"+sql);
+		checkDataIsOpen();
+		Observable<Cursor> cursorObservable=Observable.fromCallable(() ->{
+			System.out.println("Thread we are running on from rxRawQueryWithRxJava:" + Thread.currentThread().getName());
+			return database.rawQuery(sql, null);})
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread());
+
+		cursorObservable.subscribe(cursor -> {
+			iProcessCursorAble.processCursor(cursor);});
+	}
+
+	private void checkDataIsOpen() {
 		try {
 			if (database == null || !database.isOpen()) {
 				open();
@@ -203,12 +209,6 @@ public class DancerDao implements Serializable {
 		} catch (SQLiteException ex) {
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error:"+ex.getMessage());
 		}
-		Observable<Cursor> cursorObservable=Observable.fromCallable(() -> database.rawQuery(sql, null))
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread());
-
-		cursorObservable.subscribe(cursor -> {
-			iProcessCursorAble.processCursor(cursor);});
 	}
 
 	private void readDataFile(SQLiteDatabase db) {
