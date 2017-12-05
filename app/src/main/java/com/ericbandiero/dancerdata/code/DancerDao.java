@@ -203,23 +203,12 @@ public class DancerDao implements Serializable {
 		} catch (SQLiteException ex) {
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error:"+ex.getMessage());
 		}
-		Observable<Cursor> cursorObservable = getCursor(sql).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+		Observable<Cursor> cursorObservable=Observable.fromCallable(() -> database.rawQuery(sql, null))
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread());
+
 		cursorObservable.subscribe(cursor -> {
 			iProcessCursorAble.processCursor(cursor);});
-	}
-
-	private void doSomethingWithCursor(Cursor c) {
-		while (c.moveToNext()) {
-			System.out.println("Dance last name:"+c.getString(c.getColumnIndex(DancerDao.LAST_NAME)));
-		}
-		c.close();
-	}
-
-	public Observable<Cursor> getCursor(String sql) {
-		return Observable.defer(() -> {
-			System.out.println(Thread.currentThread().getName());
-			return Observable.just(database.rawQuery(sql, null));
-		});
 	}
 
 	private void readDataFile(SQLiteDatabase db) {
