@@ -43,6 +43,7 @@
         android:layout_alignLeft="@+id/textViewDate"
         android:layout_below="@+id/textViewDate"
         android:textSize="@dimen/activity_venue_text_font"
+        android:layout_marginBottom="5dp"
         android:textColor="@color/blue"/>
 
     <ListView

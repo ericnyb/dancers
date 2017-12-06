@@ -194,7 +194,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 			}
 
 			//This we moved here so that the data is already prepared.
-			ListAdapter listadapter= new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listDancers);
+			ListAdapter listadapter= new ArrayAdapter<>(this, R.layout.row_result_in_main_list,R.id.textViewMainListRow,listDancers);
 			listviewdancers.setAdapter(listadapter);
 
 		}

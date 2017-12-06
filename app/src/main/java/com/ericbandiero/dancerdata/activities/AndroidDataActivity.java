@@ -676,7 +676,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	private void displayResultList() {
 		ListView listView = findViewById(R.id.listViewDancer);
 		listView.setAdapter(new ArrayAdapter<>(this,
-				android.R.layout.simple_list_item_1, results));
+				R.layout.row_result_in_main_list,R.id.textViewMainListRow, results));
 		listView.setTextFilterEnabled(true);
 	}
 
