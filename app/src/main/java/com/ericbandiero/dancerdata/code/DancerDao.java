@@ -21,6 +21,7 @@ import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
@@ -48,6 +49,7 @@ import javax.inject.Named;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
@@ -202,6 +204,39 @@ public class DancerDao implements Serializable {
 			iProcessCursorAble.processCursor(cursor);});
 		cursorObservable.unsubscribeOn(Schedulers.io());
 	}
+
+	public Observable<List<DataHolderTwoFields>> getStringFromCursor(IProcessCursorToDataHolderList processCursorToDataHolderList){
+		checkDataIsOpen();
+		String sql="Select "+DancerDao.CODE+
+				","+
+				DancerDao.FIRST_NAME+
+				","+
+				DancerDao.LAST_NAME+
+				",count(distinct "+
+				DancerDao.DANCE_CODE+") as cnt" +
+				" from info group by 1,2,3,"
+				+DancerDao.CODE +" order by cnt desc";
+	return	Observable.fromCallable(() ->{
+			System.out.println("Thread we are running on from rxRawQueryWithRxJava:" + Thread.currentThread().getName());
+			return database.rawQuery(sql, null);}).map(new Function<Cursor, List<DataHolderTwoFields>>() {
+
+			/**
+			 * Apply some calculation to the input value and return some other value.
+			 *
+			 * @param cursor the input value
+			 * @return the output value
+			 * @throws Exception on error
+			 */
+			@Override
+			public List<DataHolderTwoFields> apply(Cursor cursor) throws Exception {
+				return processCursorToDataHolderList.createListFromCursor(cursor);
+			}
+		}).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+	}
+
+
+
+
 
 	private void checkDataIsOpen() {
 		try {

@@ -36,9 +36,12 @@ import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
+import com.ericbandiero.dancerdata.code.HandleClickForVenueOrDancerCount;
 import com.ericbandiero.dancerdata.code.IProcessCursorAble;
+import com.ericbandiero.dancerdata.code.IProcessCursorToDataHolderList;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
+import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
@@ -47,6 +50,7 @@ import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
+import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
@@ -61,6 +65,7 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -210,14 +215,17 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			}
 		});
 
-		//new TestRxJava();
-		String sql="select * from Info";
-		dancerDao.runRawQueryWithRxJava(sql,new IProcessCursorAble() {
+		Disposable subscribe = dancerDao.getStringFromCursor(new IProcessCursorToDataHolderList() {
 			@Override
-			public void processCursor(Cursor c) {
-				System.out.println("Test cursor:"+c.getCount());
+			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
+					List<DataHolderTwoFields> l=new ArrayList<>();
+				while(cursor.moveToNext()){
+					l.add(new DataHolderTwoFields(cursor.getString(1),cursor.getString(2)));
+				}
+				return l;
 			}
-		});
+		}).subscribe(s -> {System.out.println("Size:"+s.size());});
+		//subscribe.dispose();
 	}
 
 	// /End of main
@@ -345,6 +353,40 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		startActivity(intent);
 	}
 
+	private void runDancerCountsFromRxJava(){
+		int maxLengthOfFieldOne=30;
+		Disposable subscribe = dancerDao.getStringFromCursor(new IProcessCursorToDataHolderList() {
+			@Override
+			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
+				List<DataHolderTwoFields> list=new ArrayList<>();
+				System.out.println("Running on thread:"+Thread.currentThread().getName());
+				while (cursor.moveToNext()){
+					//System.out.println("Cursor field 1"+cursor.getString(1));
+					String fieldOne= StatData.getSubStringForField(cursor.getString(2).trim()+","+cursor.getString(1).trim(),maxLengthOfFieldOne);
+					DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(fieldOne,cursor.getString(3).trim());
+					dataHolderTwoFields.setId(cursor.getString(0)); //Want this for click event.
+					list.add(dataHolderTwoFields);
+				}
+				return list;
+			}
+		}).subscribe(s -> {startActivityForDancerCount(s);});
+	}
+
+	private void startActivityForDancerCount(List<DataHolderTwoFields>dataHolderTwoFields){
+		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+		Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+		//These are for the activity
+		statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Dancer Stats",
+				"Dancers by performance",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.DANCER_COUNT)));
+		//Builder is injected
+		statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+		startActivity(statIntent);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
@@ -371,6 +413,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_dancer_counts))) {
+			runDancerCountsFromRxJava();
+/*
+
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
@@ -384,6 +429,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
+*/
 
 		}
 
