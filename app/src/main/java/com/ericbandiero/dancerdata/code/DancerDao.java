@@ -17,10 +17,14 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
+import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
+import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
@@ -49,6 +53,7 @@ import javax.inject.Named;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -100,7 +105,12 @@ public class DancerDao implements Serializable {
 	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
 	HandleAChildClick handleAChildClick;
 
+	@Inject
+	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
+
 	private Cursor cursorRxJava;
+
+	Disposable disposable;
 
 	public DancerDao(Context context) {
 		//Setup
@@ -677,5 +687,40 @@ public class DancerDao implements Serializable {
 
 	public void setActivityContext(Context activityContext) {
 		this.activityContext = activityContext;
+	}
+
+	public void runDancerCountsFromRxJava(Context context1){
+		int maxLengthOfFieldOne=30;
+		disposable=getStringFromCursor(new IProcessCursorToDataHolderList() {
+			@Override
+			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
+				List<DataHolderTwoFields> list=new ArrayList<>();
+				System.out.println("Running on thread:"+Thread.currentThread().getName());
+				while (cursor.moveToNext()){
+					//System.out.println("Cursor field 1"+cursor.getString(1));
+					String fieldOne= StatData.getSubStringForField(cursor.getString(2).trim()+","+cursor.getString(1).trim(),maxLengthOfFieldOne);
+					DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(fieldOne,cursor.getString(3).trim());
+					dataHolderTwoFields.setId(cursor.getString(0)); //Want this for click event.
+					list.add(dataHolderTwoFields);
+				}
+				return list;
+			}
+		}).subscribe(list -> {startActivityForDancerCount(context1,list);});
+	}
+
+	private void startActivityForDancerCount(Context context1,List<DataHolderTwoFields>dataHolderTwoFields){
+		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+		Intent statIntent=new Intent(context1,Lib_StatsActivity.class);
+		//These are for the activity
+		statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Dancer Stats",
+				"Dancers by performance",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.DANCER_COUNT)));
+		//Builder is injected
+		statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+		context1.startActivity(statIntent);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancer by danced in work count...");
+		disposable.dispose();
 	}
 }

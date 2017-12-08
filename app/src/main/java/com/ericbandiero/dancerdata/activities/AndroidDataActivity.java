@@ -353,39 +353,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		startActivity(intent);
 	}
 
-	private void runDancerCountsFromRxJava(){
-		int maxLengthOfFieldOne=30;
-		Disposable subscribe = dancerDao.getStringFromCursor(new IProcessCursorToDataHolderList() {
-			@Override
-			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
-				List<DataHolderTwoFields> list=new ArrayList<>();
-				System.out.println("Running on thread:"+Thread.currentThread().getName());
-				while (cursor.moveToNext()){
-					//System.out.println("Cursor field 1"+cursor.getString(1));
-					String fieldOne= StatData.getSubStringForField(cursor.getString(2).trim()+","+cursor.getString(1).trim(),maxLengthOfFieldOne);
-					DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(fieldOne,cursor.getString(3).trim());
-					dataHolderTwoFields.setId(cursor.getString(0)); //Want this for click event.
-					list.add(dataHolderTwoFields);
-				}
-				return list;
-			}
-		}).subscribe(s -> {startActivityForDancerCount(s);});
-	}
 
-	private void startActivityForDancerCount(List<DataHolderTwoFields>dataHolderTwoFields){
-		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-		Intent statIntent=new Intent(this,Lib_StatsActivity.class);
-		//These are for the activity
-		statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Dancer Stats",
-				"Dancers by performance",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.DANCER_COUNT)));
-		//Builder is injected
-		statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-		startActivity(statIntent);
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -413,7 +381,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_dancer_counts))) {
-			runDancerCountsFromRxJava();
+			dancerDao.runDancerCountsFromRxJava(this);
 /*
 
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
