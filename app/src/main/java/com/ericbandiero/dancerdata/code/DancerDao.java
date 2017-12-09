@@ -95,6 +95,11 @@ public class DancerDao implements Serializable {
 			DancerDao.DANCE_CODE+") as cnt from info group by "+
 			DancerDao.VENUE +" order by cnt desc";
 
+public static final String SQL_GIGS_BY_YEAR="Select "+ "strftime('%Y',"+DancerDao.PERF_DATE+") as year,"
+		+"count(distinct "+DancerDao.PERF_CODE+")" +
+		" from info" +
+		" group by "+"strftime('%Y',"+DancerDao.PERF_DATE+")" +
+		" order by year desc";
 
 	public static final String CHOR_CODE = "Chore_Code";
 	public static final String PERF_DESC = "PerfDesc";
@@ -239,7 +244,7 @@ public class DancerDao implements Serializable {
 		checkDataIsOpen();
 		String sql = sqlParam;
 		return Observable.fromCallable(() -> {
-			System.out.println("Thread we are running on from rxRawQueryWithRxJava:" + Thread.currentThread().getName());
+			System.out.println("Thread we are running on from getStringFromCursor:" + Thread.currentThread().getName());
 			return database.rawQuery(sql, null);
 		}).map(new Function<Cursor, List<DataHolderTwoFields>>() {
 
@@ -777,6 +782,36 @@ public class DancerDao implements Serializable {
 		}
 
 
+	public void getGigsByYear(Context contextParam) {
+		disposable=getStringFromCursor(SQL_GIGS_BY_YEAR,new IProcessCursorToDataHolderList() {
+			@Override
+			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
+				List<DataHolderTwoFields> list = new ArrayList<>();
+				System.out.println("Running on thread:" + Thread.currentThread().getName());
+				while (cursor.moveToNext()) {
+					list.add(new DataHolderTwoFields(cursor.getString(0),cursor.getString(1)));
+				}
+				return list;
+			}
+		}).subscribe(list -> {
+			startActivityGigsByYear(contextParam, list);
+		});
+	}
 
-
+	private void startActivityGigsByYear(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields) {
+		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+		Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
+		//These are for the activity
+		statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Gigs By Year",
+				"Gigs By Year",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				dataHolderTwoFields, null));
+		//Builder is injected
+		statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+		contextParam.startActivity(statIntent);
+		if (AppConstant.DEBUG)
+			Log.d(this.getClass().getSimpleName() + ">", "Most people danced at venue...");
+		disposable.dispose();
+	}
 }
