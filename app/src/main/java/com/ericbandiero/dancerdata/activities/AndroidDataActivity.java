@@ -214,18 +214,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				return false;
 			}
 		});
-
-		Disposable subscribe = dancerDao.getStringFromCursor(new IProcessCursorToDataHolderList() {
-			@Override
-			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
-					List<DataHolderTwoFields> l=new ArrayList<>();
-				while(cursor.moveToNext()){
-					l.add(new DataHolderTwoFields(cursor.getString(1),cursor.getString(2)));
-				}
-				return l;
-			}
-		}).subscribe(s -> {System.out.println("Size:"+s.size());});
-		//subscribe.dispose();
 	}
 
 	// /End of main
@@ -405,6 +393,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		//"Venue By Dance Piece Count"
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_dance_piece))) {
+			dancerDao.getMostPiecesShotAtVenue(this);
+/*
+
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
@@ -417,7 +408,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
 
 			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked by dance piece count");
+*/
 
 		}
 
