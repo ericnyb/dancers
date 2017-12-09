@@ -30,6 +30,7 @@ public class HandleClickForVenueOrDancerCount implements IHandleListViewClicks,S
 
 	public HandleClickForVenueOrDancerCount(String clickForWhat) {
 		this.clickForWhat = clickForWhat;
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Which do we want:"+clickForWhat);
 	}
 
 	@Override

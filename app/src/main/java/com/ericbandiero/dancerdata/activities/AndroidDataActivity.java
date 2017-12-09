@@ -375,6 +375,10 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
+
+			dancerDao.getMostShotVenue(this,false);
+
+			/*
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
 
@@ -388,7 +392,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 			startActivity(statIntent);
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
-
+*/
 		}
 
 		//"Venue By Dance Piece Count"

@@ -78,32 +78,39 @@ public class DancerDao implements Serializable {
 	public static final String CLAST_NAME = "CLastName";
 	public static final String CMIDDLE = "CMiddle";
 	public static final String DANCE_CODE = "Dance_Code";
+	public static final String CHOR_CODE = "Chore_Code";
+	public static final String PERF_DESC = "PerfDesc";
+	public static final String PERF_CODE = "Perf_Code";
 
-
-	public static final String SQL_DANCERS_BY_DANCE_PIECES = "Select " + DancerDao.CODE +
+	public static final String SQL_DANCERS_BY_DANCE_PIECES = "Select " +
+			DancerDao.CODE +
 			"," +
 			DancerDao.FIRST_NAME +
 			"," +
 			DancerDao.LAST_NAME +
 			",count(distinct " +
 			DancerDao.DANCE_CODE + ") as cnt" +
-			" from info group by 1,2,3,"
-			+ DancerDao.CODE + " order by cnt desc";
+			" from info group by 1,2,3,"+
+			DancerDao.CODE + " order by cnt desc";
 
-	public static final String SQL_VENUE_BY_MOST_DANCE_PIECES="Select "+DancerDao.VENUE+
+	public static final String SQL_VENUE_BY_MOST_DANCE_PIECES="Select "+
+			DancerDao.VENUE+
 			",count(distinct "+
 			DancerDao.DANCE_CODE+") as cnt from info group by "+
 			DancerDao.VENUE +" order by cnt desc";
 
-public static final String SQL_GIGS_BY_YEAR="Select "+ "strftime('%Y',"+DancerDao.PERF_DATE+") as year,"
-		+"count(distinct "+DancerDao.PERF_CODE+")" +
+public static final String SQL_GIGS_BY_YEAR="Select "+ "strftime('%Y',"+DancerDao.PERF_DATE+") as year,"+
+		"count(distinct "+DancerDao.PERF_CODE+")" +
 		" from info" +
 		" group by "+"strftime('%Y',"+DancerDao.PERF_DATE+")" +
 		" order by year desc";
 
-	public static final String CHOR_CODE = "Chore_Code";
-	public static final String PERF_DESC = "PerfDesc";
-	public static final String PERF_CODE = "Perf_Code";
+public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
+		DancerDao.VENUE+
+		",count(distinct "+
+		DancerDao.PERF_DATE+") as cnt from info group by "+
+		DancerDao.VENUE +
+		" having cnt>1 order by cnt desc";
 
 	//Import location for data file that user needs to have
 	private static final String WORKING_DATA_FOLDER = "/DancerData";
@@ -771,7 +778,7 @@ public static final String SQL_GIGS_BY_YEAR="Select "+ "strftime('%Y',"+DancerDa
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Venue Stats",
 					"Venues By Dance Pieces Shots",
 					ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-					dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.DANCER_COUNT)));
+					dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.VENUE_COUNT)));
 			//Builder is injected
 			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
 			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
@@ -814,4 +821,53 @@ public static final String SQL_GIGS_BY_YEAR="Select "+ "strftime('%Y',"+DancerDa
 			Log.d(this.getClass().getSimpleName() + ">", "Most people danced at venue...");
 		disposable.dispose();
 	}
+
+	public void getMostShotVenue(Context contextParam,boolean rollUp) {
+		final int maxLengthOfVenueName=rollUp?10:30;
+		disposable=getStringFromCursor(SQL_VENUE_BY_PERFORMANCE_SHOOTS,new IProcessCursorToDataHolderList() {
+			@Override
+			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
+				List<DataHolderTwoFields> list = new ArrayList<>();
+				System.out.println("Running on thread:" + Thread.currentThread().getName());
+				while (cursor.moveToNext()) {
+					if (rollUp){
+
+					}
+					else {
+						String venueName = cursor.getString(0).trim();
+						DataHolderTwoFields dataHolderTwoFields = new DataHolderTwoFields(venueName.substring(0, (venueName.length() > maxLengthOfVenueName ? maxLengthOfVenueName : venueName.length())) + ":", String.valueOf(cursor.getString(1)));
+						dataHolderTwoFields.setId(venueName); //Want this for click event.
+						list.add(dataHolderTwoFields);
+					}
+					if (rollUp){
+						break;
+					}
+				}
+
+				return list;
+			}
+		}).subscribe(list -> {
+			startActivityMostShotVenue(contextParam, list);
+		});
+	}
+
+	private void startActivityMostShotVenue(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields) {
+		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+		Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
+		//These are for the activity
+		statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Venue Stats",
+				"Venues By Shoots",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.VENUE_COUNT)));
+		//Builder is injected
+		statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+		contextParam.startActivity(statIntent);
+		if (AppConstant.DEBUG)
+			Log.d(this.getClass().getSimpleName() + ">", "Venue by most performances shot...");
+		disposable.dispose();
+	}
+
+
+	//getMostShotVenue(boolean rollUp)
 }
