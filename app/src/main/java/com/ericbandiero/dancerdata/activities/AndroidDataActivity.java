@@ -394,23 +394,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//"Venue By Dance Piece Count"
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_dance_piece))) {
 			dancerDao.getMostPiecesShotAtVenue(this);
-/*
-
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilderVenueDances.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked by dance piece count");
-*/
-
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_gigs_by_year))) {
