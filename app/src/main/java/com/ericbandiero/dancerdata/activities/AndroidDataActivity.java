@@ -36,9 +36,12 @@ import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
+import com.ericbandiero.dancerdata.code.HandleClickForVenueOrDancerCount;
 import com.ericbandiero.dancerdata.code.IProcessCursorAble;
+import com.ericbandiero.dancerdata.code.IProcessCursorToDataHolderList;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
+import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
@@ -47,6 +50,7 @@ import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
+import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
@@ -61,6 +65,7 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -209,15 +214,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				return false;
 			}
 		});
-
-		//new TestRxJava();
-		String sql="select * from Info";
-		dancerDao.runRawQueryWithRxJava(sql,new IProcessCursorAble() {
-			@Override
-			public void processCursor(Cursor c) {
-				System.out.println("Test cursor:"+c.getCount());
-			}
-		});
 	}
 
 	// /End of main
@@ -345,6 +341,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		startActivity(intent);
 	}
 
+
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
@@ -371,74 +369,22 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_dancer_counts))) {
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityDancersByWorks.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
-
+			dancerDao.runDancerCountsFromRxJava(this);
 		}
 
 
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilderVenueCounts.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
-
+			dancerDao.getMostShotVenue(this,false);
 		}
 
 		//"Venue By Dance Piece Count"
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_dance_piece))) {
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilderVenueDances.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
-
+			dancerDao.getMostPiecesShotAtVenue(this);
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_gigs_by_year))) {
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityGigsByYear.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
-
+			dancerDao.getGigsByYear(this);
 		}
 
 		//Predictions

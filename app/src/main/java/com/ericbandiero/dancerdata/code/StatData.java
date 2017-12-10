@@ -237,7 +237,7 @@ private void getMostPiecesShotAtVenue(){
 		}
 		cursor.close();
 	}
-private String getSubStringForField(String stringToShorten,int maxLength){
+public static String getSubStringForField(String stringToShorten,int maxLength){
 	int stringLength=stringToShorten.length();
 	return (stringToShorten.length()>maxLength)?stringToShorten.substring(0,maxLength):stringToShorten;
 }
