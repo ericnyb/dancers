@@ -214,7 +214,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 			Single<Cursor> ob = Single.fromCallable(new Callable<Cursor>() {
 				@Override
 				public Cursor call() throws Exception {
-					System.out.println("Thread we are running on:" + Thread.currentThread().getName());
+					System.out.println("Thread we are running on using blocking:" + Thread.currentThread().getName());
 					return database.rawQuery(sql, null);
 				}
 			}).subscribeOn(Schedulers.io());
