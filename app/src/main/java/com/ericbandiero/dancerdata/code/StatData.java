@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.ericbandiero.dancerdata.dagger.DaggerTestObjectComponent;
-import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.dagger.TestObjectComponent;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 
@@ -14,8 +13,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
 
 /**
  * Created by Eric Bandiero on 10/25/2017.
@@ -29,16 +26,16 @@ public class StatData {
 
 	List<DataHolderTwoFields> dataHolderTwoFieldsList=new ArrayList<>();
 
-	@Inject
-	TestDaggerObject testDaggerObject;
+	//@Inject
+	//TestDaggerObject testDaggerObject;
 
 	private TestObjectComponent testObjectComponent;
 
 	public StatData(DancerDao sqLiteDatabase) {
 		//DanceApp.app().testObjectComponent().inject(this);
-		testObjectComponent= DaggerTestObjectComponent.builder().build();
-		testObjectComponent.inject(this);
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
+		DaggerTestObjectComponent.create().inject(this);
+		//testObjectComponent.inject(this);
+		//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Test object use:"+testDaggerObject.getName());
 		dancerDao=sqLiteDatabase;
 	}
 
@@ -51,32 +48,10 @@ public class StatData {
 		getChoreographerCount();
 		getSolos();
 		getMostShotVenue(true);
+		//getMostPiecesShotAtVenue();
 		getFirstAndLastPerformance();
 		getMostCommonName();
 		return dataHolderTwoFieldsList;
-	}
-
-	public List<DataHolderTwoFields> runVenueStats() {
-		dataHolderTwoFieldsList.clear();
-		getMostShotVenue(false);
-		return dataHolderTwoFieldsList;
-	}
-
-	public List<DataHolderTwoFields> runGigsByYear() {
-		dataHolderTwoFieldsList.clear();
-		getGigsByYear();
-		return dataHolderTwoFieldsList;
-	}
-
-	private void getGigsByYear() {
-		Cursor cursor = dancerDao.runRawQuery("Select "+ "strftime('%Y',"+DancerDao.PERF_DATE+") as year," +
-				"count(distinct "+DancerDao.PERF_CODE+")" +
-				" from info" +
-				" group by "+"strftime('%Y',"+DancerDao.PERF_DATE+")" +
-				" order by year desc");
-		while (cursor.moveToNext()){
-			dataHolderTwoFieldsList.add(new DataHolderTwoFields(cursor.getString(0),cursor.getString(1)));
-		}
 	}
 
 	private void getDancerCount() {
@@ -84,6 +59,7 @@ public class StatData {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancer count"+cursor.getCount());
 		//dataMap.put("Dancers",cursor.getCount());
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Dancers:",String.valueOf(cursor.getCount())));
+		cursor.close();
 	}
 
 
@@ -92,6 +68,7 @@ public class StatData {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Chore count"+cursor.getCount());
 		//dataMap.put("Choreographers",cursor.getCount());
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Choreographers:",String.valueOf(cursor.getCount())));
+		cursor.close();
 	}
 
 	private void getVenueCount() {
@@ -99,7 +76,7 @@ public class StatData {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue count"+cursor.getCount());
 		//dataMap.put("Venues",cursor.getCount());
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Venues:",String.valueOf(cursor.getCount())));
-
+		cursor.close();
 	}
 
 	private void getDanceWorksCount() {
@@ -107,7 +84,7 @@ public class StatData {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dance pieces count"+cursor.getCount());
 		//dataMap.put("Dance pieces",cursor.getCount());
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Dance pieces:",String.valueOf(cursor.getCount())));
-
+		cursor.close();
 	}
 
 	private void getPerformanceCount() {
@@ -115,6 +92,7 @@ public class StatData {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance count"+cursor.getCount());
 		//dataMap.put("Performances",cursor.getCount());
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Performances:",String.valueOf(cursor.getCount())));
+		cursor.close();
 	}
 
 	private void getFirstAndLastPerformance() {
@@ -127,18 +105,26 @@ public class StatData {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance last shoot"+cursor.getString(0));
 		//dataMap.put("Latest shoot",cursor.getCount());
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Last shoot:",String.valueOf(cursor.getString(0))));
+		cursor.close();
 	}
 
 	private void getMostCommonName() {
+
 		String sql="Select distinct "+DancerDao.FIRST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.FIRST_NAME+") from info group by "+DancerDao.FIRST_NAME +" order by 2 desc";
 		Cursor cursor = dancerDao.runRawQuery(sql);
-		cursor.moveToFirst();
+
+		if(cursor != null && cursor.moveToFirst()){
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Common first name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+		cursor.close();
+		}
 
 		sql="Select distinct "+DancerDao.LAST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.LAST_NAME+") from info group by "+DancerDao.LAST_NAME +" order by 2 desc";
 		cursor = dancerDao.runRawQuery(sql);
-		cursor.moveToFirst();
-		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Common last name:",String.valueOf(cursor.getString(0))+"("+String.valueOf(cursor.getString(1))+")"));
+
+		if(cursor != null && cursor.moveToFirst()) {
+			dataHolderTwoFieldsList.add(new DataHolderTwoFields("Common last name:", String.valueOf(cursor.getString(0)) + "(" + String.valueOf(cursor.getString(1)) + ")"));
+			cursor.close();
+		}
 	}
 
 	private void getSolos() {
@@ -146,6 +132,7 @@ public class StatData {
 		Cursor cursor = dancerDao.runRawQuery(sql);
 		cursor.moveToFirst();
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Solos:",String.valueOf(cursor.getCount())));
+		cursor.close();
 }
 
 	private void getMostShotVenue(boolean rollUp) {
@@ -157,7 +144,7 @@ public class StatData {
 		while (cursor.moveToNext()){
 			String venueName=cursor.getString(0).trim();
 			if (rollUp){
-				DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(rollUp?"Venue most shot:":venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length())),venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1)));
+				DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields("Venue most shot:",venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1)));
 				dataHolderTwoFieldsList.add(dataHolderTwoFields);
 			}
 			else {
@@ -169,11 +156,16 @@ public class StatData {
 				break;
 			}
 		}
-
+		cursor.close();
 //		String venueName=cursor.getString(0).trim();
 //		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Venue most shot:",venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1))));
 	}
 
+
+public static String getSubStringForField(String stringToShorten,int maxLength){
+	int stringLength=stringToShorten.length();
+	return (stringToShorten.length()>maxLength)?stringToShorten.substring(0,maxLength):stringToShorten;
+}
 
 public static String formatStatData(Map<String,Integer> stringIntegerMap){
 	//if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
@@ -231,9 +223,7 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 	}
 
 	public static int maxLengthOfValueFromMap(Map<String,Integer> stringIntegerMap){
-		Collection c = stringIntegerMap.values();
+		Collection<Integer> c = stringIntegerMap.values();
 		return (int) Collections.max(c);
 	}
-
-
 }

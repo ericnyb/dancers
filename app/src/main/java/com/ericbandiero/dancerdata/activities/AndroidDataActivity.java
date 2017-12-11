@@ -33,13 +33,13 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AppConstant;
-import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
-import com.ericbandiero.dancerdata.code.ITest;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
+import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
+import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.Lib_StatsActivity;
@@ -47,9 +47,7 @@ import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
-import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
-import com.ericbandiero.librarymain.interfaces.ITestParce;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,12 +63,13 @@ import butterknife.ButterKnife;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
-		OnItemClickListener, OnCheckedChangeListener,ITest {
+		OnItemClickListener, OnCheckedChangeListener {
+
 	private static final int ID_MENU_EXIT = 0;
 	private static final String TAG = "Droid Dancer";
 
 	//Test commit change.
-	ArrayList<String> results = new ArrayList<String>();
+	ArrayList<String> results = new ArrayList<>();
 	//transient Button mSearchButton;
 	transient EditText mInputEdit;
 	transient RadioGroup mradiogroup;
@@ -79,7 +78,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	//transient TextView textInfo;
 	transient ListView listview;
-	transient List<Integer> listOfDanceCode = new ArrayList<Integer>();
+	transient List<Integer> listOfDanceCode = new ArrayList<>();
 
 	final Context context = this;
 	transient private RadioButton radioButton;
@@ -91,7 +90,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	transient private String orderByFields;
 
 	// List of fields to get
-	transient List<String> listOfFieldsToGet = new ArrayList<String>();
+	transient List<String> listOfFieldsToGet = new ArrayList<>();
 
 	// String to get data
 	String sqlSearchString;
@@ -99,9 +98,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	//For parameters
 	String[] selectionArgs;
 
-	//data access class
-	@Inject
-	DancerDao dancerDao;
 
 	//Permission request integer
 	public static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
@@ -116,49 +112,57 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Named("stats")
 	ControlStatsActivityBuilder controlStatsActivityBuilder;
 */
+//data access class
+	@Inject
+	DancerDao dancerDao;
 
 	@Inject
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
 
 	@Inject
-	@Named("stats")
+	@Named(AppConstant.DAG_CONTROLLER_STATS)
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
 
 	@Inject
-	@Named("stats_venues")
-	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderTest;
+	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
+	HandleAChildClick handleAChildClickPerformance;
 
 	@Inject
-	@Named("stats_gigs_by_year")
-	Provider <ControlStatsActivityBuilder> controlStatsActivityGigsByYear;
-
+	@Named(HandleAChildClick.GET_PERFORMANCE_FROM_CLICK)
+	HandleAChildClick handleAChildClickVenues;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		confirmExitOnBackPress=true;
 		//Dagger
 		DanceApp.app().basicComponent().inject(this);
 
-
-
 		//We want a context that we can use
-		AppConstant.CONTEXT = this;
+		dancerDao.setActivityContext(this);
 
 		ButterKnife.bind(this);
 		// getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		//mSearchButton = (Button) findViewById(R.id.button1);
-		mInputEdit = (EditText) findViewById(R.id.editText1);
-		mradiogroup = (RadioGroup) findViewById(R.id.radioGroup1);
-		radioButton = (RadioButton) findViewById(R.id.radioDancer);
+		mInputEdit = findViewById(R.id.editText1);
+		mradiogroup = findViewById(R.id.radioGroup1);
+		radioButton = findViewById(R.id.radioDancer);
 		//textInfo = (TextView) findViewById(R.id.textViewRecordCount1);
-		listview = (ListView) findViewById(R.id.listViewDancer);
-		buttonPredict = (Button) findViewById(R.id.button_venues);
-
+		listview = findViewById(R.id.listViewDancer);
+		buttonPredict = findViewById(R.id.button_venues);
 
 		//Ask for permissions to use the app
 		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,1);
+
+		if (!AppConstant.WE_HAVE_DATA_IN_TABLE&&dancerDao.isTableEmpty(SqlHelper.MAIN_TABLE_NAME)){
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Table is empty!");
+			UtilsShared.AlertMessageSimple(this,"New Database Created","You need to import data - see menu option.");
+			AppConstant.WE_HAVE_DATA_IN_TABLE=false;
+		}
+		else{
+			AppConstant.WE_HAVE_DATA_IN_TABLE=true;
+		}
 
 		// First thing - make sure we have a directory
 		//We will call this from the ask callback
@@ -187,12 +191,10 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 				return false;
 			}
-
 		});
 	}
 
 	// /End of main
-
 
 	@Override
 	protected void onRestart() {
@@ -201,7 +203,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		Log.i("Restarted", "restarted");
 		// mInputEdit.setText("");
 		if (!DetailActivity.getDancerdetailid().equals("-1")) {
-			RadioButton b = (RadioButton) findViewById(R.id.radioDancer);
+			RadioButton b = findViewById(R.id.radioDancer);
 			b.setChecked(true);
 
 			//radioButton.setId(R.id.radioDancer);
@@ -258,7 +260,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 		else{
 			//We can do this
-			dancerDao.createMyWorkingDirectory();
+			boolean myWorkingDirectory = dancerDao.createMyWorkingDirectory();
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Was directory created?"+myWorkingDirectory);
 		}
 	}
 
@@ -302,43 +305,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				intent = new Intent(this, ExpandListSubclass.class);
 
 				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-
-				HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.VENUE_CLICK);
-				//HandleAChildClick handleAChildClick = new HandleAChildClick(this);
-
-				IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds(){
-					@Override
-					public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
-						if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
-					}
-				};
-
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venue list");
-
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
 
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
-				//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
-
-
-
-
-//			TestConcrete t1=new TestConcrete(){
-//				@Override
-//				public void doSomething(){
-//					System.out.println("Yowser!");
-//				}
-//
-//		};
-
-				ITestParce t1= new My();
-
-
-				t1.doSomething();
-				intent.putExtra("test", t1);
-
+				//ITestParce t1= new My();
+				//t1.doSomething();
+				//intent.putExtra("processCursor", t1);
 				break;
 			default:
 				break;
@@ -346,11 +319,16 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		startActivity(intent);
 	}
 
+
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
-		if (item.getTitle() != null && item.getTitle().equals("Stats")) {
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_stats))) {
+
+			//TestRxJava  testRxJava=new TestRxJava();
+
 
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
@@ -368,93 +346,27 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		}
 
-		if (item.getTitle() != null && item.getTitle().equals("Venue By Count")) {
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilderTest.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
-
-		}
-
-		if (item.getTitle() != null && item.getTitle().equals("Gigs By Year")) {
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityGigsByYear.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue picked");
-
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_dancer_counts))) {
+			dancerDao.runDancerCountsFromRxJava(this);
 		}
 
 
-		if (item.getTitle() != null && item.getTitle().equals("Venue Data")) {
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
 
-			//We call routine to create the data list.
-			List<Lib_ExpandableDataWithIds> listData=dancerDao.prepDataVenue();
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
+			dancerDao.getMostShotVenue(this,false);
+		}
 
-			//Intent i=new Intent(this, Lib_Expandable_Activity.class);
-			Intent i = new Intent(this, ExpandListSubclass.class);
+		//"Venue By Dance Piece Count"
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_dance_piece))) {
+			dancerDao.getMostPiecesShotAtVenue(this);
+		}
 
-			IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-
-			HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.VENUE_CLICK);
-			//HandleAChildClick handleAChildClick = new HandleAChildClick(this);
-
-			IHandleChildClicksExpandableIds ih=new IHandleChildClicksExpandableIds(){
-				@Override
-				public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
-				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Hello");
-				}
-			};
-
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
-			i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venue list");
-
-			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-
-			i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
-		//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
-
-
-
-
-//			TestConcrete t1=new TestConcrete(){
-//				@Override
-//				public void doSomething(){
-//					System.out.println("Yowser!");
-//				}
-//
-//		};
-
-			ITestParce t1= new My();
-
-
-			t1.doSomething();
-			i.putExtra("test", t1);
-
-			startActivity(i);
+		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_gigs_by_year))) {
+			dancerDao.getGigsByYear(this);
 		}
 
 		//Predictions
-		if (item.getTitle().equals(getResources().getString(R.string.prediction_Text))) {
+		if (item.getTitle().equals(getString(R.string.menu_prediction))) {
 			Intent intent = new Intent(this, PredictActivity.class);
 			startActivity(intent);
 		}
@@ -540,14 +452,22 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		// the menu option text is defined as constant String
 		menu.add("Import Data");
-		menu.add("Stats");
-		menu.add("Gigs By Year");
-		menu.add("Venue By Count");
-		menu.add(getResources().getString(R.string.prediction_Text));
+		menu.add(R.string.menu_stats);
+		menu.add(R.string.menu_dancer_counts);
+		menu.add(R.string.menu_gigs_by_year);
+		menu.add(R.string.menu_venue_by_performance);
+		menu.add(R.string.menu_venue_by_dance_piece);
+		menu.add(R.string.menu_prediction);
 		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);
 
 		return true;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","In on destroy...");
 	}
 
 	private void getDataAndShowIt(String dataToGet) {
@@ -584,7 +504,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				results.add("No Data Found!");
 			}
 		}
-		c.close();
+		if (c != null) {
+			c.close();
+		}
 	}
 
 	private void setDataSearch() {
@@ -598,7 +520,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		switch (buttonId) {
 			case R.id.radioDancer:
 				Log.i(TAG, "dancer");
-				listOfFieldsToGet = new ArrayList<String>(Arrays.asList(
+				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
 						DancerDao.LAST_NAME, DancerDao.FIRST_NAME,
 						DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
@@ -623,7 +545,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				orderByFields = "LastName,FirstName,PerfDate Desc";
 				break;
 			case R.id.radioVenue:
-				listOfFieldsToGet = new ArrayList<String>(
+				listOfFieldsToGet = new ArrayList<>(
 						Collections.singletonList(DancerDao.VENUE));
 				sqlSearchString = DancerData.getUpperSearch(DancerDao.VENUE)
 						+ " LIKE ?";
@@ -634,7 +556,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				break;
 
 			case R.id.radioPeople:
-				listOfFieldsToGet = new ArrayList<String>(Arrays.asList(
+				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
 						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
 				sqlSearchString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
@@ -676,9 +598,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	}
 
 	private void displayResultList() {
-		ListView listView = (ListView) findViewById(R.id.listViewDancer);
-		listView.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, results));
+		ListView listView = findViewById(R.id.listViewDancer);
+		listView.setAdapter(new ArrayAdapter<>(this,
+				R.layout.row_result_in_main_list,R.id.textViewMainListRow, results));
 		listView.setTextFilterEnabled(true);
 	}
 
@@ -691,19 +613,20 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			Intent intent = new Intent(this, DetailActivity.class);
 			startActivity(intent);
 		}
+		else{
+			String venueToGet=adapterView.getAdapter().getItem(position).toString();
+			String venueName=venueToGet.substring(venueToGet.indexOf(":")+1).trim();
+			dancerDao.getPerformanceForAVenue(venueName);
+		}
 	}
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		// TODO Auto-generated method stub
-		radioButton = (RadioButton) findViewById(checkedId);
+		radioButton = findViewById(checkedId);
 		Log.i(TAG, radioButton.getText().toString());
 	}
 
-	@Override
-	public void test() {
-
-	}
 	private class My extends TestConcrete{
 
 		@Override

@@ -6,8 +6,10 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 
 import com.ericbandiero.dancerdata.R;
-import com.ericbandiero.dancerdata.activities.HandleListClickForVenueCount;
+import com.ericbandiero.dancerdata.code.HandleClickForVenueOrDancerCount;
+import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
+import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
@@ -27,6 +29,7 @@ import dagger.Provides;
 public class AppModule {
 	private Context context;
 
+
 	public AppModule(Context context) {
 		this.context = context;
 	}
@@ -43,16 +46,23 @@ public class AppModule {
 	}
 
 	@Singleton @Provides
-	public HandleListClickForVenueCount provideHandleTestClick(){
-		return new HandleListClickForVenueCount();
+	public HandleClickForVenueOrDancerCount provideHandleTestClick(String v){
+		return new HandleClickForVenueOrDancerCount(v);
 	}
+/*
+
+	@Singleton @Provides @Named("dance")
+	public HandleClickForVenueOrDancerCount provideHandleClickDancer(){
+		return new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.DANCER_COUNT);
+	}
+*/
 
 	@Singleton @Provides
 	public StatData provideStatData(DancerDao dancerDao){
 		return new StatData(dancerDao);
 	}
 
-	@Provides @Named ("stats")
+	@Provides @Named (AppConstant.DAG_CONTROLLER_STATS)
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity(StatData statData){
 		return new ControlStatsActivityBuilder("Shooting History Stats",
 				"Data",
@@ -60,20 +70,36 @@ public class AppModule {
 				statData.runStats(),null);
 	}
 
-	@Provides @Named ("stats_venues")
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(StatData statData){
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM_SHOOTS)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(){
 		return new ControlStatsActivityBuilder("Venue Stats",
-				"Venues By Shoots",
+				"Venues By Performance Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueStats(), provideHandleTestClick() );
+				 provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
 	}
 
-	@Provides @Named ("stats_gigs_by_year")
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivityGigs(StatData statData){
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity2(){
+		return new ControlStatsActivityBuilder("Venue Stats",
+				"Venues By Dance Pieces Shot",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
+	}
+
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivityGigs(){
 		return new ControlStatsActivityBuilder("Gigs By Year",
 				"Gigs By Year",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runGigsByYear(), null);
+				 null);
+	}
+
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_DANCER_COUNT)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivityDancerCounts(){
+		return new ControlStatsActivityBuilder("Dancer Stats",
+				"Dancers by performance",
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				provideHandleTestClick(HandleClickForVenueOrDancerCount.DANCER_COUNT));
 	}
 
 	@Singleton @Provides
@@ -84,4 +110,22 @@ public class AppModule {
 				ContextCompat.getColor(context,R.color.LightGreen),
 				false);
 	}
+
+
+
+
+	@Singleton
+	@Provides
+	@Named (HandleAChildClick.GET_PERFORMANCE_FROM_CLICK)
+	public HandleAChildClick provideDaggerHandleClickVenues(){
+		return new HandleAChildClick(HandleAChildClick.GET_PERFORMANCE_FROM_CLICK);
+	}
+
+	@Singleton
+	@Provides
+	@Named (HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
+	public HandleAChildClick provideDaggerHandleClickPerformances(){
+		return new HandleAChildClick(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK);
+	}
+
 }
