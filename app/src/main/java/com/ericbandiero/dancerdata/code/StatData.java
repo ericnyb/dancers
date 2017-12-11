@@ -226,7 +226,4 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 		Collection<Integer> c = stringIntegerMap.values();
 		return (int) Collections.max(c);
 	}
-
-
-
 }
