@@ -54,41 +54,15 @@ public class StatData {
 		return dataHolderTwoFieldsList;
 	}
 
+	//TODO Refactor this
 	public List<DataHolderTwoFields> runVenueStats() {
 		dataHolderTwoFieldsList.clear();
 		getMostShotVenue(false);
 		return dataHolderTwoFieldsList;
 	}
 
-	public List<DataHolderTwoFields> runVenueMostPiecesStats() {
-		dataHolderTwoFieldsList.clear();
-		getMostPiecesShotAtVenue();
-		return dataHolderTwoFieldsList;
-	}
 
-	public List<DataHolderTwoFields> runDancersCountByWorks() {
-		dataHolderTwoFieldsList.clear();
-		getDancerByWorks();
-		return dataHolderTwoFieldsList;
-	}
 
-	public List<DataHolderTwoFields> runGigsByYear() {
-		dataHolderTwoFieldsList.clear();
-		getGigsByYear();
-		return dataHolderTwoFieldsList;
-	}
-
-	private void getGigsByYear() {
-		Cursor cursor = dancerDao.runRawQuery("Select "+ "strftime('%Y',"+DancerDao.PERF_DATE+") as year," +
-				"count(distinct "+DancerDao.PERF_CODE+")" +
-				" from info" +
-				" group by "+"strftime('%Y',"+DancerDao.PERF_DATE+")" +
-				" order by year desc");
-		while (cursor.moveToNext()){
-			dataHolderTwoFieldsList.add(new DataHolderTwoFields(cursor.getString(0),cursor.getString(1)));
-		}
-		cursor.close();
-	}
 
 	private void getDancerCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
@@ -197,46 +171,7 @@ public class StatData {
 //		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Venue most shot:",venueName.substring(0,(venueName.length()>maxLengthOfVenueName?maxLengthOfVenueName:venueName.length()))+":"+String.valueOf(cursor.getString(1))));
 	}
 
-private void getMostPiecesShotAtVenue(){
-	if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venues by dance pieces...");
-	int maxLengthOfVenueName=30;
-	String sql="Select "+DancerDao.VENUE+",count(distinct "+ DancerDao.DANCE_CODE+") as cnt from info group by "+DancerDao.VENUE +" order by cnt desc";
-	if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Sql:"+sql);
-	Cursor cursor = dancerDao.runRawQuery(sql);
 
-	while (cursor.moveToNext()){
-		String venueName=cursor.getString(0).trim();
-
-		DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(venueName.substring(0, (venueName.length() > maxLengthOfVenueName ? maxLengthOfVenueName : venueName.length()))+":",  String.valueOf(cursor.getString(1)));
-			dataHolderTwoFields.setId(venueName); //Want this for click event.
-			dataHolderTwoFieldsList.add(dataHolderTwoFields);
-		}
-	cursor.close();
-}
-
-	private void getDancerByWorks() {
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancers by dance pieces...");
-		int maxLengthOfFieldOne=30;
-		String sql="Select "+DancerDao.CODE+
-				","+
-				DancerDao.FIRST_NAME+
-				","+
-				DancerDao.LAST_NAME+
-				",count(distinct "+
-				DancerDao.DANCE_CODE+") as cnt" +
-				" from info group by 1,2,3,"
-				+DancerDao.CODE +" order by cnt desc";
-		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Sql:"+sql);
-		Cursor cursor = dancerDao.runRawQuery(sql);
-
-		while (cursor.moveToNext()){
-			String fieldOne=getSubStringForField(cursor.getString(2).trim()+","+cursor.getString(1).trim(),maxLengthOfFieldOne);
-			DataHolderTwoFields dataHolderTwoFields=new DataHolderTwoFields(fieldOne,cursor.getString(3).trim());
-			dataHolderTwoFields.setId(cursor.getString(0)); //Want this for click event.
-			dataHolderTwoFieldsList.add(dataHolderTwoFields);
-		}
-		cursor.close();
-	}
 public static String getSubStringForField(String stringToShorten,int maxLength){
 	int stringLength=stringToShorten.length();
 	return (stringToShorten.length()>maxLength)?stringToShorten.substring(0,maxLength):stringToShorten;
