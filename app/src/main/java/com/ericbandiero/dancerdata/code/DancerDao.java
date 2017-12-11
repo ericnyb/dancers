@@ -49,6 +49,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -137,6 +138,24 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 
 	@Inject
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
+
+	@Inject
+	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM_SHOOTS)
+	ControlStatsActivityBuilder controlStatsActivityBuilderVenueCounts;
+
+/*
+	This would be lazy injection - we would need to call get.
+	Since this isn't high cost we can build it right away.
+	@Inject
+	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
+	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderVenueDances;
+*/
+
+	@Inject
+	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
+	ControlStatsActivityBuilder controlStatsActivityBuilderVenueDances;
+
+
 
 	private Cursor cursorRxJava;
 
@@ -767,26 +786,11 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startActivityForMostPiecesShotAtVenue(contextParam, list);
+			startStatActivity(contextParam, list,controlStatsActivityBuilderVenueDances);
 		});
 	}
 
-		private void startActivityForMostPiecesShotAtVenue(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields) {
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
-			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Venue Stats",
-					"Venues By Dance Pieces Shots",
-					ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-					dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.VENUE_COUNT)));
-			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-			contextParam.startActivity(statIntent);
-			if (AppConstant.DEBUG)
-				Log.d(this.getClass().getSimpleName() + ">", "Most people danced at venue...");
-			disposable.dispose();
-		}
+
 
 
 	public void getGigsByYear(Context contextParam) {
@@ -847,27 +851,25 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startActivityMostShotVenue(contextParam, list);
+			startStatActivity(contextParam, list,controlStatsActivityBuilderVenueCounts);
 		});
 	}
 
-	private void startActivityMostShotVenue(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields) {
-		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-		Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
-		//These are for the activity
-		statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Venue Stats",
-				"Venues By Shoots",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.VENUE_COUNT)));
-		//Builder is injected
-		statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-		contextParam.startActivity(statIntent);
-		if (AppConstant.DEBUG)
-			Log.d(this.getClass().getSimpleName() + ">", "Venue by most performances shot...");
-		disposable.dispose();
-	}
 
+private void startStatActivity(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields,ControlStatsActivityBuilder controlStatsActivityBuilder){
+	//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+	Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
+	//These are for the activity
+	controlStatsActivityBuilder.setDataHolderTwoFieldsList(dataHolderTwoFields);
+	statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER,controlStatsActivityBuilder);
+	//Builder is injected
+	statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+	//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+	contextParam.startActivity(statIntent);
+	if (AppConstant.DEBUG)
+		Log.d(this.getClass().getSimpleName() + ">", "Venue by most performances shot...");
+	disposable.dispose();
 
+}
 	//getMostShotVenue(boolean rollUp)
 }

@@ -70,20 +70,20 @@ public class AppModule {
 				statData.runStats(),null);
 	}
 
-	@Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM)
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(StatData statData){
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM_SHOOTS)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(){
 		return new ControlStatsActivityBuilder("Venue Stats",
-				"Venues By Shoots",
+				"Venues By Performance Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueStats(), provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
+				 provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
 	}
 
-	@Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivity2(StatData statData){
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity2(){
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Dance Pieces Shots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueMostPiecesStats(), provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
+				provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
 	}
 
 	@Provides @Named (AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)

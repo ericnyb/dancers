@@ -36,12 +36,8 @@ import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
-import com.ericbandiero.dancerdata.code.HandleClickForVenueOrDancerCount;
-import com.ericbandiero.dancerdata.code.IProcessCursorAble;
-import com.ericbandiero.dancerdata.code.IProcessCursorToDataHolderList;
 import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
-import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
@@ -50,7 +46,6 @@ import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
-import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
@@ -65,7 +60,6 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.disposables.Disposable;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -130,7 +124,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
 
 	@Inject
-	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM)
+	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM_SHOOTS)
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderVenueCounts;
 
 	@Inject
