@@ -753,7 +753,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startStatActivity(context1, list,controlStatsActivityDancersByWorks);
+			startStatActivity(context1,disposable, list,controlStatsActivityDancersByWorks);
 		});
 	}
 
@@ -774,7 +774,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startStatActivity(contextParam, list,controlStatsActivityBuilderVenueDances);
+			startStatActivity(contextParam,disposable, list,controlStatsActivityBuilderVenueDances);
 		});
 	}
 
@@ -790,7 +790,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startStatActivity(contextParam, list,controlStatsActivityGigsByYear);
+			startStatActivity(contextParam, disposable,list,controlStatsActivityGigsByYear);
 		});
 	}
 
@@ -819,11 +819,11 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startStatActivity(contextParam, list,controlStatsActivityBuilderVenueCounts);
+			startStatActivity(contextParam, disposable,list,controlStatsActivityBuilderVenueCounts);
 		});
 	}
 
-	private void startStatActivity(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields,ControlStatsActivityBuilder controlStatsActivityBuilder){
+	private void startStatActivity(Context contextParam, Disposable disposable, List<DataHolderTwoFields> dataHolderTwoFields,ControlStatsActivityBuilder controlStatsActivityBuilder){
 	//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 	Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
 	//These are for the activity
