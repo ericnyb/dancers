@@ -70,36 +70,36 @@ public class AppModule {
 				statData.runStats(),null);
 	}
 
-	@Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM)
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(StatData statData){
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM_SHOOTS)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(){
 		return new ControlStatsActivityBuilder("Venue Stats",
-				"Venues By Shoots",
+				"Venues By Performance Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueStats(), provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
+				 provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
 	}
 
-	@Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivity2(StatData statData){
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivity2(){
 		return new ControlStatsActivityBuilder("Venue Stats",
-				"Venues By Dance Pieces Shots",
+				"Venues By Dance Pieces Shot",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runVenueMostPiecesStats(), provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
+				provideHandleTestClick(HandleClickForVenueOrDancerCount.VENUE_COUNT));
 	}
 
-	@Provides @Named (AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivityGigs(StatData statData){
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivityGigs(){
 		return new ControlStatsActivityBuilder("Gigs By Year",
 				"Gigs By Year",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runGigsByYear(), null);
+				 null);
 	}
 
-	@Provides @Named (AppConstant.DAG_CONTROLLER_DANCER_COUNT)
-	public ControlStatsActivityBuilder provideDaggerControlStatsActivityDancerCounts(StatData statData){
+	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_DANCER_COUNT)
+	public ControlStatsActivityBuilder provideDaggerControlStatsActivityDancerCounts(){
 		return new ControlStatsActivityBuilder("Dancer Stats",
 				"Dancers by performance",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runDancersCountByWorks(), provideHandleTestClick(HandleClickForVenueOrDancerCount.DANCER_COUNT));
+				provideHandleTestClick(HandleClickForVenueOrDancerCount.DANCER_COUNT));
 	}
 
 	@Singleton @Provides
