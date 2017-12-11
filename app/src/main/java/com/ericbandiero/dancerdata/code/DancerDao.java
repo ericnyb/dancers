@@ -117,6 +117,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 	private static final String WORKING_DATA_FOLDER = "/DancerData";
 	private static final String DANCER_DATA_INPUT_FILE = "/dancers.txt";
 	private static final long serialVersionUID = 8631832636106174063L;
+	public static final int INT_MAX_FIELD_LENGTH = 30;
 
 	private static List<Lib_ExpandableDataWithIds> listPerformances = new ArrayList<>();
 
@@ -737,7 +738,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 	}
 
 	public void runDancerCountsFromRxJava(Context context1) {
-		int maxLengthOfFieldOne = 30;
+		int maxLengthOfFieldOne = INT_MAX_FIELD_LENGTH;
 		disposable = getStringFromCursor(SQL_DANCERS_BY_DANCE_PIECES,new IProcessCursorToDataHolderList() {
 			@Override
 			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
@@ -753,12 +754,13 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startStatActivity(context1, list,controlStatsActivityDancersByWorks);
+			UtilsShared.startStatActivity(context1,list,controlStatsActivityDancersByWorks,controlStatsAdapterBuilder);
+			disposable.dispose();
 		});
 	}
 
 	public void getMostPiecesShotAtVenue(Context contextParam) {
-		int maxLengthOfVenueName = 30;
+		int maxLengthOfVenueName = INT_MAX_FIELD_LENGTH;
 		disposable=getStringFromCursor(SQL_VENUE_BY_MOST_DANCE_PIECES,new IProcessCursorToDataHolderList() {
 			@Override
 			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
@@ -774,7 +776,8 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startStatActivity(contextParam, list,controlStatsActivityBuilderVenueDances);
+			UtilsShared.startStatActivity(contextParam, list,controlStatsActivityBuilderVenueDances,controlStatsAdapterBuilder);
+			disposable.dispose();
 		});
 	}
 
@@ -790,12 +793,13 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startStatActivity(contextParam, list,controlStatsActivityGigsByYear);
+			UtilsShared.startStatActivity(contextParam, list,controlStatsActivityGigsByYear,controlStatsAdapterBuilder);
+			disposable.dispose();
 		});
 	}
 
 	public void getMostShotVenue(Context contextParam,boolean rollUp) {
-		final int maxLengthOfVenueName=rollUp?10:30;
+		final int maxLengthOfVenueName=rollUp?10: INT_MAX_FIELD_LENGTH;
 		disposable=getStringFromCursor(SQL_VENUE_BY_PERFORMANCE_SHOOTS,new IProcessCursorToDataHolderList() {
 			@Override
 			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
@@ -819,22 +823,8 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startStatActivity(contextParam, list,controlStatsActivityBuilderVenueCounts);
+			UtilsShared.startStatActivity(contextParam,list,controlStatsActivityBuilderVenueCounts,controlStatsAdapterBuilder);
+			disposable.dispose();
 		});
 	}
-
-	private void startStatActivity(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields,ControlStatsActivityBuilder controlStatsActivityBuilder){
-	//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-	Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
-	//These are for the activity
-	controlStatsActivityBuilder.setDataHolderTwoFieldsList(dataHolderTwoFields);
-	statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER,controlStatsActivityBuilder);
-	//Builder is injected
-	statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-	//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-	contextParam.startActivity(statIntent);
-	if (AppConstant.DEBUG)
-		Log.d(this.getClass().getSimpleName() + ">", "Venue by most performances shot...");
-	disposable.dispose();
-}
 }

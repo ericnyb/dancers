@@ -54,16 +54,6 @@ public class StatData {
 		return dataHolderTwoFieldsList;
 	}
 
-	//TODO Refactor this
-	public List<DataHolderTwoFields> runVenueStats() {
-		dataHolderTwoFieldsList.clear();
-		getMostShotVenue(false);
-		return dataHolderTwoFieldsList;
-	}
-
-
-
-
 	private void getDancerCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancer count"+cursor.getCount());
@@ -236,7 +226,4 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 		Collection<Integer> c = stringIntegerMap.values();
 		return (int) Collections.max(c);
 	}
-
-
-
 }
