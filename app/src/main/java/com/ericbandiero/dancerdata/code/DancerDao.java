@@ -155,11 +155,17 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
 	ControlStatsActivityBuilder controlStatsActivityBuilderVenueDances;
 
+	@Inject
+	@Named(AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
+	ControlStatsActivityBuilder controlStatsActivityGigsByYear;
 
+	@Inject
+	@Named(AppConstant.DAG_CONTROLLER_DANCER_COUNT)
+	ControlStatsActivityBuilder controlStatsActivityDancersByWorks;
 
 	private Cursor cursorRxJava;
 
-	Disposable disposable;
+	private Disposable disposable;
 
 	public DancerDao(Context context) {
 		//Setup
@@ -268,10 +274,9 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 
 	public Observable<List<DataHolderTwoFields>> getStringFromCursor(String sqlParam,IProcessCursorToDataHolderList processCursorToDataHolderList) {
 		checkDataIsOpen();
-		String sql = sqlParam;
 		return Observable.fromCallable(() -> {
 			System.out.println("Thread we are running on from getStringFromCursor:" + Thread.currentThread().getName());
-			return database.rawQuery(sql, null);
+			return database.rawQuery(sqlParam, null);
 		}).map(new Function<Cursor, List<DataHolderTwoFields>>() {
 
 			/**
@@ -748,25 +753,8 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startActivityForDancerCount(context1, list);
+			startStatActivity(context1, list,controlStatsActivityDancersByWorks);
 		});
-	}
-
-	private void startActivityForDancerCount(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields) {
-		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-		Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
-		//These are for the activity
-		statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Dancer Stats",
-				"Dancers by performance",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				dataHolderTwoFields, new HandleClickForVenueOrDancerCount(HandleClickForVenueOrDancerCount.DANCER_COUNT)));
-		//Builder is injected
-		statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-		contextParam.startActivity(statIntent);
-		if (AppConstant.DEBUG)
-			Log.d(this.getClass().getSimpleName() + ">", "Dancer by danced in work count...");
-		disposable.dispose();
 	}
 
 	public void getMostPiecesShotAtVenue(Context contextParam) {
@@ -790,9 +778,6 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 		});
 	}
 
-
-
-
 	public void getGigsByYear(Context contextParam) {
 		disposable=getStringFromCursor(SQL_GIGS_BY_YEAR,new IProcessCursorToDataHolderList() {
 			@Override
@@ -805,25 +790,8 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			startActivityGigsByYear(contextParam, list);
+			startStatActivity(contextParam, list,controlStatsActivityGigsByYear);
 		});
-	}
-
-	private void startActivityGigsByYear(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields) {
-		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-		Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
-		//These are for the activity
-		statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Gigs By Year",
-				"Gigs By Year",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				dataHolderTwoFields, null));
-		//Builder is injected
-		statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-		contextParam.startActivity(statIntent);
-		if (AppConstant.DEBUG)
-			Log.d(this.getClass().getSimpleName() + ">", "Most people danced at venue...");
-		disposable.dispose();
 	}
 
 	public void getMostShotVenue(Context contextParam,boolean rollUp) {
@@ -835,7 +803,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				System.out.println("Running on thread:" + Thread.currentThread().getName());
 				while (cursor.moveToNext()) {
 					if (rollUp){
-
+						if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Waiting to use this...");
 					}
 					else {
 						String venueName = cursor.getString(0).trim();
@@ -855,8 +823,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 		});
 	}
 
-
-private void startStatActivity(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields,ControlStatsActivityBuilder controlStatsActivityBuilder){
+	private void startStatActivity(Context contextParam, List<DataHolderTwoFields> dataHolderTwoFields,ControlStatsActivityBuilder controlStatsActivityBuilder){
 	//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 	Intent statIntent = new Intent(contextParam, Lib_StatsActivity.class);
 	//These are for the activity
@@ -869,7 +836,5 @@ private void startStatActivity(Context contextParam, List<DataHolderTwoFields> d
 	if (AppConstant.DEBUG)
 		Log.d(this.getClass().getSimpleName() + ">", "Venue by most performances shot...");
 	disposable.dispose();
-
 }
-	//getMostShotVenue(boolean rollUp)
 }
