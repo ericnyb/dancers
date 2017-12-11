@@ -28,7 +28,7 @@
     //Custom Menu items
     <string name="menu_prediction">Prediction</string>
     <string name="menu_venue_by_dance_piece">Venue By Dance Piece Count</string>
-    <string name="menu_venue_by_performance">Venue By Count</string>
+    <string name="menu_venue_by_performance">Venue By Performances</string>
     <string name="menu_gigs_by_year">Gigs By Year</string>
     <string name="menu_stats">Stats</string>
 

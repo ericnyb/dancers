@@ -124,22 +124,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
 
 	@Inject
-	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM_SHOOTS)
-	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderVenueCounts;
-
-	@Inject
-	@Named(AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
-	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilderVenueDances;
-
-	@Inject
-	@Named(AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
-	Provider <ControlStatsActivityBuilder> controlStatsActivityGigsByYear;
-
-	@Inject
-	@Named(AppConstant.DAG_CONTROLLER_DANCER_COUNT)
-	Provider <ControlStatsActivityBuilder> controlStatsActivityDancersByWorks;
-
-	@Inject
 	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
 	HandleAChildClick handleAChildClickPerformance;
 
