@@ -100,13 +100,13 @@ public class DancerDao implements Serializable {
 			DancerDao.DANCE_CODE+") as cnt from info group by "+
 			DancerDao.VENUE +" order by cnt desc";
 
-public static final String SQL_GIGS_BY_YEAR="Select "+ "strftime('%Y',"+DancerDao.PERF_DATE+") as year,"+
+	public static final String SQL_GIGS_BY_YEAR="Select "+ "strftime('%Y',"+DancerDao.PERF_DATE+") as year,"+
 		"count(distinct "+DancerDao.PERF_CODE+")" +
 		" from info" +
 		" group by "+"strftime('%Y',"+DancerDao.PERF_DATE+")" +
 		" order by year desc";
 
-public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
+	public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 		DancerDao.VENUE+
 		",count(distinct "+
 		DancerDao.PERF_DATE+") as cnt from info group by "+
@@ -403,8 +403,7 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 					br.close();
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());;
 			}
 		}
 		db.setTransactionSuccessful();
@@ -754,7 +753,8 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			UtilsShared.startStatActivity(context1,list,controlStatsActivityDancersByWorks,controlStatsAdapterBuilder);
+			controlStatsActivityDancersByWorks.setDataHolderTwoFieldsList(list);
+			UtilsShared.startStatActivity(context1,controlStatsActivityDancersByWorks,controlStatsAdapterBuilder);
 			disposable.dispose();
 		});
 	}
@@ -776,7 +776,8 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			UtilsShared.startStatActivity(contextParam, list,controlStatsActivityBuilderVenueDances,controlStatsAdapterBuilder);
+			controlStatsActivityBuilderVenueDances.setDataHolderTwoFieldsList(list);
+			UtilsShared.startStatActivity(contextParam,controlStatsActivityBuilderVenueDances,controlStatsAdapterBuilder);
 			disposable.dispose();
 		});
 	}
@@ -793,7 +794,8 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			UtilsShared.startStatActivity(contextParam, list,controlStatsActivityGigsByYear,controlStatsAdapterBuilder);
+			controlStatsActivityGigsByYear.setDataHolderTwoFieldsList(list);
+			UtilsShared.startStatActivity(contextParam,controlStatsActivityGigsByYear,controlStatsAdapterBuilder);
 			disposable.dispose();
 		});
 	}
@@ -823,7 +825,8 @@ public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 				return list;
 			}
 		}).subscribe(list -> {
-			UtilsShared.startStatActivity(contextParam,list,controlStatsActivityBuilderVenueCounts,controlStatsAdapterBuilder);
+			controlStatsActivityBuilderVenueCounts.setDataHolderTwoFieldsList(list);
+			UtilsShared.startStatActivity(contextParam,controlStatsActivityBuilderVenueCounts,controlStatsAdapterBuilder);
 			disposable.dispose();
 		});
 	}
