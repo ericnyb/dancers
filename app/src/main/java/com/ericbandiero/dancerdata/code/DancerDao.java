@@ -389,8 +389,7 @@ public class DancerDao implements Serializable {
 				try {
 					stmt.execute();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());
 				}
 			}
 
@@ -403,7 +402,7 @@ public class DancerDao implements Serializable {
 					br.close();
 				}
 			} catch (IOException e) {
-				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());;
+				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());
 			}
 		}
 		db.setTransactionSuccessful();
