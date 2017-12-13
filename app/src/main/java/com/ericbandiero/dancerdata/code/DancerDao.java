@@ -250,6 +250,7 @@ public class DancerDao implements Serializable {
 		}
 	}
 
+	@Deprecated
 	public void runRawQueryWithRxJava(String sql, IProcessCursorAble iProcessCursorAble) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Sql passed in:" + sql);
 		checkDataIsOpen();

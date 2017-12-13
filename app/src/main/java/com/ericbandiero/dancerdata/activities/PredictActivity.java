@@ -88,12 +88,6 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 				textViewChild.setVisibility(View.VISIBLE);
 			}
 		});
-			showData();
-	}
-
-	private void showData() {
-		dancerDao.runRawQueryWithRxJava("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from " + SqlHelper.MAIN_TABLE_NAME +
-				" where strftime('%Y',Perfdate)<>'" + currentYear + "' order by strftime('%W',Perfdate)", this);
 	}
 
 	@SuppressLint("DefaultLocale")
