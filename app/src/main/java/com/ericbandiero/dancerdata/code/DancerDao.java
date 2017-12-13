@@ -17,11 +17,9 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
-import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
@@ -45,11 +43,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -123,10 +119,10 @@ public class DancerDao implements Serializable {
 
 	// Database fields
 	private SQLiteDatabase database;
-	private SqlHelper dbHelper;
+	private final SqlHelper dbHelper;
 
 	//New comment 3
-	private Context context;
+	private final Context context;
 
 	private Context activityContext;
 
@@ -237,12 +233,9 @@ public class DancerDao implements Serializable {
 		Cursor cursor = null;
 		checkDataIsOpen();
 		try {
-			Single<Cursor> ob = Single.fromCallable(new Callable<Cursor>() {
-				@Override
-				public Cursor call() throws Exception {
-					System.out.println("Thread we are running on using blocking:" + Thread.currentThread().getName());
-					return database.rawQuery(sql, null);
-				}
+			Single<Cursor> ob = Single.fromCallable(() -> {
+				System.out.println("Thread we are running on using blocking:" + Thread.currentThread().getName());
+				return database.rawQuery(sql, null);
 			}).subscribeOn(Schedulers.io());
 
 			cursorRxJava = ob.blockingGet();
@@ -273,10 +266,10 @@ public class DancerDao implements Serializable {
 		cursorObservable.unsubscribeOn(Schedulers.io());
 	}
 
-	public Observable<List<DataHolderTwoFields>> getStringFromCursor(String sqlParam,IProcessCursorToDataHolderList processCursorToDataHolderList) {
+	public Observable<List<DataHolderTwoFields>> getListDataHolderTwoFieldsFromCursorWithRxJava(String sqlParam, IProcessCursorToDataHolderList processCursorToDataHolderList) {
 		checkDataIsOpen();
 		return Observable.fromCallable(() -> {
-			System.out.println("Thread we are running on from getStringFromCursor:" + Thread.currentThread().getName());
+			System.out.println("Thread we are running on from getListDataHolderTwoFieldsFromCursorWithRxJava:" + Thread.currentThread().getName());
 			return database.rawQuery(sqlParam, null);
 		}).map(new Function<Cursor, List<DataHolderTwoFields>>() {
 
@@ -736,21 +729,17 @@ public class DancerDao implements Serializable {
 	}
 
 	public void runDancerCountsFromRxJava(Context context1) {
-		int maxLengthOfFieldOne = INT_MAX_FIELD_LENGTH;
-		disposable = getStringFromCursor(SQL_DANCERS_BY_DANCE_PIECES,new IProcessCursorToDataHolderList() {
-			@Override
-			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
-				List<DataHolderTwoFields> list = new ArrayList<>();
-				System.out.println("Running on thread:" + Thread.currentThread().getName());
-				while (cursor.moveToNext()) {
-					//System.out.println("Cursor field 1"+cursor.getString(1));
-					String fieldOne = StatData.getSubStringForField(cursor.getString(2).trim() + "," + cursor.getString(1).trim(), maxLengthOfFieldOne);
-					DataHolderTwoFields dataHolderTwoFields = new DataHolderTwoFields(fieldOne, cursor.getString(3).trim());
-					dataHolderTwoFields.setId(cursor.getString(0)); //Want this for click event.
-					list.add(dataHolderTwoFields);
-				}
-				return list;
+		disposable = getListDataHolderTwoFieldsFromCursorWithRxJava(SQL_DANCERS_BY_DANCE_PIECES, cursor -> {
+			List<DataHolderTwoFields> list = new ArrayList<>();
+			System.out.println("Running on thread:" + Thread.currentThread().getName());
+			while (cursor.moveToNext()) {
+				//System.out.println("Cursor field 1"+cursor.getString(1));
+				String fieldOne = StatData.getSubStringForField(cursor.getString(2).trim() + "," + cursor.getString(1).trim(), INT_MAX_FIELD_LENGTH);
+				DataHolderTwoFields dataHolderTwoFields = new DataHolderTwoFields(fieldOne, cursor.getString(3).trim());
+				dataHolderTwoFields.setId(cursor.getString(0)); //Want this for click event.
+				list.add(dataHolderTwoFields);
 			}
+			return list;
 		}).subscribe(list -> {
 			controlStatsActivityDancersByWorks.setDataHolderTwoFieldsList(list);
 			UtilsShared.startStatActivity(context1,controlStatsActivityDancersByWorks,controlStatsAdapterBuilder);
@@ -760,20 +749,17 @@ public class DancerDao implements Serializable {
 
 	public void getMostPiecesShotAtVenue(Context contextParam) {
 		int maxLengthOfVenueName = INT_MAX_FIELD_LENGTH;
-		disposable=getStringFromCursor(SQL_VENUE_BY_MOST_DANCE_PIECES,new IProcessCursorToDataHolderList() {
-			@Override
-			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
-				List<DataHolderTwoFields> list = new ArrayList<>();
-				System.out.println("Running on thread:" + Thread.currentThread().getName());
-				while (cursor.moveToNext()) {
-					String venueName = cursor.getString(0).trim();
+		disposable= getListDataHolderTwoFieldsFromCursorWithRxJava(SQL_VENUE_BY_MOST_DANCE_PIECES, cursor -> {
+			List<DataHolderTwoFields> list = new ArrayList<>();
+			System.out.println("Running on thread:" + Thread.currentThread().getName());
+			while (cursor.moveToNext()) {
+				String venueName = cursor.getString(0).trim();
 
-					DataHolderTwoFields dataHolderTwoFields = new DataHolderTwoFields(venueName.substring(0, (venueName.length() > maxLengthOfVenueName ? maxLengthOfVenueName : venueName.length())) + ":", String.valueOf(cursor.getString(1)));
-					dataHolderTwoFields.setId(venueName); //Want this for click event.
-					list.add(dataHolderTwoFields);
-				}
-				return list;
+				DataHolderTwoFields dataHolderTwoFields = new DataHolderTwoFields(venueName.substring(0, (venueName.length() > maxLengthOfVenueName ? maxLengthOfVenueName : venueName.length())) + ":", String.valueOf(cursor.getString(1)));
+				dataHolderTwoFields.setId(venueName); //Want this for click event.
+				list.add(dataHolderTwoFields);
 			}
+			return list;
 		}).subscribe(list -> {
 			controlStatsActivityBuilderVenueDances.setDataHolderTwoFieldsList(list);
 			UtilsShared.startStatActivity(contextParam,controlStatsActivityBuilderVenueDances,controlStatsAdapterBuilder);
@@ -782,16 +768,13 @@ public class DancerDao implements Serializable {
 	}
 
 	public void getGigsByYear(Context contextParam) {
-		disposable=getStringFromCursor(SQL_GIGS_BY_YEAR,new IProcessCursorToDataHolderList() {
-			@Override
-			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
-				List<DataHolderTwoFields> list = new ArrayList<>();
-				System.out.println("Running on thread:" + Thread.currentThread().getName());
-				while (cursor.moveToNext()) {
-					list.add(new DataHolderTwoFields(cursor.getString(0),cursor.getString(1)));
-				}
-				return list;
+		disposable= getListDataHolderTwoFieldsFromCursorWithRxJava(SQL_GIGS_BY_YEAR, cursor -> {
+			List<DataHolderTwoFields> list = new ArrayList<>();
+			System.out.println("Running on thread:" + Thread.currentThread().getName());
+			while (cursor.moveToNext()) {
+				list.add(new DataHolderTwoFields(cursor.getString(0),cursor.getString(1)));
 			}
+			return list;
 		}).subscribe(list -> {
 			controlStatsActivityGigsByYear.setDataHolderTwoFieldsList(list);
 			UtilsShared.startStatActivity(contextParam,controlStatsActivityGigsByYear,controlStatsAdapterBuilder);
@@ -801,7 +784,7 @@ public class DancerDao implements Serializable {
 
 	public void getMostShotVenue(Context contextParam,boolean rollUp) {
 		final int maxLengthOfVenueName=rollUp?10: INT_MAX_FIELD_LENGTH;
-		disposable=getStringFromCursor(SQL_VENUE_BY_PERFORMANCE_SHOOTS,new IProcessCursorToDataHolderList() {
+		disposable= getListDataHolderTwoFieldsFromCursorWithRxJava(SQL_VENUE_BY_PERFORMANCE_SHOOTS,new IProcessCursorToDataHolderList() {
 			@Override
 			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
 				List<DataHolderTwoFields> list = new ArrayList<>();
