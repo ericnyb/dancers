@@ -42,8 +42,9 @@ import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.Lib_Expandable_Activity;
-import com.ericbandiero.librarymain.Lib_StatsActivity;
+
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.activities.Lib_Stat_RecycleActivity;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
@@ -61,7 +62,7 @@ import javax.inject.Provider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-//TODO Refactor code to remove lib_stat_activity so we can remove from base.
+
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		OnItemClickListener, OnCheckedChangeListener {
 
@@ -336,13 +337,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+			Intent statIntent=new Intent(this,Lib_Stat_RecycleActivity.class);
 
 			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
+			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
 
 			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
 
 			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
 
