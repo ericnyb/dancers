@@ -62,7 +62,7 @@ import javax.inject.Provider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-//TODO Refactor code to remove lib_stat_activity so we can remove from base.
+
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		OnItemClickListener, OnCheckedChangeListener {
 
