@@ -7,7 +7,6 @@ import android.support.v4.content.ContextCompat;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.HandleClickForRecyclerVenueOrDancer;
-import com.ericbandiero.dancerdata.code.HandleClickForVenueOrDancerCount;
 import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
@@ -47,11 +46,6 @@ public class AppModule {
 	}
 
 	@Singleton @Provides
-	public HandleClickForVenueOrDancerCount provideHandleTestClick(String v){
-		return new HandleClickForVenueOrDancerCount(v);
-	}
-
-	@Singleton @Provides
 	public HandleClickForRecyclerVenueOrDancer provideHandleClickForRecyclerVenueOrDancer(String v){
 		return new HandleClickForRecyclerVenueOrDancer(v);
 	}
@@ -81,7 +75,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Performance Shoots",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				provideHandleClickForRecyclerVenueOrDancer(HandleClickForVenueOrDancerCount.VENUE_COUNT));
+				provideHandleClickForRecyclerVenueOrDancer(HandleClickForRecyclerVenueOrDancer.VENUE_COUNT));
 	}
 
 	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_DANCE)
@@ -89,7 +83,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Dance Pieces Shot",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				provideHandleClickForRecyclerVenueOrDancer(HandleClickForVenueOrDancerCount.VENUE_COUNT));
+				provideHandleClickForRecyclerVenueOrDancer(HandleClickForRecyclerVenueOrDancer.VENUE_COUNT));
 	}
 
 	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_GIGS_PER_YEAR)
@@ -105,7 +99,7 @@ public class AppModule {
 		return new ControlStatsActivityBuilder("Dancer Stats",
 				"Dancers by performance",
 				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				provideHandleClickForRecyclerVenueOrDancer(HandleClickForVenueOrDancerCount.DANCER_COUNT));
+				provideHandleClickForRecyclerVenueOrDancer(HandleClickForRecyclerVenueOrDancer.DANCER_COUNT));
 	}
 
 	@Singleton @Provides
