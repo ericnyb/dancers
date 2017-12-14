@@ -372,6 +372,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		//Predictions
 		if (item.getTitle().equals(getString(R.string.menu_prediction))) {
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","In prediction...");
 			Intent intent = new Intent(this, PredictActivity.class);
 			startActivity(intent);
 		}
