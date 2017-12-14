@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AndroidUtility;
+import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.IProcessCursorAble;
 import com.ericbandiero.dancerdata.code.SqlHelper;
@@ -88,6 +89,12 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 				textViewChild.setVisibility(View.VISIBLE);
 			}
 		});
+			showData();
+	}
+
+	private void showData() {
+		dancerDao.runRawQueryWithRxJava("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from " + SqlHelper.MAIN_TABLE_NAME +
+				" where strftime('%Y',Perfdate)<>'" + currentYear + "' order by strftime('%W',Perfdate)", this);
 	}
 
 	@SuppressLint("DefaultLocale")
@@ -95,6 +102,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 			/*
 		  Key=Week number of year. Values holds list of previous performances during that week number.
 		 */
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Setting up prediction data..");
 		//List of maps - each will hold date for header and child row
 		List<HashMap<String, String>> fillMaps = new ArrayList<>();
 		Map<String, List<String>> mapData2 = new TreeMap<>();

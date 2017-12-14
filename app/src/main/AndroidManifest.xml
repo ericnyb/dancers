@@ -68,6 +68,16 @@
                 android:value="com.ericbandiero.dancerdata.activities.AndroidDataActivity"/>
         </activity>
 
+        <activity
+            android:name="com.ericbandiero.librarymain.activities.Lib_Stat_RecycleActivity"
+            android:label="@string/stats_activity_label"
+            android:parentActivityName=".activities.AndroidDataActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ericbandiero.dancerdata.activities.AndroidDataActivity"/>
+        </activity>
+
+
     </application>
 
 </manifest>

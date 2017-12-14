@@ -786,6 +786,8 @@ public class DancerDao implements Serializable {
 
 	public void getMostShotVenue(Context contextParam,boolean rollUp) {
 		final int maxLengthOfVenueName=rollUp?10: INT_MAX_FIELD_LENGTH;
+		//final HandleClickForRecyclerVenueOrDancer handleClickForRecyclerVenueOrDancer=new HandleClickForRecyclerVenueOrDancer(HandleClickForRecyclerVenueOrDancer.VENUE_COUNT);
+
 		disposable= getListDataHolderTwoFieldsFromCursorWithRxJava(SQL_VENUE_BY_PERFORMANCE_SHOOTS,new IProcessCursorToDataHolderList() {
 			@Override
 			public List<DataHolderTwoFields> createListFromCursor(Cursor cursor) {
@@ -810,6 +812,7 @@ public class DancerDao implements Serializable {
 			}
 		}).subscribe(list -> {
 			controlStatsActivityBuilderVenueCounts.setDataHolderTwoFieldsList(list);
+			//controlStatsActivityBuilderVenueCounts.setHandleRecyclerViewClicks(handleClickForRecyclerVenueOrDancer);
 			UtilsShared.startStatActivity(contextParam,controlStatsActivityBuilderVenueCounts,controlStatsAdapterBuilder);
 			disposable.dispose();
 		});
