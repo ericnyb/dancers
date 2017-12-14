@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -47,7 +46,6 @@ import com.ericbandiero.librarymain.Lib_StatsActivity;
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
-import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
@@ -63,7 +61,7 @@ import javax.inject.Provider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
+//TODO Refactor code to remove lib_stat_activity so we can remove from base.
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		OnItemClickListener, OnCheckedChangeListener {
 
