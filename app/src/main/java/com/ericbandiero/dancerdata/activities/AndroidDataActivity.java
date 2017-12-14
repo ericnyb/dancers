@@ -357,8 +357,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			dancerDao.runDancerCountsFromRxJava(this);
 		}
 
-
-
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
 			dancerDao.getMostShotVenue(this,false);
 		}

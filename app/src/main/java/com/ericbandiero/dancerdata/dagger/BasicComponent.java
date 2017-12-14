@@ -1,7 +1,6 @@
 package com.ericbandiero.dancerdata.dagger;
 
 import com.ericbandiero.dancerdata.activities.AndroidDataActivity;
-import com.ericbandiero.dancerdata.activities.DancedAtVenue;
 import com.ericbandiero.dancerdata.activities.DetailActivity;
 import com.ericbandiero.dancerdata.code.HandleClickForVenueOrDancerCount;
 import com.ericbandiero.dancerdata.activities.PerfActivity;
@@ -25,7 +24,6 @@ public interface BasicComponent {
 	void inject(PredictActivity activity);
 	void inject(DetailActivity activity);
 	void inject(PerfActivity activity);
-	void inject(DancedAtVenue activity);
 	void inject(TestDaggerObject td);
 	void inject(HandleAChildClick ck);
 	void inject (HandleClickForVenueOrDancerCount venueClick);
