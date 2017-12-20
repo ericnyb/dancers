@@ -77,9 +77,6 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		//We use Thursday
 		calendar.setMinimalDaysInFirstWeek(4);
 			showData();
-			//Comment 1
-		//Comment 2
-		//comment 3
 	}
 
 	private void showData() {
