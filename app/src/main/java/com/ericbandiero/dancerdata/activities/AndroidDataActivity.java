@@ -40,8 +40,9 @@ import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
-import com.ericbandiero.librarymain.Lib_Expandable_Activity;
+import com.ericbandiero.librarymain.activities.Lib_Base_ActionBarActivity;
+import com.ericbandiero.librarymain.activities.*;
+import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
 
 import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.activities.Lib_Stat_RecycleActivity;

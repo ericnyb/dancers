@@ -6,11 +6,10 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.ericbandiero.librarymain.Lib_Expandable_Activity;
+import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
 
 public class ExpandListSubclass extends Lib_Expandable_Activity {
 

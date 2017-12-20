@@ -12,7 +12,10 @@
 
     <include
         android:id="@+id/RecordCount"
-        layout="@layout/textbaserecordcount" />
+        layout="@layout/textbaserecordcount"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+       />
 
     <ListView
         android:id="@+id/listViewPredict"
