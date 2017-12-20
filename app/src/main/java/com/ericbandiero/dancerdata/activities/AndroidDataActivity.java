@@ -40,10 +40,12 @@ import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.librarymain.Lib_Base_ActionBarActivity;
-import com.ericbandiero.librarymain.Lib_Expandable_Activity;
-import com.ericbandiero.librarymain.Lib_StatsActivity;
+import com.ericbandiero.librarymain.activities.Lib_Base_ActionBarActivity;
+import com.ericbandiero.librarymain.activities.*;
+import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
+
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.activities.Lib_Stat_RecycleActivity;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
@@ -192,6 +194,11 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				return false;
 			}
 		});
+		/*
+		List<DataHolderTwoFields> dataHolderTwoFields2=new ArrayList<>();
+		dataHolderTwoFields2.add(new DataHolderTwoFields("1","2"));
+		UtilsShared.startStatActivity(this,new ControlStatsActivityBuilder("Test","Header", 12000,dataHolderTwoFields2, null),controlStatsAdapterBuilder);
+		*/
 	}
 
 	// /End of main
@@ -331,13 +338,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 
 			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_StatsActivity.class);
+			Intent statIntent=new Intent(this,Lib_Stat_RecycleActivity.class);
 
 			//These are for the activity
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
+			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
 
 			//Builder is injected
-			statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
 
 			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
 
@@ -349,8 +356,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_dancer_counts))) {
 			dancerDao.runDancerCountsFromRxJava(this);
 		}
-
-
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
 			dancerDao.getMostShotVenue(this,false);
@@ -367,6 +372,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		//Predictions
 		if (item.getTitle().equals(getString(R.string.menu_prediction))) {
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","In prediction...");
 			Intent intent = new Intent(this, PredictActivity.class);
 			startActivity(intent);
 		}

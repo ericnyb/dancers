@@ -9,12 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AndroidUtility;
+import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.IProcessCursorAble;
 import com.ericbandiero.dancerdata.code.SqlHelper;
@@ -75,19 +77,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		//We use Thursday
 		calendar.setMinimalDaysInFirstWeek(4);
 		//dancerDao=new DancerDao(this);
-		listPredict.setOnItemClickListener((parent, view, position, id) -> {
 
-			// View parentView = (View) view.getParent();
-			textViewChild = view.findViewById(R.id.textViewChild);
-
-			//    String item = ((TextView) view).getText().toString();
-
-			if (textViewChild.getVisibility() == View.VISIBLE) {
-				textViewChild.setVisibility(View.GONE);
-			} else {
-				textViewChild.setVisibility(View.VISIBLE);
-			}
-		});
 			showData();
 	}
 
@@ -101,6 +91,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 			/*
 		  Key=Week number of year. Values holds list of previous performances during that week number.
 		 */
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Setting up prediction data..");
 		//List of maps - each will hold date for header and child row
 		List<HashMap<String, String>> fillMaps = new ArrayList<>();
 		Map<String, List<String>> mapData2 = new TreeMap<>();
@@ -179,11 +170,29 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		adapter = new SimpleAdapter(activityContext, fillMaps, R.layout.expandertexts, from, to);
 		listPredict.setAdapter(adapter);
 		listPredict.setVisibility(View.VISIBLE);
+
+		//listPredict.setOnItemClickListener(this);
+
+		listPredict.setOnItemClickListener((parent, view, position, id) -> {
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Clicked parent...");
+			// View parentView = (View) view.getParent();
+			textViewChild = view.findViewById(R.id.textViewChild);
+
+			//    String item = ((TextView) view).getText().toString();
+
+			if (textViewChild.getVisibility() == View.VISIBLE) {
+				textViewChild.setVisibility(View.GONE);
+			} else {
+				textViewChild.setVisibility(View.VISIBLE);
+			}
+		});
+
 	}
 
 
 	public void onClickHeader(View v) {
-		Log.d(TAG, "Text clicked");
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Header text clicked"+v.getClass().getName());
+
 	}
 
 	@Override
@@ -204,4 +213,21 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 	public void processCursor(Cursor cursor) {
 		setUpDataFromCursor(cursor);
 	}
+/*
+	@Override
+	public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+		System.out.println("Clicked on an item...");
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Clicked parent...");
+		// View parentView = (View) view.getParent();
+		textViewChild = view.findViewById(R.id.textViewChild);
+
+		//    String item = ((TextView) view).getText().toString();
+
+		if (textViewChild.getVisibility() == View.VISIBLE) {
+			textViewChild.setVisibility(View.GONE);
+		} else {
+			textViewChild.setVisibility(View.VISIBLE);
+		}
+	}
+	*/
 }

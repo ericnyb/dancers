@@ -104,11 +104,8 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 		String sqlString="select * from Info where "+ DancerDao.DANCE_CODE+"="+dance_id+
 				 " order by "+ DancerDao.LAST_NAME+", "+ DancerDao.FIRST_NAME+", "+
 				 DancerDao.CLAST_NAME+", "+ DancerDao.CFIRST_NAME;
-		 
 		//Cursor c=sql_database.rawQuery("select * from Info where "+DancerData.DANCE_CODE+"="+dance_id,null);
 		dancerDao.runRawQueryWithRxJava(sqlString,this);
-
-
 	}
 
 	/**
