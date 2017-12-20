@@ -79,6 +79,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		//dancerDao=new DancerDao(this);
 
 		//Comment one
+		//Comment two
 			showData();
 	}
 
