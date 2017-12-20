@@ -13,6 +13,7 @@
      android:onClick="onClickHeader"
      android:textSize="21sp"
      android:text="@string/textheader"
+     android:textColor="@color/Black"
      android:focusable="true"/>
 
     <TextView
