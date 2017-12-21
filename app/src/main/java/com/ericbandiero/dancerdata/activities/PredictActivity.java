@@ -9,8 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -57,6 +57,9 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 
 	private Context activityContext;
 
+	private ProgressBar progressBar;
+	private TextView textViewProgress;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -74,12 +77,34 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		//We use Monday as first day of week...want weekend to fall in same week.
 		calendar.setFirstDayOfWeek(Calendar.MONDAY);
 
+		textViewProgress = (TextView) findViewById(R.id.tv);
+		progressBar = (ProgressBar) findViewById(R.id.indeterminateBar);
+
 		//We use Thursday
 		calendar.setMinimalDaysInFirstWeek(4);
 			showData();
+
+		listPredict.setOnItemClickListener((parent, view, position, id) -> {
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Clicked parent...");
+			// View parentView = (View) view.getParent();
+			textViewChild = view.findViewById(R.id.textViewChild);
+
+			//    String item = ((TextView) view).getText().toString();
+
+			if (textViewChild.getVisibility() == View.VISIBLE) {
+				textViewChild.setVisibility(View.GONE);
+			} else {
+				textViewChild.setVisibility(View.VISIBLE);
+			}
+		});
+
 	}
 
 	private void showData() {
+
+		progressBar.setVisibility(View.VISIBLE);
+		textViewProgress.setText("Getting data...");
+		textViewProgress.setVisibility(View.VISIBLE);
 		dancerDao.runRawQueryWithRxJava("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from " + SqlHelper.MAIN_TABLE_NAME +
 				" where strftime('%Y',Perfdate)<>'" + currentYear + "' order by strftime('%W',Perfdate)", this);
 	}
@@ -168,23 +193,8 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		adapter = new SimpleAdapter(activityContext, fillMaps, R.layout.expandertexts, from, to);
 		listPredict.setAdapter(adapter);
 		listPredict.setVisibility(View.VISIBLE);
-
-		//listPredict.setOnItemClickListener(this);
-
-		listPredict.setOnItemClickListener((parent, view, position, id) -> {
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Clicked parent...");
-			// View parentView = (View) view.getParent();
-			textViewChild = view.findViewById(R.id.textViewChild);
-
-			//    String item = ((TextView) view).getText().toString();
-
-			if (textViewChild.getVisibility() == View.VISIBLE) {
-				textViewChild.setVisibility(View.GONE);
-			} else {
-				textViewChild.setVisibility(View.VISIBLE);
-			}
-		});
-
+		progressBar.setVisibility(View.GONE);
+		textViewProgress.setVisibility(View.GONE);
 	}
 
 
