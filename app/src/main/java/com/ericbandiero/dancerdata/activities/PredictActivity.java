@@ -77,8 +77,8 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		//We use Monday as first day of week...want weekend to fall in same week.
 		calendar.setFirstDayOfWeek(Calendar.MONDAY);
 
-		textViewProgress = (TextView) findViewById(R.id.tv);
-		progressBar = (ProgressBar) findViewById(R.id.indeterminateBar);
+		textViewProgress = (TextView) findViewById(R.id.lib_base_txt_progressBar);
+		progressBar = (ProgressBar) findViewById(R.id.lib_base_indeterminateBar);
 
 		//We use Thursday
 		calendar.setMinimalDaysInFirstWeek(4);

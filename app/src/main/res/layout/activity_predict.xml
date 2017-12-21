@@ -11,31 +11,10 @@
               tools:context=".activities.PredictActivity">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <ProgressBar
-            android:id="@+id/indeterminateBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:textAppearance="@android:style/TextAppearance.Small"
-            android:textColor="@color/ForestGreen"
-            android:visibility="gone"
-            />
-
-    </LinearLayout>
+    <include
+        android:id="@+id/progressbar"
+        layout="@layout/lib_progress"
+        />
 
     <include
         android:id="@+id/RecordCount"
