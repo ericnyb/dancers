@@ -19,7 +19,6 @@ public class ExpandListSubclass extends Lib_Expandable_Activity {
 		//setContentView(R.layout.activity_venue);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Intent passed in:"+getIntent().getPackage().toString());
-
 	}
 	/**
 	 * Set up the {@link android.app.ActionBar}, if the API is available.
