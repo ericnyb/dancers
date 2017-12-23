@@ -42,7 +42,7 @@ import butterknife.OnClick;
 public class PerformanceActivity extends Lib_Base_ActionBarActivity implements AdapterView.OnItemClickListener {
 	//static SQLiteDatabase db;
 	public static Bus bus;
-	//TODO Not used except in test - refactor expand to use progross. Need to change in base to extend base.
+	//TODO Not used except in test - refactor expand to use progress. Need to change in base to extend base.
 	final static String TAG="Perf";
 	SimpleCursorAdapter mAdapter; 	
 	Cursor cursor;
