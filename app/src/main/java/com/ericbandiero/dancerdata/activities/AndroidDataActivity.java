@@ -312,7 +312,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				intent = new Intent(this, ExpandListSubclass.class);
 
 				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venue list");
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venues");
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
 

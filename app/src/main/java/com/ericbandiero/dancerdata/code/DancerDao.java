@@ -585,15 +585,6 @@ public class DancerDao implements Serializable {
 
 		List<Lib_ExpandableDataWithIds> listData = prepDataPerformance(performanceCode);
 
-		int size = 0;
-
-		for (Lib_ExpandableDataWithIds lib_expandableDataWithIds : listData) {
-			if (lib_expandableDataWithIds.getTextStringChild() == null) {
-				size++;
-			}
-		}
-
-
 		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
 
 		//HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
@@ -609,7 +600,7 @@ public class DancerDao implements Serializable {
 		Intent i = new Intent(context, ExpandListSubclass.class);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
-		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:" + size);
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
 
 		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 
@@ -663,19 +654,6 @@ public class DancerDao implements Serializable {
 			listData.add(new Lib_ExpandableDataWithIds(performance));
 		}
 
-
-		//==================
-		//List<Lib_ExpandableDataWithIds> listData=prepDataPerformance(performanceCode);
-
-		int size = 0;
-
-		for (Lib_ExpandableDataWithIds lib_expandableDataWithIds : listData) {
-			if (lib_expandableDataWithIds.getTextStringChild() == null) {
-				size++;
-			}
-		}
-
-
 		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
 
 		//HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
@@ -691,7 +669,7 @@ public class DancerDao implements Serializable {
 		Intent i = new Intent(context, ExpandListSubclass.class);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
-		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:" + size);
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:");
 
 		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 
