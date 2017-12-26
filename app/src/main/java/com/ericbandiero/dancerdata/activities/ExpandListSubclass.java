@@ -11,6 +11,8 @@ import android.view.MenuItem;
 
 import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
 
+import java.util.Locale;
+
 public class ExpandListSubclass extends Lib_Expandable_Activity {
 
 	@Override
@@ -51,6 +53,4 @@ public class ExpandListSubclass extends Lib_Expandable_Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-
 }
