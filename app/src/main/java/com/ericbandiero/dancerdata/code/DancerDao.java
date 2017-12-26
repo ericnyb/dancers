@@ -342,7 +342,7 @@ public class DancerDao implements Serializable {
 			//Test of from assets
 			if (false) {
 				//toastIt(context,"reading a processCursor file...",Toast.LENGTH_SHORT);
-				UtilsShared.AlertMessageSimple(context, "Import Message", "Using processCursor data");
+				UtilsShared.alertMessageSimple(context, "Import Message", "Using processCursor data");
 				AssetManager am = context.getAssets();
 				dancerDataAssets = am.open("dancers.txt", AssetManager.ACCESS_BUFFER);
 				br = new BufferedReader(new InputStreamReader(dancerDataAssets));
@@ -422,7 +422,7 @@ public class DancerDao implements Serializable {
 		cursor.close();
 //		AndroidUtility.AlertMessageSimple(context, "Database import results.",
 //				rowsAttempted + "\n" + rowsImported);
-		UtilsShared.AlertMessageSimple(activityContext, "Database import results.",
+		UtilsShared.alertMessageSimple(activityContext, "Database import results.",
 				rowsAttempted + "\n" + rowsImported);
 	}
 

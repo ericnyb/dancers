@@ -6,7 +6,9 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
     >
-<!--tools:context=".PerfActivity" -->
+<!--tools:contexPerformanceActivityvity" -->
+
+
     <TextView
         android:id="@+id/textViewPerfInfo"
         android:layout_width="wrap_content"
@@ -14,6 +16,8 @@
         android:layout_alignLeft="@+id/listViewPerfs"
         android:layout_alignParentTop="true"
         android:text="@string/hello_world" />
+    <include
+        layout="@layout/lib_progress"/>
 
     <ListView
         android:id="@+id/listViewPerfs"

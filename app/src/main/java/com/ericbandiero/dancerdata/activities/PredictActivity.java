@@ -5,11 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -21,6 +19,7 @@ import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.IProcessCursorAble;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
+import com.ericbandiero.librarymain.activities.Lib_Base_ActionBarActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,7 +34,7 @@ import java.util.TreeMap;
 import javax.inject.Inject;
 
 
-public class PredictActivity extends AppCompatActivity implements IProcessCursorAble {
+public class PredictActivity extends Lib_Base_ActionBarActivity implements IProcessCursorAble {
 
 	private static final String TAG = "PREDICT";
 	private ListView listPredict;
@@ -74,12 +73,32 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		//We use Monday as first day of week...want weekend to fall in same week.
 		calendar.setFirstDayOfWeek(Calendar.MONDAY);
 
+		//textViewProgress = (TextView) findViewById(R.id.lib_base_txt_progressBar);
+		//progressBar = (ProgressBar) findViewById(R.id.lib_base_indeterminateBar);
+
 		//We use Thursday
 		calendar.setMinimalDaysInFirstWeek(4);
 			showData();
+
+		listPredict.setOnItemClickListener((parent, view, position, id) -> {
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Clicked parent...");
+			// View parentView = (View) view.getParent();
+			textViewChild = view.findViewById(R.id.textViewChild);
+
+			//    String item = ((TextView) view).getText().toString();
+
+			if (textViewChild.getVisibility() == View.VISIBLE) {
+				textViewChild.setVisibility(View.GONE);
+			} else {
+				textViewChild.setVisibility(View.VISIBLE);
+			}
+		});
+
 	}
 
 	private void showData() {
+
+		progressBarStart();
 		dancerDao.runRawQueryWithRxJava("Select distinct perfdate,perfdesc,'  ' as wdate,perfdate as _id from " + SqlHelper.MAIN_TABLE_NAME +
 				" where strftime('%Y',Perfdate)<>'" + currentYear + "' order by strftime('%W',Perfdate)", this);
 	}
@@ -168,29 +187,7 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		adapter = new SimpleAdapter(activityContext, fillMaps, R.layout.expandertexts, from, to);
 		listPredict.setAdapter(adapter);
 		listPredict.setVisibility(View.VISIBLE);
-
-		//listPredict.setOnItemClickListener(this);
-
-		listPredict.setOnItemClickListener((parent, view, position, id) -> {
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Clicked parent...");
-			// View parentView = (View) view.getParent();
-			textViewChild = view.findViewById(R.id.textViewChild);
-
-			//    String item = ((TextView) view).getText().toString();
-
-			if (textViewChild.getVisibility() == View.VISIBLE) {
-				textViewChild.setVisibility(View.GONE);
-			} else {
-				textViewChild.setVisibility(View.VISIBLE);
-			}
-		});
-
-	}
-
-
-	public void onClickHeader(View v) {
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Header text clicked"+v.getClass().getName());
-
+		progressBarStop();
 	}
 
 	@Override
@@ -205,7 +202,6 @@ public class PredictActivity extends AppCompatActivity implements IProcessCursor
 		super.onDestroy();
 		dancerDao.close();
 	}
-
 
 	@Override
 	public void processCursor(Cursor cursor) {
