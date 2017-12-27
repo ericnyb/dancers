@@ -3,7 +3,6 @@ package com.ericbandiero.dancerdata.activities;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -13,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +27,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AppConstant;
@@ -40,12 +37,9 @@ import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.librarymain.activities.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.activities.*;
-import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
 
 import com.ericbandiero.librarymain.UtilsShared;
-import com.ericbandiero.librarymain.activities.Lib_Stat_RecycleActivity;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
@@ -70,39 +64,33 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	private static final int ID_MENU_EXIT = 0;
 	private static final String TAG = "Droid Dancer";
 
-	//Test commit change.
-	ArrayList<String> results = new ArrayList<>();
-	//transient Button mSearchButton;
-	transient EditText mInputEdit;
-	transient RadioGroup mradiogroup;
-
-	transient Button buttonPredict;
-
-	//transient TextView textInfo;
-	transient ListView listview;
-	transient List<Integer> listOfDanceCode = new ArrayList<>();
-
-	final Context context = this;
-	transient private RadioButton radioButton;
+	private final ArrayList<String> results = new ArrayList<>();
+	private EditText editTextInput;
+	private RadioGroup radioGroup;
+	private Button buttonPredict;
+	private ListView listview;
+	private final List<Integer> listOfDanceCode = new ArrayList<>();
+	private final Context context = this;
+	private RadioButton radioButton;
 
 	// Used for data collection - group by
-	transient private String fieldToGroupBy;
+	private String fieldToGroupBy;
 
 	// Used for data collection - order by
-	transient private String orderByFields;
+	private String orderByFields;
 
 	// List of fields to get
-	transient List<String> listOfFieldsToGet = new ArrayList<>();
+	private List<String> listOfFieldsToGet = new ArrayList<>();
 
 	// String to get data
-	String sqlSearchString;
+	private String sqlSearchString;
 
 	//For parameters
-	String[] selectionArgs;
+	private String[] selectionArgs;
 
 
 	//Permission request integer
-	public static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
+	private static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
 
 	@BindView(R.id.button_performances) Button mSearchButton;
 	@BindView(R.id.textViewRecordCount1) TextView textInfo;
@@ -147,15 +135,15 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		ButterKnife.bind(this);
 		// getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		//mSearchButton = (Button) findViewById(R.id.button1);
-		mInputEdit = findViewById(R.id.editText1);
-		mradiogroup = findViewById(R.id.radioGroup1);
+		editTextInput = findViewById(R.id.editText1);
+		radioGroup = findViewById(R.id.radioGroup1);
 		radioButton = findViewById(R.id.radioDancer);
 		//textInfo = (TextView) findViewById(R.id.textViewRecordCount1);
 		listview = findViewById(R.id.listViewDancer);
 		buttonPredict = findViewById(R.id.button_venues);
 
 		//Ask for permissions to use the app
-		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,1);
+		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,PERMISSION_REQUEST_WRITE_STORAGE);
 
 		if (!AppConstant.WE_HAVE_DATA_IN_TABLE&&dancerDao.isTableEmpty(SqlHelper.MAIN_TABLE_NAME)){
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Table is empty!");
@@ -179,20 +167,17 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		listview.setOnItemClickListener(this);
 
-		mradiogroup.setOnCheckedChangeListener(this);
+		radioGroup.setOnCheckedChangeListener(this);
 
 		// EditText SearchEditText =(EditText)findViewById(R.id.editText1);
 
-		mInputEdit.setOnEditorActionListener(new OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
-				Log.i(TAG, "event:" + arg2);
-				if (arg1 == EditorInfo.IME_ACTION_GO) {
-					dataRunner();
-				}
-
-				return false;
+		editTextInput.setOnEditorActionListener((arg0, arg1, arg2) -> {
+			Log.i(TAG, "event:" + arg2);
+			if (arg1 == EditorInfo.IME_ACTION_GO) {
+				dataRunner();
 			}
+
+			return false;
 		});
 		/*
 		List<DataHolderTwoFields> dataHolderTwoFields2=new ArrayList<>();
@@ -203,10 +188,40 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	// /End of main
 
+	/**
+	 * Dispatch onResume() to fragments.  Note that for better inter-operation
+	 * with older versions of the platform, at the point of this call the
+	 * fragments attached to the activity are <em>not</em> resumed.  This means
+	 * that in some cases the previous state may still be saved, not allowing
+	 * fragment transactions that modify the state.  To correctly interact
+	 * with fragments in their proper state, you should instead override
+	 * {@link #onResumeFragments()}.
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+	}
+
+
+	/**
+	 * Dispatch onPause() to fragments.
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		progressBarStop();
+	}
+
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		mInputEdit.requestFocus();
+		editTextInput.requestFocus();
 		Log.i("Restarted", "restarted");
 		// mInputEdit.setText("");
 		if (!DetailActivity.getDancerdetailid().equals("-1")) {
@@ -274,13 +289,15 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	private void dataRunner() {
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(mInputEdit.getWindowToken(),
-				InputMethodManager.HIDE_NOT_ALWAYS);
+		if (imm != null) {
+			imm.hideSoftInputFromWindow(editTextInput.getWindowToken(),
+					InputMethodManager.HIDE_NOT_ALWAYS);
+		}
 
-		String dataSearch = mInputEdit.getText().toString();
+		String dataSearch = editTextInput.getText().toString();
 		getDataAndShowIt(dataSearch);
 		displayResultList();
-		Log.i(TAG, mInputEdit.getText().toString());
+		Log.i(TAG, editTextInput.getText().toString());
 	}
 
 	public void onRadioButtonClick(View v) {
@@ -300,9 +317,11 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		switch (id) {
 			case R.id.button_performances:
+				progressBarStart();
 				intent = dancerDao.prepPerformanceActivity();
 				break;
 			case R.id.button_venues:
+				progressBarStart();
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
 
 				//We call routine to create the data list.
@@ -323,6 +342,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			default:
 				break;
 		}
+		progressBarStop();
 		startActivity(intent);
 	}
 
@@ -354,15 +374,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_dancer_counts))) {
+			progressBarStart();
 			dancerDao.runDancerCountsFromRxJava(this);
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
+			progressBarStart();
 			dancerDao.getMostShotVenue(this,false);
 		}
 
 		//"Venue By Dance Piece Count"
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_dance_piece))) {
+			progressBarStart();
 			dancerDao.getMostPiecesShotAtVenue(this);
 		}
 
@@ -407,28 +430,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				.setMessage("Click yes to import.")
 				.setCancelable(false)
 				.setPositiveButton("Yes",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// if this button is clicked, close
-								// current activity
-								//	if (checkIfInputFileExists()) {
-								//DancerDao dancerDao = new DancerDao(context);
-								dancerDao.importData(context);
-
-								//dropTable();
-								//createSqlTable();
-
-								//readFile3();
-								//	}
-							}
+						(dialog, id) -> {
+							dancerDao.importData(context);
 						})
 				.setNegativeButton("Cancel Import",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// if this button is clicked, just close
-								// the dialog box and do nothing
-								dialog.cancel();
-							}
+						(dialog, id) -> {
+							// if this button is clicked, just close the dialog box and do nothing
+							dialog.cancel();
 						});
 
 		// create alert dialog
@@ -519,7 +527,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		int buttonId = radioButton.getId();
 
-		String userSearchText = mInputEdit.getText().toString().trim()
+		String userSearchText = editTextInput.getText().toString().trim()
 				.toUpperCase();
 
 
@@ -539,7 +547,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 					selectionArgs=new String[] {userSearchText+'%'};
 
 				} else {
-					mInputEdit.setText("");
+					editTextInput.setText("");
 					sqlSearchString = DancerData.getUpperSearch(DancerDao.CODE)
 							+ "=?";
 					selectionArgs=new String[] {DetailActivity.dancerdetailid};

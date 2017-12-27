@@ -36,12 +36,12 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	private TextView txtviewVenue;
 	private TextView txtviewDate;
 	private TextView txtviewTitle;
-	Set<String> setchoreos= new LinkedHashSet<>();
-	Set<String> setdancers= new LinkedHashSet<>();
-	Set<String> setids= new LinkedHashSet<>();
+	private Set<String> setchoreos= new LinkedHashSet<>();
+	private Set<String> setdancers= new LinkedHashSet<>();
+	private Set<String> setids= new LinkedHashSet<>();
 	
 	public static String dancerdetailid="-1";
-	Cursor cursorDanceInfo;
+	private Cursor cursorDanceInfo;
 
 
 	public static String getDancerdetailid() {
@@ -55,14 +55,14 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	}
 
 
-	List<String>listDancers= new ArrayList<>();
+	private List<String>listDancers= new ArrayList<>();
 	
-	public static int dance_id;
+	private static int dance_id;
 	//SQLiteDatabase database;
 	@Inject
 	DancerDao dancerDao;
 	private TextView txtviewChoreos;
-	ListView listviewdancers;
+	private ListView listviewdancers;
 	public static void setDance_id(int dance_id) {
 		DetailActivity.dance_id = dance_id;
 	}

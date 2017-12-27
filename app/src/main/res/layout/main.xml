@@ -4,9 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-   
 
-    
+
     <RadioGroup
         android:id="@+id/radioGroup1"
         android:layout_width="wrap_content"
@@ -32,6 +31,11 @@
             android:layout_height="wrap_content"
             android:text="@string/OptionPeople" />
     </RadioGroup>
+
+    <include
+        android:id="@+id/progressbar"
+        layout="@layout/lib_progress"
+        />
 
     <EditText
         android:id="@+id/editText1"
