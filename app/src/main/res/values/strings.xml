@@ -24,6 +24,7 @@
     <string name="stats_activity_label">Stats</string>
     <string name="results_text">Records found:</string>
     <string name="button_venue_text">Venues</string>
+    <string name="textviewRecords">Record found:</string>
 
     //Custom Menu items
     <string name="menu_prediction">Prediction</string>
@@ -35,5 +36,6 @@
     //Custom controller names
     <string name="controller_stats">Stats</string>
     <string name="menu_dancer_counts">Dancer Count By Piece</string>
+
 
 </resources>

@@ -16,6 +16,7 @@ import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.EventBusTester;
 import com.ericbandiero.dancerdata.code.TestBus;
+import com.ericbandiero.librarymain.activities.Lib_Base_ActionBarActivity;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -38,10 +39,10 @@ import butterknife.OnClick;
  * Will use custom layout file. 
  */
 
-public class PerfActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class PerformanceActivity extends Lib_Base_ActionBarActivity implements AdapterView.OnItemClickListener {
 	//static SQLiteDatabase db;
 	public static Bus bus;
-
+	//TODO Not used except in test - refactor expand to use progress. Need to change in base to extend base.
 	final static String TAG="Perf";
 	SimpleCursorAdapter mAdapter; 	
 	Cursor cursor;
@@ -70,8 +71,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 
 		DanceApp.app().basicComponent().inject(this);
 
-
-		setTitle("Performances");
+		setTitle("Performances!!!");
 
 		bus = new Bus(ThreadEnforcer.MAIN);
 		bus.register(this);
@@ -104,6 +104,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 	@Override
 	protected void onResume() {
 		super.onResume();
+		progressBarStart();
 		getDancersAtVenue();
 		this.cursor=getData();
 		if (this.cursor!=null) {
@@ -126,6 +127,7 @@ public class PerfActivity extends AppCompatActivity implements AdapterView.OnIte
 		        new int[] { R.id.textViewRecordCount1,R.id.textView2,R.id.textView3},1);
 		listviewperf.setAdapter(adapter);
 		TextView tv= findViewById(R.id.textViewRecordCount1);
+		//progressBarStop();
 	//	Log.d(TAG,"Text size"+tv.getText());
 
     }

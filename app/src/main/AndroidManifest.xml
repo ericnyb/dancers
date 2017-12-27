@@ -44,7 +44,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ericbandiero.dancerdata.activities.AndroidDataActivity"/>
         </activity>
-        <activity android:name=".activities.PerfActivity"
+        <activity android:name=".activities.PerformanceActivity"
             android:parentActivityName="com.ericbandiero.dancerdata.activities.AndroidDataActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

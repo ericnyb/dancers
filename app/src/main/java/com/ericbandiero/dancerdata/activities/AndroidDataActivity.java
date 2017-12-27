@@ -159,7 +159,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		if (!AppConstant.WE_HAVE_DATA_IN_TABLE&&dancerDao.isTableEmpty(SqlHelper.MAIN_TABLE_NAME)){
 			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Table is empty!");
-			UtilsShared.AlertMessageSimple(this,"New Database Created","You need to import data - see menu option.");
+			UtilsShared.alertMessageSimple(this,"New Database Created","You need to import data - see menu option.");
 			AppConstant.WE_HAVE_DATA_IN_TABLE=false;
 		}
 		else{
@@ -263,7 +263,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		//We only ask for write permissions so array is length 1
 		if (requestCode==PERMISSION_REQUEST_WRITE_STORAGE&grantResults[0]==PackageManager.PERMISSION_DENIED){
-			UtilsShared.AlertMessageSimple(this,"Needed permissions were denied","You will not be able to use the application.");
+			UtilsShared.alertMessageSimple(this,"Needed permissions were denied","You will not be able to use the application.");
 		}
 		else{
 			//We can do this
@@ -312,7 +312,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				intent = new Intent(this, ExpandListSubclass.class);
 
 				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venue list");
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venues");
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
 
@@ -384,7 +384,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			}
 				else
 			{
-				UtilsShared.AlertMessageSimple(this,"Permissions Information","You need to go into settings and grant Write to storage permissions.");
+				UtilsShared.alertMessageSimple(this,"Permissions Information","You need to go into settings and grant Write to storage permissions.");
 			}
 
 			return true;
