@@ -56,6 +56,14 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.subjects.SingleSubject;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -145,14 +153,24 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//Ask for permissions to use the app
 		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,PERMISSION_REQUEST_WRITE_STORAGE);
 
-		if (!AppConstant.WE_HAVE_DATA_IN_TABLE&&dancerDao.isTableEmpty(SqlHelper.MAIN_TABLE_NAME)){
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Table is empty!");
-			UtilsShared.alertMessageSimple(this,"New Database Created","You need to import data - see menu option.");
-			AppConstant.WE_HAVE_DATA_IN_TABLE=false;
-		}
-		else{
-			AppConstant.WE_HAVE_DATA_IN_TABLE=true;
-		}
+		dancerDao.runRawQueryCursor("select * from " + SqlHelper.MAIN_TABLE_NAME).
+			subscribeWith(new DisposableSingleObserver<Cursor>() {
+			@Override
+			public void onSuccess(Cursor cursor) {
+				boolean isTableEmpty = dancerDao.isTableEmptyNew(cursor);
+				if (!AppConstant.WE_HAVE_DATA_IN_TABLE && isTableEmpty) {
+					UtilsShared.alertMessageSimple(context, "New Database Created", "You need to import data - see menu option.");
+					AppConstant.WE_HAVE_DATA_IN_TABLE = false;
+				} else {
+					AppConstant.WE_HAVE_DATA_IN_TABLE = true;
+				}
+				dispose();
+			}
+			@Override
+			public void onError(Throwable e) {
+
+			}
+		});
 
 		// First thing - make sure we have a directory
 		//We will call this from the ask callback
@@ -390,7 +408,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_gigs_by_year))) {
+
 			dancerDao.getGigsByYear(this);
+			/*
+			progressBarStart();
+			Observable<String> rxString = dancerDao.getRxString();
+			rxString.subscribe(new Consumer<String>() {
+				@Override
+				public void accept(String s) throws Exception {
+					showTheString(s);
+				}
+			});
+			*/
 		}
 
 		//Predictions
@@ -414,6 +443,11 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		return false;
+	}
+
+	private void showTheString(String s){
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","String:"+s);
+		progressBarStop();
 	}
 
 	private void loadData() {

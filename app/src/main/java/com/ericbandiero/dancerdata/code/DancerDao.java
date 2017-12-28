@@ -43,15 +43,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
+import io.reactivex.internal.operators.completable.CompletableFromSingle;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
@@ -248,6 +253,16 @@ public class DancerDao implements Serializable {
 				Log.d(this.getClass().getSimpleName() + ">", "Error getting data!" + "Data error:" + ex.getMessage());
 			return cursorRxJava;
 		}
+	}
+
+	public Single<Cursor> runRawQueryCursor(String sql){
+		checkDataIsOpen();
+		return Single.fromCallable(() -> {
+			System.out.println("Thread we are running on from runRawQueryCursor:" + Thread.currentThread().getName());
+			return database.rawQuery(sql, null);
+		})
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread());
 	}
 
 
@@ -686,6 +701,17 @@ public class DancerDao implements Serializable {
 		context.startActivity(intent);
 	}
 
+	public boolean isTableEmptyNew(Cursor cursor){
+		boolean isEmpty;
+//		if (cursor == null) {
+//			return false;
+//		}
+		boolean wasMoved = cursor.moveToFirst();
+		isEmpty = !wasMoved;
+		cursor.close();
+		return isEmpty;
+	}
+
 	public boolean isTableEmpty(String table_name) {
 		if (AppConstant.DEBUG)
 			Log.d(this.getClass().getSimpleName() + ">", "Checking if table " + table_name + " is empty.");
@@ -794,5 +820,15 @@ public class DancerDao implements Serializable {
 			UtilsShared.startStatActivity(contextParam,controlStatsActivityBuilderVenueCounts,controlStatsAdapterBuilder);
 			disposable.dispose();
 		});
+	}
+
+	public Observable<String> getRxString(){
+		return Observable.fromCallable(new Callable<String>() {
+			@Override
+			public String call() throws Exception {
+				Thread.sleep(2000);
+				return "Hello";
+			}
+		}).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 	}
 }
