@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ericbandiero.dancerdata.activities.AndroidDataActivity;
 import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
@@ -27,6 +28,7 @@ import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
+import com.ericbandiero.librarymain.interfaces.ISetProgressBar;
 import com.ericbandiero.myframework.Utility;
 
 import java.io.BufferedReader;
@@ -119,6 +121,7 @@ public class DancerDao implements Serializable {
 	private static final String DANCER_DATA_INPUT_FILE = "/dancers.txt";
 	private static final long serialVersionUID = 8631832636106174063L;
 	public static final int INT_MAX_FIELD_LENGTH = 30;
+	public static final String SELECT_ALL_VENUE_DATA = "select PerfDate as _id,PerfDate,PerfDesc,Venue,Dance_Code,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc";
 
 	private static List<Lib_ExpandableDataWithIds> listPerformances = new ArrayList<>();
 
@@ -563,33 +566,46 @@ public class DancerDao implements Serializable {
 		return prepDataPerformance("-1");
 	}
 
-	public List<Lib_ExpandableDataWithIds> prepDataVenue() {
+	public void getVenueData(Activity activity, HandleAChildClick handleAChildClickVenues) {
+		final List<Lib_ExpandableDataWithIds>listVenues=new ArrayList<>();
+
 		if (AppConstant.DEBUG)
 			Log.d(this.getClass().getSimpleName() + ">", "Prepping venue data...");
-		final Cursor cursor = runRawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue,Dance_Code,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc");
-		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
+		Single<Cursor> single = runRawQueryCursor(SELECT_ALL_VENUE_DATA);
+		single.subscribe(new Consumer<Cursor>() {
+			/**
+			 * Consume the given value.
+			 *
+			 * @param cursor the value
+			 * @throws Exception on error
+			 */
+			@Override
+			public void accept(Cursor cursor) throws Exception {
+				SortedSet<String> venues = new TreeSet<>();
 
-		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
+				//First get venues
+				while (cursor.moveToNext()) {
+					venues.add(cursor.getString(3));
+					Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2));
+					lib_expandableDataWithIds.setAnyObject(cursor.getString(5));
+					//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
+					listVenues.add(lib_expandableDataWithIds);
+					if (AppConstant.DEBUG)
+						Log.d(this.getClass().getSimpleName() + ">", "Data venue:" + cursor.getString(1));
+				}
 
-		SortedSet<String> venues = new TreeSet<>();
-
-		//First get venues
-		while (cursor.moveToNext()) {
-			venues.add(cursor.getString(3));
-			Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2));
-			lib_expandableDataWithIds.setAnyObject(cursor.getString(5));
-			//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
-			listData.add(lib_expandableDataWithIds);
-			if (AppConstant.DEBUG)
-				Log.d(this.getClass().getSimpleName() + ">", "Data venue:" + cursor.getString(1));
-		}
-
-		for (String venue : venues) {
-			listData.add(new Lib_ExpandableDataWithIds(venue));
-		}
-
-		cursor.close();
-		return listData;
+				for (String venue : venues) {
+					listVenues.add(new Lib_ExpandableDataWithIds(venue));
+				}
+				cursor.close();
+				Intent intent = new Intent(activity, ExpandListSubclass.class);
+				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listVenues);
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venues");
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
+				context.startActivity(intent);
+			}
+		});
 	}
 
 	public Intent prepPerformanceActivity() {

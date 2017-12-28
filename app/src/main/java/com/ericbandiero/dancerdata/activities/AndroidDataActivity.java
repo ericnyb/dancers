@@ -33,7 +33,6 @@ import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
-import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
@@ -43,7 +42,6 @@ import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
-import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,14 +54,7 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.subjects.SingleSubject;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -338,21 +329,17 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			case R.id.button_performances:
 				progressBarStart();
 				intent = dancerDao.prepPerformanceActivity();
+				startActivity(intent);
+				progressBarStop();
 				break;
 			case R.id.button_venues:
 				progressBarStart();
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
 
 				//We call routine to create the data list.
-				List<Lib_ExpandableDataWithIds> listData=dancerDao.prepDataVenue();
+				List<Lib_ExpandableDataWithIds> listData=new ArrayList<>();
+				dancerDao.getVenueData(this,handleAChildClickVenues);
 
-				//Intent i=new Intent(this, Lib_Expandable_Activity.class);
-				intent = new Intent(this, ExpandListSubclass.class);
-
-				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venues");
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
 
 				//ITestParce t1= new My();
 				//t1.doSomething();
@@ -361,8 +348,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			default:
 				break;
 		}
-		progressBarStop();
-		startActivity(intent);
 	}
 
 
