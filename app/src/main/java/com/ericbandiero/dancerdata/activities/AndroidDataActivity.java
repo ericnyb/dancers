@@ -394,18 +394,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_gigs_by_year))) {
-
 			dancerDao.getGigsByYear(this);
-			/*
-			progressBarStart();
-			Observable<String> rxString = dancerDao.getRxString();
-			rxString.subscribe(new Consumer<String>() {
-				@Override
-				public void accept(String s) throws Exception {
-					showTheString(s);
-				}
-			});
-			*/
 		}
 
 		//Predictions
@@ -429,11 +418,6 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 
 		return false;
-	}
-
-	private void showTheString(String s){
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","String:"+s);
-		progressBarStop();
 	}
 
 	private void loadData() {

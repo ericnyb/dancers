@@ -837,14 +837,4 @@ public class DancerDao implements Serializable {
 			disposable.dispose();
 		});
 	}
-
-	public Observable<String> getRxString(){
-		return Observable.fromCallable(new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				Thread.sleep(2000);
-				return "Hello";
-			}
-		}).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-	}
 }
