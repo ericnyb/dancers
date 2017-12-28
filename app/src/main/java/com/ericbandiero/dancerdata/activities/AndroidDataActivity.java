@@ -335,15 +335,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			case R.id.button_venues:
 				progressBarStart();
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
-
 				//We call routine to create the data list.
 				List<Lib_ExpandableDataWithIds> listData=new ArrayList<>();
 				dancerDao.getVenueData(this,handleAChildClickVenues);
-
-
-				//ITestParce t1= new My();
-				//t1.doSomething();
-				//intent.putExtra("processCursor", t1);
 				break;
 			default:
 				break;
