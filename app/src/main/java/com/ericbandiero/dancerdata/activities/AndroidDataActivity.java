@@ -161,10 +161,11 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				if (!AppConstant.WE_HAVE_DATA_IN_TABLE && isTableEmpty) {
 					UtilsShared.alertMessageSimple(context, "New Database Created", "You need to import data - see menu option.");
 					AppConstant.WE_HAVE_DATA_IN_TABLE = false;
+					dispose();
 				} else {
 					AppConstant.WE_HAVE_DATA_IN_TABLE = true;
+					dispose();
 				}
-				dispose();
 			}
 			@Override
 			public void onError(Throwable e) {
