@@ -586,6 +586,7 @@ public class DancerDao implements Serializable {
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venues");
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				context.startActivity(intent);
 				dispose();
 			}
