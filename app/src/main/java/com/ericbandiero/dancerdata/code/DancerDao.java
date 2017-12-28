@@ -17,7 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.ericbandiero.dancerdata.activities.AndroidDataActivity;
 import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
@@ -28,7 +27,6 @@ import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
 import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
-import com.ericbandiero.librarymain.interfaces.ISetProgressBar;
 import com.ericbandiero.myframework.Utility;
 
 import java.io.BufferedReader;
@@ -45,20 +43,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.internal.operators.completable.CompletableFromSingle;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -239,7 +232,6 @@ public class DancerDao implements Serializable {
 	 */
 	public Cursor runRawQuery(String sql) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Sql passed in:" + sql);
-		Cursor cursor = null;
 		checkDataIsOpen();
 		try {
 			Single<Cursor> ob = Single.fromCallable(() -> {
@@ -415,7 +407,7 @@ public class DancerDao implements Serializable {
 					br.close();
 				}
 			} catch (IOException e) {
-				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());;
+				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());
 				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());
 			}
 		}
@@ -562,11 +554,6 @@ public class DancerDao implements Serializable {
 
 	}
 
-
-	private List<Lib_ExpandableDataWithIds> prepDataPerformance() {
-		return prepDataPerformance("-1");
-	}
-
 	public void getVenueData(Activity activity, HandleAChildClick handleAChildClickVenues) {
 		final List<Lib_ExpandableDataWithIds>listVenues=new ArrayList<>();
 
@@ -687,29 +674,15 @@ public class DancerDao implements Serializable {
 		}
 
 		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-
-		//HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
-
-		IHandleChildClicksExpandableIds ih = new IHandleChildClicksExpandableIds() {
-			@Override
-			public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
-				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Hello");
-			}
-		};
-
 		//Intent i=new Intent(this, Lib_Expandable_Activity.class);
 		Intent i = new Intent(context, ExpandListSubclass.class);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
 		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:");
-
 		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 
 		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
 		return i;
-		//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
-		//Test comment
-		//Test 2
 	}
 
 	public void getPerformanceForAVenue(String venueName) {
@@ -725,20 +698,6 @@ public class DancerDao implements Serializable {
 //		}
 		boolean wasMoved = cursor.moveToFirst();
 		isEmpty = !wasMoved;
-		cursor.close();
-		return isEmpty;
-	}
-
-	public boolean isTableEmpty(String table_name) {
-		if (AppConstant.DEBUG)
-			Log.d(this.getClass().getSimpleName() + ">", "Checking if table " + table_name + " is empty.");
-		boolean isEmpty;
-		Cursor cursor = runRawQuery("Select count(*) from " + table_name);
-		if (cursor == null) {
-			return false;
-		}
-		cursor.moveToFirst();
-		isEmpty = cursor.getInt(0) == 0;
 		cursor.close();
 		return isEmpty;
 	}
