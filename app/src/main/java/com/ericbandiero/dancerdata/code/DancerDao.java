@@ -679,7 +679,7 @@ public class DancerDao implements Serializable {
 		Intent i = new Intent(context, ExpandListSubclass.class);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
-		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:");
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
 		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 
 		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
