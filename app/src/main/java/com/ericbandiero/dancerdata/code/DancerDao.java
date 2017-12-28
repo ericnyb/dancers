@@ -59,6 +59,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.internal.operators.completable.CompletableFromSingle;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
@@ -572,15 +573,10 @@ public class DancerDao implements Serializable {
 		if (AppConstant.DEBUG)
 			Log.d(this.getClass().getSimpleName() + ">", "Prepping venue data...");
 		Single<Cursor> single = runRawQueryCursor(SELECT_ALL_VENUE_DATA);
-		single.subscribe(new Consumer<Cursor>() {
-			/**
-			 * Consume the given value.
-			 *
-			 * @param cursor the value
-			 * @throws Exception on error
-			 */
+
+		single.subscribeWith(new DisposableSingleObserver<Cursor>() {
 			@Override
-			public void accept(Cursor cursor) throws Exception {
+			public void onSuccess(Cursor cursor) {
 				SortedSet<String> venues = new TreeSet<>();
 
 				//First get venues
@@ -604,6 +600,11 @@ public class DancerDao implements Serializable {
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
 				context.startActivity(intent);
+				dispose();
+			}
+			@Override
+			public void onError(Throwable e) {
+				dispose();
 			}
 		});
 	}
