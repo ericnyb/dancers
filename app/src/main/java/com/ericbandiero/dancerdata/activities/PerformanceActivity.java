@@ -105,7 +105,7 @@ public class PerformanceActivity extends Lib_Base_ActionBarActivity implements A
 	protected void onResume() {
 		super.onResume();
 		progressBarStart();
-		getDancersAtVenue();
+		//getDancersAtVenue();
 		this.cursor=getData();
 		if (this.cursor!=null) {
 			showData();
