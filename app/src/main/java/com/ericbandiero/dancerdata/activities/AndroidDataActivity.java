@@ -225,6 +225,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	@Override
 	protected void onStop() {
 		super.onStop();
+		//Better here - we may have completed asynch task - but still preparing data.
 		progressBarStop();
 	}
 
@@ -328,9 +329,9 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		switch (id) {
 			case R.id.button_performances:
 				progressBarStart();
-				intent = dancerDao.prepPerformanceActivity();
-				startActivity(intent);
-				progressBarStop();
+				dancerDao.prepPerformanceActivity();
+				//startActivity(intent);
+				//progressBarStop();
 				break;
 			case R.id.button_venues:
 				progressBarStart();
