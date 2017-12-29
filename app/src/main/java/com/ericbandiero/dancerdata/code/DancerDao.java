@@ -631,7 +631,7 @@ public class DancerDao implements Serializable {
 		//Test 2
 	}
 
-
+	//TODO Try to make this all run in io thread.
 	public void createIntentForPerformanceByVenueName(String venueName) {
 
 		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
