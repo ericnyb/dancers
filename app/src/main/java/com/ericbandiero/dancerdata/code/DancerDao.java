@@ -48,6 +48,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -675,10 +676,9 @@ public class DancerDao implements Serializable {
 				}
 
 				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-				//Intent i=new Intent(this, Lib_Expandable_Activity.class);
 				Intent i = new Intent(context, ExpandListSubclass.class);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
+			//	i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
+			//	i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
 				i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
 				i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 
