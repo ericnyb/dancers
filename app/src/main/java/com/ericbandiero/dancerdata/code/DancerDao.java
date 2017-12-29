@@ -651,18 +651,10 @@ public class DancerDao implements Serializable {
 				" order by PerfDate desc");
 
 		single.subscribeWith(new DisposableSingleObserver<Cursor>() {
-			/**
-			 * Notifies the SingleObserver with a single item and that the {@link Single} has finished sending
-			 * push-based notifications.
-			 * <p>
-			 * The {@link Single} will not call this method if it calls {@link #onError}.
-			 *
-			 * @param cursor the item emitted by the Single
-			 */
 			@Override
 			public void onSuccess(Cursor cursor) {
 				SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
-
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Success thread-"+Thread.currentThread().getName());
 				//First get venues
 				while (cursor.moveToNext()) {
 					if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2))) {
@@ -694,18 +686,12 @@ public class DancerDao implements Serializable {
 				i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				context.startActivity(i);
-			}
+				dispose();
 
-			/**
-			 * Notifies the SingleObserver that the {@link Single} has experienced an error condition.
-			 * <p>
-			 * If the {@link Single} calls this method, it will not thereafter call {@link #onSuccess}.
-			 *
-			 * @param e the exception encountered by the Single
-			 */
+			}
 			@Override
 			public void onError(Throwable e) {
-
+				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">",e.getMessage());
 			}
 		});
 
