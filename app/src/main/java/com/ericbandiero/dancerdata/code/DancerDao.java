@@ -107,7 +107,7 @@ public class DancerDao implements Serializable {
 	public static final String SQL_VENUE_BY_PERFORMANCE_SHOOTS="Select "+
 		DancerDao.VENUE+
 		",count(distinct "+
-		DancerDao.PERF_DATE+") as cnt from info group by "+
+		DancerDao.PERF_DATE+"||"+DancerDao.PERF_CODE+") as cnt from info group by "+
 		DancerDao.VENUE +
 		" having cnt>1 order by cnt desc";
 
