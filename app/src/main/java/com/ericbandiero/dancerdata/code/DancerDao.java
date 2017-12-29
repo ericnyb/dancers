@@ -500,9 +500,11 @@ public class DancerDao implements Serializable {
 
 		//We already have gotten the full list once
 
-//		if (performanceCode.equals("-1") & !listPerformances.isEmpty()) {
-//			return listPerformances;
-//		}
+		if (performanceCode.equals("-1") & !listPerformances.isEmpty()) {
+			startPerformanceActivityNew(listPerformances);
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","We already cached data - not re-running query");
+			return;
+		}
 
 		String whereClause = !performanceCode.equals("-1") ? " where Perf_Code =" + performanceCode : "";
 
@@ -559,13 +561,7 @@ public class DancerDao implements Serializable {
 				if (performanceCode.equals("-1") & listPerformances.isEmpty()) {
 					listPerformances = listData;
 				}
-				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-				Intent i = new Intent(context, ExpandListSubclass.class);
-				i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
-				i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-				i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
-				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				context.startActivity(i);
+				startPerformanceActivityNew(listData);
 				dispose();
 			}
 
@@ -582,6 +578,17 @@ public class DancerDao implements Serializable {
 			dispose();
 			}
 		});
+	}
+
+
+	private void startPerformanceActivityNew(List<Lib_ExpandableDataWithIds> listData){
+		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
+		Intent i = new Intent(context, ExpandListSubclass.class);
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
+		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(i);
 	}
 
 	public void getVenueData(Activity activity, HandleAChildClick handleAChildClickVenues) {
@@ -700,57 +707,6 @@ public class DancerDao implements Serializable {
 				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">",e.getMessage());
 			}
 		});
-
-		if (true){
-			return;
-		}
-
-		final Cursor cursor = runRawQuery(
-				"select PerfDate as _id," +
-						"PerfDate," +
-						"PerfDesc," +
-						"Venue," +
-						"Dance_Code," +
-						"title," +
-						"Perf_Code" +
-						" from Info " +
-						whereClause +
-						" group by Perf_Code,Dance_code " +
-						" order by PerfDate desc");
-
-
-		SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
-
-		//First get venues
-		while (cursor.moveToNext()) {
-			if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2))) {
-				if (AppConstant.DEBUG)
-					Log.d(this.getClass().getSimpleName() + ">", "Duplicate:" + cursor.getString(2));
-			}
-
-			Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(1) + ":" + cursor.getString(2), cursor.getString(5));
-			lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
-			//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
-			listData.add(lib_expandableDataWithIds);
-			if (AppConstant.DEBUG)
-				Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
-		}
-
-
-		for (String performance : performances) {
-			listData.add(new Lib_ExpandableDataWithIds(performance));
-		}
-
-		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-		//Intent i=new Intent(this, Lib_Expandable_Activity.class);
-		Intent i = new Intent(context, ExpandListSubclass.class);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
-//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
-		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
-		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-
-		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
-
 	}
 
 	private void startPerformanceActivity(){
