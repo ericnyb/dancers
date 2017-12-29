@@ -654,7 +654,6 @@ public class DancerDao implements Serializable {
 			@Override
 			public void onSuccess(Cursor cursor) {
 				SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
-				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Success thread-"+Thread.currentThread().getName());
 				//First get venues
 				while (cursor.moveToNext()) {
 					if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2))) {
