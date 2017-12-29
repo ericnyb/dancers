@@ -20,7 +20,7 @@ public class TestBus {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Message received:"+s);
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","We will now stop receiving messages from the event bus...");
 		//We will no longer receive these.
-		PerformanceActivity.bus.unregister(this);
+		//PerformanceActivity.bus.unregister(this);
 	}
 
 }

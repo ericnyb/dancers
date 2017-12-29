@@ -38,7 +38,7 @@ import butterknife.OnClick;
  * Will use cursor adapter.
  * Will use custom layout file. 
  */
-
+@Deprecated
 public class PerformanceActivity extends Lib_Base_ActionBarActivity implements AdapterView.OnItemClickListener {
 	//static SQLiteDatabase db;
 	public static Bus bus;
@@ -105,7 +105,7 @@ public class PerformanceActivity extends Lib_Base_ActionBarActivity implements A
 	protected void onResume() {
 		super.onResume();
 		progressBarStart();
-		getDancersAtVenue();
+		//getDancersAtVenue();
 		this.cursor=getData();
 		if (this.cursor!=null) {
 			showData();

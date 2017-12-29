@@ -33,7 +33,6 @@ import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
-import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
@@ -43,7 +42,6 @@ import com.ericbandiero.librarymain.UtilsShared;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
-import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +54,7 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.observers.DisposableSingleObserver;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -145,14 +144,25 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//Ask for permissions to use the app
 		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,PERMISSION_REQUEST_WRITE_STORAGE);
 
-		if (!AppConstant.WE_HAVE_DATA_IN_TABLE&&dancerDao.isTableEmpty(SqlHelper.MAIN_TABLE_NAME)){
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Table is empty!");
-			UtilsShared.alertMessageSimple(this,"New Database Created","You need to import data - see menu option.");
-			AppConstant.WE_HAVE_DATA_IN_TABLE=false;
-		}
-		else{
-			AppConstant.WE_HAVE_DATA_IN_TABLE=true;
-		}
+		dancerDao.runRawQueryCursor("select * from " + SqlHelper.MAIN_TABLE_NAME).
+			subscribeWith(new DisposableSingleObserver<Cursor>() {
+			@Override
+			public void onSuccess(Cursor cursor) {
+				boolean isTableEmpty = dancerDao.isTableEmptyNew(cursor);
+				if (!AppConstant.WE_HAVE_DATA_IN_TABLE && isTableEmpty) {
+					UtilsShared.alertMessageSimple(context, "New Database Created", "You need to import data - see menu option.");
+					AppConstant.WE_HAVE_DATA_IN_TABLE = false;
+					dispose();
+				} else {
+					AppConstant.WE_HAVE_DATA_IN_TABLE = true;
+					dispose();
+				}
+			}
+			@Override
+			public void onError(Throwable e) {
+
+			}
+		});
 
 		// First thing - make sure we have a directory
 		//We will call this from the ask callback
@@ -319,31 +329,19 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			case R.id.button_performances:
 				progressBarStart();
 				intent = dancerDao.prepPerformanceActivity();
+				startActivity(intent);
+				progressBarStop();
 				break;
 			case R.id.button_venues:
 				progressBarStart();
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
-
 				//We call routine to create the data list.
-				List<Lib_ExpandableDataWithIds> listData=dancerDao.prepDataVenue();
-
-				//Intent i=new Intent(this, Lib_Expandable_Activity.class);
-				intent = new Intent(this, ExpandListSubclass.class);
-
-				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venues");
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
-
-				//ITestParce t1= new My();
-				//t1.doSomething();
-				//intent.putExtra("processCursor", t1);
+				List<Lib_ExpandableDataWithIds> listData=new ArrayList<>();
+				dancerDao.getVenueData(this,handleAChildClickVenues);
 				break;
 			default:
 				break;
 		}
-		progressBarStop();
-		startActivity(intent);
 	}
 
 

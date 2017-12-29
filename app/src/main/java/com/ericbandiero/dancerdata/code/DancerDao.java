@@ -48,10 +48,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.ericbandiero.librarymain.UtilsShared.toastIt;
@@ -114,6 +116,7 @@ public class DancerDao implements Serializable {
 	private static final String DANCER_DATA_INPUT_FILE = "/dancers.txt";
 	private static final long serialVersionUID = 8631832636106174063L;
 	public static final int INT_MAX_FIELD_LENGTH = 30;
+	public static final String SELECT_ALL_VENUE_DATA = "select PerfDate as _id,PerfDate,PerfDesc,Venue,Dance_Code,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc";
 
 	private static List<Lib_ExpandableDataWithIds> listPerformances = new ArrayList<>();
 
@@ -230,7 +233,6 @@ public class DancerDao implements Serializable {
 	 */
 	public Cursor runRawQuery(String sql) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Sql passed in:" + sql);
-		Cursor cursor = null;
 		checkDataIsOpen();
 		try {
 			Single<Cursor> ob = Single.fromCallable(() -> {
@@ -248,6 +250,16 @@ public class DancerDao implements Serializable {
 				Log.d(this.getClass().getSimpleName() + ">", "Error getting data!" + "Data error:" + ex.getMessage());
 			return cursorRxJava;
 		}
+	}
+
+	public Single<Cursor> runRawQueryCursor(String sql){
+		checkDataIsOpen();
+		return Single.fromCallable(() -> {
+			System.out.println("Thread we are running on from runRawQueryCursor:" + Thread.currentThread().getName());
+			return database.rawQuery(sql, null);
+		})
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread());
 	}
 
 
@@ -396,7 +408,7 @@ public class DancerDao implements Serializable {
 					br.close();
 				}
 			} catch (IOException e) {
-				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());;
+				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());
 				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">","Error:"+e.getLocalizedMessage());
 			}
 		}
@@ -543,38 +555,47 @@ public class DancerDao implements Serializable {
 
 	}
 
+	public void getVenueData(Activity activity, HandleAChildClick handleAChildClickVenues) {
+		final List<Lib_ExpandableDataWithIds>listVenues=new ArrayList<>();
 
-	private List<Lib_ExpandableDataWithIds> prepDataPerformance() {
-		return prepDataPerformance("-1");
-	}
-
-	public List<Lib_ExpandableDataWithIds> prepDataVenue() {
 		if (AppConstant.DEBUG)
 			Log.d(this.getClass().getSimpleName() + ">", "Prepping venue data...");
-		final Cursor cursor = runRawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue,Dance_Code,Perf_Code from Info group by PerfDate,Venue,Perf_Code order by PerfDate desc");
-		//this.cursor = db.rawQuery("select PerfDate as _id,PerfDate,PerfDesc,Venue from Info group by PerfDate,Venue order by PerfDate desc", null);
+		Single<Cursor> single = runRawQueryCursor(SELECT_ALL_VENUE_DATA);
 
-		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
+		single.subscribeWith(new DisposableSingleObserver<Cursor>() {
+			@Override
+			public void onSuccess(Cursor cursor) {
+				SortedSet<String> venues = new TreeSet<>();
 
-		SortedSet<String> venues = new TreeSet<>();
+				//First get venues
+				while (cursor.moveToNext()) {
+					venues.add(cursor.getString(3));
+					Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2));
+					lib_expandableDataWithIds.setAnyObject(cursor.getString(5));
+					//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
+					listVenues.add(lib_expandableDataWithIds);
+					if (AppConstant.DEBUG)
+						Log.d(this.getClass().getSimpleName() + ">", "Data venue:" + cursor.getString(1));
+				}
 
-		//First get venues
-		while (cursor.moveToNext()) {
-			venues.add(cursor.getString(3));
-			Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2));
-			lib_expandableDataWithIds.setAnyObject(cursor.getString(5));
-			//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
-			listData.add(lib_expandableDataWithIds);
-			if (AppConstant.DEBUG)
-				Log.d(this.getClass().getSimpleName() + ">", "Data venue:" + cursor.getString(1));
-		}
-
-		for (String venue : venues) {
-			listData.add(new Lib_ExpandableDataWithIds(venue));
-		}
-
-		cursor.close();
-		return listData;
+				for (String venue : venues) {
+					listVenues.add(new Lib_ExpandableDataWithIds(venue));
+				}
+				cursor.close();
+				Intent intent = new Intent(activity, ExpandListSubclass.class);
+				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listVenues);
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venues");
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(intent);
+				dispose();
+			}
+			@Override
+			public void onError(Throwable e) {
+				dispose();
+			}
+		});
 	}
 
 	public Intent prepPerformanceActivity() {
@@ -611,12 +632,71 @@ public class DancerDao implements Serializable {
 		//Test 2
 	}
 
-
-	public Intent createIntentForPerformanceByVenueName(String venueName) {
+	//TODO Try to make this all run in io thread.
+	public void createIntentForPerformanceByVenueName(String venueName) {
 
 		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
 
 		String whereClause = " where venue =" + Utility.quote(venueName);
+
+		Single<Cursor> single = runRawQueryCursor("select PerfDate as _id," +
+				"PerfDate," +
+				"PerfDesc," +
+				"Venue," +
+				"Dance_Code," +
+				"title," +
+				"Perf_Code" +
+				" from Info " +
+				whereClause +
+				" group by Perf_Code,Dance_code " +
+				" order by PerfDate desc");
+
+		single.subscribeWith(new DisposableSingleObserver<Cursor>() {
+			@Override
+			public void onSuccess(Cursor cursor) {
+				SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
+				//First get venues
+				while (cursor.moveToNext()) {
+					if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2))) {
+						if (AppConstant.DEBUG)
+							Log.d(this.getClass().getSimpleName() + ">", "Duplicate:" + cursor.getString(2));
+					}
+
+					Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(1) + ":" + cursor.getString(2), cursor.getString(5));
+					lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
+					//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
+					listData.add(lib_expandableDataWithIds);
+					if (AppConstant.DEBUG)
+						Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
+				}
+
+
+				for (String performance : performances) {
+					listData.add(new Lib_ExpandableDataWithIds(performance));
+				}
+
+				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
+				Intent i = new Intent(context, ExpandListSubclass.class);
+			//	i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
+			//	i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
+				i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
+				i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+
+				i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(i);
+				dispose();
+
+			}
+			@Override
+			public void onError(Throwable e) {
+				if (AppConstant.DEBUG) Log.e(this.getClass().getSimpleName()+">",e.getMessage());
+			}
+		});
+
+		if (true){
+			return;
+		}
 
 		final Cursor cursor = runRawQuery(
 				"select PerfDate as _id," +
@@ -655,47 +735,34 @@ public class DancerDao implements Serializable {
 		}
 
 		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-
-		//HandleAChildClick handleAChildClick = new HandleAChildClick(HandleAChildClick.PERFORMANCE_CLICK);
-
-		IHandleChildClicksExpandableIds ih = new IHandleChildClicksExpandableIds() {
-			@Override
-			public void handleClicks(Context context, Lib_ExpandableDataWithIds lib_expandableDataWithIds, Lib_ExpandableDataWithIds lib_expandableDataWithIds1) {
-				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Hello");
-			}
-		};
-
 		//Intent i=new Intent(this, Lib_Expandable_Activity.class);
 		Intent i = new Intent(context, ExpandListSubclass.class);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
 //			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
-		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances:");
-
+		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
 		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 
 		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
-		return i;
-		//	i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, ih);
-		//Test comment
-		//Test 2
+
 	}
 
+	private void startPerformanceActivity(){
+
+	}
 	public void getPerformanceForAVenue(String venueName) {
-		Intent intent = createIntentForPerformanceByVenueName(venueName);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		context.startActivity(intent);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Getting performance for venue...");
+		createIntentForPerformanceByVenueName(venueName);
+		//intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		//context.startActivity(intent);
 	}
 
-	public boolean isTableEmpty(String table_name) {
-		if (AppConstant.DEBUG)
-			Log.d(this.getClass().getSimpleName() + ">", "Checking if table " + table_name + " is empty.");
+	public boolean isTableEmptyNew(Cursor cursor){
 		boolean isEmpty;
-		Cursor cursor = runRawQuery("Select count(*) from " + table_name);
-		if (cursor == null) {
-			return false;
-		}
-		cursor.moveToFirst();
-		isEmpty = cursor.getInt(0) == 0;
+//		if (cursor == null) {
+//			return false;
+//		}
+		boolean wasMoved = cursor.moveToFirst();
+		isEmpty = !wasMoved;
 		cursor.close();
 		return isEmpty;
 	}
