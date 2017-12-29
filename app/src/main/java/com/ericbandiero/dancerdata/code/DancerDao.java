@@ -535,17 +535,15 @@ public class DancerDao implements Serializable {
 
 				//First get venues
 				while (cursor.moveToNext()) {
-					if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2))) {
-						if (AppConstant.DEBUG)
-							Log.d(this.getClass().getSimpleName() + ">", "Duplicate:" + cursor.getString(2));
+					if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2)+":"+cursor.getString(6))) {
+						//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Duplicate:" + cursor.getString(2));
 					}
 
-					Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(1) + ":" + cursor.getString(2), cursor.getString(5));
+					Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(1) + ":" + cursor.getString(2)+":"+cursor.getString(6), cursor.getString(5));
 					lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
 					//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
 					listData.add(lib_expandableDataWithIds);
-					if (AppConstant.DEBUG)
-						Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
+					//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
 				}
 
 

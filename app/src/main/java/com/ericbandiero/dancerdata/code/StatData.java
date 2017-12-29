@@ -10,9 +10,12 @@ import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Eric Bandiero on 10/25/2017.
@@ -89,7 +92,41 @@ public class StatData {
 
 	private void getPerformanceCount() {
 		Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.PERF_CODE+" from info");
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance count"+cursor.getCount());
+		List<Integer> code1=new ArrayList<>();
+		Set<Integer> code2=new HashSet<>();
+		Set<String> code3=new HashSet<>();
+		while (cursor.moveToNext()){
+			code1.add(cursor.getInt(0));
+		}
+
+/*		Test code
+		String sql="select PerfDate as _id," +
+				"PerfDate," +
+				"PerfDesc," +
+				"Venue," +
+				"Dance_Code," +
+				"title," +
+				"Perf_Code" +
+				" from Info " +
+				" group by Perf_Code,Dance_code " +
+				" order by PerfDate desc";
+		Cursor cursor2 = dancerDao.runRawQuery(sql);
+
+
+		while (cursor2.moveToNext()){
+			code2.add(cursor2.getInt(6));
+			boolean added = code3.add(cursor2.getString(6)+cursor2.getString(1) + ":" + cursor2.getString(2));
+			if (!added){
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dup data:"+cursor2.getString(1) + ":" + cursor2.getString(2));
+			}
+		}
+
+*/
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance set 1:"+code1.size());
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance set 2:"+code2.size());
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance desc unique:"+code3.size());
+
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance count:"+cursor.getCount());
 		//dataMap.put("Performances",cursor.getCount());
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Performances:",String.valueOf(cursor.getCount())));
 		cursor.close();
