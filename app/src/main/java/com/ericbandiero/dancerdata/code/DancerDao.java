@@ -632,11 +632,86 @@ public class DancerDao implements Serializable {
 	}
 
 
-	public Intent createIntentForPerformanceByVenueName(String venueName) {
+	public void createIntentForPerformanceByVenueName(String venueName) {
 
 		List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
 
 		String whereClause = " where venue =" + Utility.quote(venueName);
+
+		Single<Cursor> single = runRawQueryCursor("select PerfDate as _id," +
+				"PerfDate," +
+				"PerfDesc," +
+				"Venue," +
+				"Dance_Code," +
+				"title," +
+				"Perf_Code" +
+				" from Info " +
+				whereClause +
+				" group by Perf_Code,Dance_code " +
+				" order by PerfDate desc");
+
+		single.subscribeWith(new DisposableSingleObserver<Cursor>() {
+			/**
+			 * Notifies the SingleObserver with a single item and that the {@link Single} has finished sending
+			 * push-based notifications.
+			 * <p>
+			 * The {@link Single} will not call this method if it calls {@link #onError}.
+			 *
+			 * @param cursor the item emitted by the Single
+			 */
+			@Override
+			public void onSuccess(Cursor cursor) {
+				SortedSet<String> performances = new TreeSet<>(Collections.<String>reverseOrder());
+
+				//First get venues
+				while (cursor.moveToNext()) {
+					if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2))) {
+						if (AppConstant.DEBUG)
+							Log.d(this.getClass().getSimpleName() + ">", "Duplicate:" + cursor.getString(2));
+					}
+
+					Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(1) + ":" + cursor.getString(2), cursor.getString(5));
+					lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
+					//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
+					listData.add(lib_expandableDataWithIds);
+					if (AppConstant.DEBUG)
+						Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
+				}
+
+
+				for (String performance : performances) {
+					listData.add(new Lib_ExpandableDataWithIds(performance));
+				}
+
+				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
+				//Intent i=new Intent(this, Lib_Expandable_Activity.class);
+				Intent i = new Intent(context, ExpandListSubclass.class);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,iPrepDataExpandableList);
+//			i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE,prepDataExpandableList);
+				i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
+				i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
+
+				i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(i);
+			}
+
+			/**
+			 * Notifies the SingleObserver that the {@link Single} has experienced an error condition.
+			 * <p>
+			 * If the {@link Single} calls this method, it will not thereafter call {@link #onSuccess}.
+			 *
+			 * @param e the exception encountered by the Single
+			 */
+			@Override
+			public void onError(Throwable e) {
+
+			}
+		});
+
+		if (true){
+			return;
+		}
 
 		final Cursor cursor = runRawQuery(
 				"select PerfDate as _id," +
@@ -683,13 +758,17 @@ public class DancerDao implements Serializable {
 		i.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
 
 		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
-		return i;
+
 	}
 
+	private void startPerformanceActivity(){
+
+	}
 	public void getPerformanceForAVenue(String venueName) {
-		Intent intent = createIntentForPerformanceByVenueName(venueName);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		context.startActivity(intent);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Getting performance for venue...");
+		createIntentForPerformanceByVenueName(venueName);
+		//intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		//context.startActivity(intent);
 	}
 
 	public boolean isTableEmptyNew(Cursor cursor){
