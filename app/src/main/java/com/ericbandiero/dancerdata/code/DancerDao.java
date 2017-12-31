@@ -415,11 +415,6 @@ public class DancerDao implements Serializable {
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		Calendar end = Calendar.getInstance();
-		if (AppConstant.DEBUG)
-			Log.d(this.getClass().getSimpleName() + ">", "Time start:" + start.getTime());
-		if (AppConstant.DEBUG)
-			Log.d(this.getClass().getSimpleName() + ">", "Time end  :" + end.getTime());
-
 		String rowsAttempted = "Rows of data attempted:" + cnt;
 		if (AppConstant.DEBUG)
 			Log.d(this.getClass().getSimpleName() + ">", "Input file was imported!");
@@ -494,7 +489,7 @@ public class DancerDao implements Serializable {
 		if (AppConstant.DEBUG) Log.d(new Object() {
 		}.getClass().getEnclosingClass() + ">", "Performance code passed in:" + performanceCode);
 		if (AppConstant.DEBUG) Log.d(new Object() {
-		}.getClass().getEnclosingClass() + ">", "Start time:" + new Date().toString());
+		}.getClass().getEnclosingClass() + ">", "Start time performance data:" + new Date().toString());
 
 		//List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
 
@@ -553,7 +548,7 @@ public class DancerDao implements Serializable {
 
 				cursor.close();
 				if (AppConstant.DEBUG) Log.d(new Object() {
-				}.getClass().getEnclosingClass() + ">", "End time:" + new Date().toString());
+				}.getClass().getEnclosingClass() + ">", "End time performance data:" + new Date().toString());
 
 				//Saving entire list for first time.
 				if (performanceCode.equals("-1") & listPerformances.isEmpty()) {
@@ -580,6 +575,8 @@ public class DancerDao implements Serializable {
 
 
 	private void startPerformanceActivityNew(List<Lib_ExpandableDataWithIds> listData){
+		if (AppConstant.DEBUG) Log.d(new Object() {
+		}.getClass().getEnclosingClass() + ">", "Start time performance activity:" + new Date().toString());
 		IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
 		Intent i = new Intent(context, ExpandListSubclass.class);
 		i.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Performances");
@@ -587,6 +584,8 @@ public class DancerDao implements Serializable {
 		i.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClick);
 		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(i);
+		if (AppConstant.DEBUG) Log.d(new Object() {
+		}.getClass().getEnclosingClass() + ">", "End time performance activity called:" + new Date().toString());
 	}
 
 	public void getVenueData(Activity activity, HandleAChildClick handleAChildClickVenues) {
