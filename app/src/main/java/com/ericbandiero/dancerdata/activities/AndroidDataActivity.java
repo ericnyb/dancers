@@ -565,10 +565,10 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.VENUE;
 				orderByFields = DancerDao.VENUE;
-				Log.i(TAG, "Venue");
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue");
 				break;
 
-			case R.id.radioPeople:
+			case R.id.radioChoreographer:
 				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
 						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
@@ -577,10 +577,21 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
 				orderByFields = "CLastName,CFirstName,PerfDate Desc";
-				Log.i(TAG, "Venue");
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Choreographer");
+				break;
+			case R.id.radioAny:
+				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+				sqlSearchString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+						+ " LIKE ? or "+DancerData.getUpperSearch(DancerDao.CFIRST_NAME)+" LIKE ?";
+				selectionArgs=new String[] {'%'+userSearchText+'%','%'+userSearchText+'%'};
+				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
+				orderByFields = "CLastName,CFirstName,PerfDate Desc";
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Search ->"+Arrays.toString(selectionArgs));
 				break;
 			default:
-				Log.i(TAG, "other");
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","other");
 				break;
 		}
 
@@ -621,7 +632,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	public void onItemClick(AdapterView<?> adapterView, View view,
 							int position, long row) {
 		Log.d(TAG, listOfDanceCode.toString());
-		if (radioButton.getId() == R.id.radioDancer || radioButton.getId() == R.id.radioPeople) {
+		if (radioButton.getId() == R.id.radioDancer || radioButton.getId() == R.id.radioChoreographer|| radioButton.getId() == R.id.radioAny) {
 			DetailActivity.setDance_id(listOfDanceCode.get(position));
 			Intent intent = new Intent(this, DetailActivity.class);
 			startActivity(intent);

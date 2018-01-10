@@ -15,7 +15,7 @@
     <string name="title_activity_detail">Detail</string>
     <string name="DancerOPtion">Dancers</string>
     <string name="OptionVenues">Venues</string>
-    <string name="OptionPeople">Choreographers</string>
+    <string name="OptionChoreographer">Choreographers</string>
     <string name="textInfoRecords">Record count</string>
     <string name="ButttonGoPerf">Performances</string>
     <string name="title_activity_predict">Prediction Calendar</string>
@@ -36,6 +36,7 @@
     //Custom controller names
     <string name="controller_stats">Stats</string>
     <string name="menu_dancer_counts">Dancer Count By Piece</string>
+    <string name="Anybody">Anybody</string>
 
 
 </resources>
