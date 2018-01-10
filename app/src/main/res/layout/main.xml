@@ -26,10 +26,17 @@
             android:text="@string/OptionVenues" />
 
         <RadioButton
-            android:id="@+id/radioPeople"
+            android:id="@+id/radioChoreographer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/OptionPeople" />
+            android:text="@string/OptionChoreographer" />
+
+        <RadioButton
+            android:id="@+id/radioAny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Anybody" />
+
     </RadioGroup>
 
     <include

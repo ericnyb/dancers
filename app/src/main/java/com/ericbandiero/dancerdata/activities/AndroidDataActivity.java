@@ -568,7 +568,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				Log.i(TAG, "Venue");
 				break;
 
-			case R.id.radioPeople:
+			case R.id.radioChoreographer:
+				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+				sqlSearchString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+						+ " LIKE ?";
+				selectionArgs=new String[] {userSearchText+'%'};
+				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
+				orderByFields = "CLastName,CFirstName,PerfDate Desc";
+				Log.i(TAG, "Choreographer");
+				break;
+			case R.id.radioAny:
 				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
 						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
@@ -621,7 +632,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	public void onItemClick(AdapterView<?> adapterView, View view,
 							int position, long row) {
 		Log.d(TAG, listOfDanceCode.toString());
-		if (radioButton.getId() == R.id.radioDancer || radioButton.getId() == R.id.radioPeople) {
+		if (radioButton.getId() == R.id.radioDancer || radioButton.getId() == R.id.radioChoreographer) {
 			DetailActivity.setDance_id(listOfDanceCode.get(position));
 			Intent intent = new Intent(this, DetailActivity.class);
 			startActivity(intent);
