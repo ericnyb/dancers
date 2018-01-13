@@ -580,14 +580,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Choreographer");
 				break;
 			case R.id.radioAny:
+				//TODO Rework this to use raw query?
 				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
-						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME,DancerDao.LAST_NAME, DancerDao.FIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
-				sqlSearchString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
-						+ " LIKE ? or "+DancerData.getUpperSearch(DancerDao.CFIRST_NAME)+" LIKE ?";
-				selectionArgs=new String[] {'%'+userSearchText+'%','%'+userSearchText+'%'};
+				sqlSearchString =
+						DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+						+ " LIKE ? or "+DancerData.getUpperSearch(DancerDao.CFIRST_NAME)+" LIKE ? or "+
+								DancerData.getUpperSearch(DancerDao.LAST_NAME)
+								+ " LIKE ? or "+DancerData.getUpperSearch(DancerDao.FIRST_NAME)+" LIKE ?";
+				selectionArgs=new String[] {'%'+userSearchText+'%','%'+userSearchText+'%','%'+userSearchText+'%','%'+userSearchText+'%'};
 				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
-				orderByFields = "CLastName,CFirstName,PerfDate Desc";
+				orderByFields ="PerfDate Desc";
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Search ->"+Arrays.toString(selectionArgs));
 				break;
 			default:
