@@ -25,7 +25,6 @@ import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
-import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 import com.ericbandiero.myframework.Utility;
 
@@ -48,7 +47,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -531,15 +529,9 @@ public class DancerDao implements Serializable {
 
 				//First get venues
 				while (cursor.moveToNext()) {
-					if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2)+":"+cursor.getString(6))) {
-						//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Duplicate:" + cursor.getString(2));
-					}
-
 					Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(1) + ":" + cursor.getString(2)+":"+cursor.getString(6), cursor.getString(5));
 					lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
-					//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
 					listData.add(lib_expandableDataWithIds);
-					//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Data performance:" + cursor.getString(1));
 				}
 
 
@@ -707,9 +699,6 @@ public class DancerDao implements Serializable {
 		});
 	}
 
-	private void startPerformanceActivity(){
-
-	}
 	public void getPerformanceForAVenue(String venueName) {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Getting performance for venue...");
 		createIntentForPerformanceByVenueName(venueName);
