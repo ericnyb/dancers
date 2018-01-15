@@ -374,7 +374,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		startActivity(statIntent);
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 		subscribeStats.dispose();
-
+		//progressBarStop();
 	}
 
 	@Override
@@ -382,7 +382,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		super.onOptionsItemSelected(item);
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_stats))) {
-
+			progressBarStart();
 			Completable completable = Completable.fromAction(() -> statData.runStats()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
 			Action action=new Action() {

@@ -4,38 +4,26 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.ericbandiero.dancerdata.dagger.DaggerTestObjectComponent;
-import com.ericbandiero.dancerdata.dagger.TestObjectComponent;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import io.reactivex.Single;
-import io.reactivex.functions.Consumer;
 
 /**
+ * This class runs our stats query
  * Created by Eric Bandiero on 10/25/2017.
  */
 
 public class StatData {
 
-	DancerDao dancerDao;
+	private final DancerDao dancerDao;
 
-	Map<String,Integer> dataMap=new LinkedHashMap<>();
 
-	private List<DataHolderTwoFields> dataHolderTwoFieldsList=new ArrayList<>();
+	private final List<DataHolderTwoFields> dataHolderTwoFieldsList=new ArrayList<>();
 
-	//@Inject
-	//TestDaggerObject testDaggerObject;
-
-	private TestObjectComponent testObjectComponent;
 
 	public StatData(DancerDao sqLiteDatabase) {
 		//DanceApp.app().testObjectComponent().inject(this);
@@ -45,7 +33,6 @@ public class StatData {
 		dancerDao=sqLiteDatabase;
 	}
 
-	//Not used
 	public void runStats() {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Running stats....!");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats thread:"+Thread.currentThread().getName());
@@ -63,7 +50,6 @@ public class StatData {
 	}
 
 	private void getDancerCount() {
-		//Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CODE+" from info");
 		Cursor cursor = dancerDao.runRawQueryMainThread("Select distinct "+ DancerDao.CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dancer count"+cursor.getCount());
 		//dataMap.put("Dancers",cursor.getCount());
@@ -73,7 +59,6 @@ public class StatData {
 
 
 	private void getChoreographerCount() {
-		//Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.CHOR_CODE+" from info");
 		Cursor cursor = dancerDao.runRawQueryMainThread("Select distinct "+ DancerDao.CHOR_CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Chore count"+cursor.getCount());
 		//dataMap.put("Choreographers",cursor.getCount());
@@ -82,7 +67,6 @@ public class StatData {
 	}
 
 	private void getVenueCount() {
-		//Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.VENUE+" from info");
 		Cursor cursor = dancerDao.runRawQueryMainThread("Select distinct "+ DancerDao.VENUE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue count"+cursor.getCount());
 		//dataMap.put("Venues",cursor.getCount());
@@ -91,7 +75,6 @@ public class StatData {
 	}
 
 	private void getDanceWorksCount() {
-		//Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.DANCE_CODE+" from info");
 		Cursor cursor = dancerDao.runRawQueryMainThread("Select distinct "+ DancerDao.DANCE_CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dance pieces count"+cursor.getCount());
 		//dataMap.put("Dance pieces",cursor.getCount());
@@ -100,42 +83,16 @@ public class StatData {
 	}
 
 	private void getPerformanceCount() {
-		//Cursor cursor = dancerDao.runRawQuery("Select distinct "+ DancerDao.PERF_CODE+" from info");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Thread plain:"+Thread.currentThread().getName());
 		Cursor cursor = dancerDao.runRawQueryMainThread("Select distinct "+ DancerDao.PERF_CODE+" from info");
 		List<Integer> code1=new ArrayList<>();
-		Set<Integer> code2=new HashSet<>();
-		Set<String> code3=new HashSet<>();
+
 		while (cursor.moveToNext()){
 			code1.add(cursor.getInt(0));
 		}
 
-/*		Test code
-		String sql="select PerfDate as _id," +
-				"PerfDate," +
-				"PerfDesc," +
-				"Venue," +
-				"Dance_Code," +
-				"title," +
-				"Perf_Code" +
-				" from Info " +
-				" group by Perf_Code,Dance_code " +
-				" order by PerfDate desc";
-		Cursor cursor2 = dancerDao.runRawQuery(sql);
 
-
-		while (cursor2.moveToNext()){
-			code2.add(cursor2.getInt(6));
-			boolean added = code3.add(cursor2.getString(6)+cursor2.getString(1) + ":" + cursor2.getString(2));
-			if (!added){
-				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Dup data:"+cursor2.getString(1) + ":" + cursor2.getString(2));
-			}
-		}
-
-*/
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance set 1:"+code1.size());
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance set 2:"+code2.size());
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance desc unique:"+code3.size());
 
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance count:"+cursor.getCount());
 		//dataMap.put("Performances",cursor.getCount());
@@ -144,12 +101,10 @@ public class StatData {
 	}
 
 	private void getFirstAndLastPerformance() {
-		//Cursor cursor = dancerDao.runRawQuery("Select min ("+ DancerDao.PERF_DATE+") from info");
 		Cursor cursor = dancerDao.runRawQueryMainThread("Select min ("+ DancerDao.PERF_DATE+") from info");
 		cursor.moveToFirst();
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("First shoot:",String.valueOf(cursor.getString(0))));
 
-		//cursor = dancerDao.runRawQuery("Select max ("+ DancerDao.PERF_DATE+") from info");
 		cursor = dancerDao.runRawQueryMainThread("Select max ("+ DancerDao.PERF_DATE+") from info");
 		cursor.moveToFirst();
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Performance last shoot"+cursor.getString(0));
@@ -161,7 +116,6 @@ public class StatData {
 	private void getMostCommonName() {
 
 		String sql="Select distinct "+DancerDao.FIRST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.FIRST_NAME+") from info group by "+DancerDao.FIRST_NAME +" order by 2 desc";
-		//Cursor cursor = dancerDao.runRawQuery(sql);
 		Cursor cursor = dancerDao.runRawQueryMainThread(sql);
 
 		if(cursor != null && cursor.moveToFirst()){
@@ -170,7 +124,6 @@ public class StatData {
 		}
 
 		sql="Select distinct "+DancerDao.LAST_NAME +",count(distinct "+ DancerDao.CODE+"+"+DancerDao.LAST_NAME+") from info group by "+DancerDao.LAST_NAME +" order by 2 desc";
-		//cursor = dancerDao.runRawQuery(sql);
 		cursor = dancerDao.runRawQueryMainThread(sql);
 
 		if(cursor != null && cursor.moveToFirst()) {
@@ -181,7 +134,6 @@ public class StatData {
 
 	private void getSolos() {
 		String sql="Select count(distinct "+ DancerDao.CODE+") as cnt from info group by "+DancerDao.DANCE_CODE +" having cnt=1";
-		//Cursor cursor = dancerDao.runRawQuery(sql);
 		Cursor cursor = dancerDao.runRawQueryMainThread(sql);
 		cursor.moveToFirst();
 		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Solos:",String.valueOf(cursor.getCount())));
@@ -192,7 +144,6 @@ public class StatData {
 		final int maxLengthOfVenueName=rollUp?10:30;
 		String sql="Select "+DancerDao.VENUE+",count(distinct "+ DancerDao.PERF_DATE+") as cnt from info group by "+DancerDao.VENUE +" having cnt>1 order by cnt desc";
 		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","Sql:"+sql);
-		//Cursor cursor = dancerDao.runRawQuery(sql);
 		Cursor cursor = dancerDao.runRawQueryMainThread(sql);
 
 		while (cursor.moveToNext()){
@@ -222,7 +173,6 @@ public static String getSubStringForField(String stringToShorten,int maxLength){
 }
 
 public static String formatStatData(Map<String,Integer> stringIntegerMap){
-	//if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
 	StringBuilder stringBuilder=new StringBuilder();
 
 	String line_sep = System.getProperty("line.separator");
@@ -241,7 +191,6 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 	}
 
 	public static String[] formatStatDataForTwoColumnsArray(Map<String,Integer> stringIntegerMap){
-		//if (com.ericbandiero.dancerdata.AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Data:"+stringIntegerMap.toString());
 
 		//First get max value
 		int maxValue=maxLengthOfValueFromMap(stringIntegerMap);
@@ -257,10 +206,6 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 
 		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","data array length:"+dataArray.length);
 
-
-		StringBuilder stringBuilder=new StringBuilder();
-
-		String line_sep = System.getProperty("line.separator");
 		int counter=0;
 
 		for (Map.Entry<String, Integer> stringIntegerEntry : stringIntegerMap.entrySet()) {
@@ -280,8 +225,8 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 		return dataArray;
 	}
 
-	public static int maxLengthOfValueFromMap(Map<String,Integer> stringIntegerMap){
+	private static int maxLengthOfValueFromMap(Map<String, Integer> stringIntegerMap){
 		Collection<Integer> c = stringIntegerMap.values();
-		return (int) Collections.max(c);
+		return Collections.max(c);
 	}
 }
