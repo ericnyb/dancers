@@ -228,29 +228,6 @@ public class DancerDao implements Serializable {
 		}
 	}
 
-	/*
-		This isn't the greatest. We do run the query off the UI thread, but the block the UI thread by using blockingGet().
-	 */
-	public Cursor runRawQuery(String sql) {
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Sql passed in:" + sql);
-		checkDataIsOpen();
-		try {
-			Single<Cursor> ob = Single.fromCallable(() -> {
-				System.out.println("Thread we are running on using blocking:" + Thread.currentThread().getName());
-				return database.rawQuery(sql, null);
-			}).subscribeOn(Schedulers.io());
-
-			cursorRxJava = ob.blockingGet();
-			ob.unsubscribeOn(Schedulers.io());
-			return cursorRxJava;
-		} catch (SQLiteException ex) {
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Error!");
-			//UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
-			if (AppConstant.DEBUG)
-				Log.d(this.getClass().getSimpleName() + ">", "Error getting data!" + "Data error:" + ex.getMessage());
-			return cursorRxJava;
-		}
-	}
 
 	public Single<Cursor> runRawQueryCursor(String sql){
 		checkDataIsOpen();
@@ -300,6 +277,30 @@ public class DancerDao implements Serializable {
 		}).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 	}
 
+	public Cursor runRawQueryMainThread(String sql){
+		Cursor cursor=null;
+
+		try {
+			if (database == null || !database.isOpen()) {
+				open();
+			}
+			//Sql cursor never comes back null
+			cursor = database.rawQuery(sql, null);
+
+			//if (cursor != null &cursor.isBeforeFirst()) {
+			//Return true or fa;se = no error
+			//cursor.moveToFirst();
+			//}
+			return cursor;
+		}
+		catch(SQLiteException ex)
+		{
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error!");
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Cursor is null?"+cursor==null?"Null":"Not null");
+			//UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
+			return cursor;
+		}
+	}
 
 	private void checkDataIsOpen() {
 		try {

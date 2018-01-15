@@ -34,6 +34,7 @@ import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.SqlHelper;
+import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.librarymain.activities.*;
@@ -54,7 +55,12 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -88,6 +94,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	private String[] selectionArgs;
 
 
+	private Disposable subscribeStats;
+
 	//Permission request integer
 	private static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
 
@@ -106,11 +114,14 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	DancerDao dancerDao;
 
 	@Inject
+	StatData statData;
+
+	@Inject
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
 
 	@Inject
 	@Named(AppConstant.DAG_CONTROLLER_STATS)
-	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
+	ControlStatsActivityBuilder controlStatsActivityBuilder;
 
 	@Inject
 	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
@@ -345,7 +356,26 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		}
 	}
 
+	private void startStats(){
+		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+		Intent statIntent=new Intent(this,Lib_Stat_RecycleActivity.class);
+		//TODO Not so sure that this couldn't be a concurrency issue - but we are only one calling it.
+		controlStatsActivityBuilder.setDataHolderTwoFieldsList(statData.getDataHolderTwoFieldsList());
 
+		//These are for the activity
+		//statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
+		statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder);
+
+			//Builder is injected
+			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+
+		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+
+		startActivity(statIntent);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
+		subscribeStats.dispose();
+
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -353,22 +383,25 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_stats))) {
 
+			Completable completable = Completable.fromAction(() -> statData.runStats()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+
+			Action action=new Action() {
+				@Override
+				public void run() throws Exception {
+					if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Action running...");
+					startStats();
+				}
+			};
+
+			subscribeStats = completable.subscribe(action);
+
+			//subscribe.dispose();
+
+
+			//List<DataHolderTwoFields> dataHolderTwoFields = statData.runStats();
 			//TestRxJava  testRxJava=new TestRxJava();
 
 
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_Stat_RecycleActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 
 		}
 
