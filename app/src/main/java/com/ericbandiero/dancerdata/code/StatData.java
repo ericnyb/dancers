@@ -46,26 +46,9 @@ public class StatData {
 	}
 
 	//Not used
-	public List<DataHolderTwoFields> runStats() {
+	public void runStats() {
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Running stats....!");
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats thread:"+Thread.currentThread().getName());
-		dataHolderTwoFieldsList.clear();
-		getPerformanceCount();
-		getDanceWorksCount();
-		getVenueCount();
-		getDancerCount();
-		getChoreographerCount();
-		getSolos();
-		getMostShotVenue(true);
-		//getMostPiecesShotAtVenue();
-		getFirstAndLastPerformance();
-		getMostCommonName();
-		return dataHolderTwoFieldsList;
-	}
-
-	public void runStatsNew() {
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Running stats new....!");
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats new thread:"+Thread.currentThread().getName());
 		dataHolderTwoFieldsList.clear();
 		getPerformanceCount();
 		getDanceWorksCount();

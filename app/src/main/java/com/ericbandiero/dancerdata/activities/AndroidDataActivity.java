@@ -383,8 +383,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_stats))) {
 
-
-			Completable completable = Completable.fromAction(() -> statData.runStatsNew()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+			Completable completable = Completable.fromAction(() -> statData.runStats()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
 			Action action=new Action() {
 				@Override
