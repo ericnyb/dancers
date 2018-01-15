@@ -289,7 +289,7 @@ public class DancerDao implements Serializable {
 
 			//if (cursor != null &cursor.isBeforeFirst()) {
 			//Return true or fa;se = no error
-			cursor.moveToFirst();
+			//cursor.moveToFirst();
 			//}
 			return cursor;
 		}
