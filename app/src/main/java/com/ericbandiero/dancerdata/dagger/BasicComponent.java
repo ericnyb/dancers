@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 /**
+ * Dagger component
  * Created by Eric Bandiero on 11/1/2017.
  */
 
