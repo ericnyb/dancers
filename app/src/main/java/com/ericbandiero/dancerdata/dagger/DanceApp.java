@@ -4,9 +4,9 @@ import android.app.Application;
 import android.util.Log;
 
 import com.ericbandiero.dancerdata.code.AppConstant;
+import com.ericbandiero.dancerdata.dagger.DaggerBasicComponent;
 
 /**
- * Standard Dagger object
  * Created by Eric Bandiero on 11/1/2017.
  */
 
