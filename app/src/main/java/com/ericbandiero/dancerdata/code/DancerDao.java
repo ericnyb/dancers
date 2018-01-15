@@ -531,10 +531,7 @@ public class DancerDao implements Serializable {
 
 				//First get venues
 				while (cursor.moveToNext()) {
-					if (!performances.add(cursor.getString(1) + ":" + cursor.getString(2)+":"+cursor.getString(6))) {
-						//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Duplicate:" + cursor.getString(2));
-					}
-
+					performances.add(cursor.getString(1) + ":" + cursor.getString(2)+":"+cursor.getString(6));
 					Lib_ExpandableDataWithIds lib_expandableDataWithIds = new Lib_ExpandableDataWithIds(cursor.getString(1) + ":" + cursor.getString(2)+":"+cursor.getString(6), cursor.getString(5));
 					lib_expandableDataWithIds.setAnyObject(cursor.getString(4));//Dance code
 					//listData.add(new Lib_ExpandableDataWithIds(cursor.getString(3), cursor.getString(1) + "---" + cursor.getString(2)));
