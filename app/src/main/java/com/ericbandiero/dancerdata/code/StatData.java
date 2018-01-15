@@ -206,7 +206,6 @@ public static String formatStatData(Map<String,Integer> stringIntegerMap){
 
 		if (AppConstant.DEBUG) Log.d(new Object() { }.getClass().getEnclosingClass()+">","data array length:"+dataArray.length);
 
-		String line_sep = System.getProperty("line.separator");
 		int counter=0;
 
 		for (Map.Entry<String, Integer> stringIntegerEntry : stringIntegerMap.entrySet()) {
