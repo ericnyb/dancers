@@ -300,6 +300,30 @@ public class DancerDao implements Serializable {
 		}).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 	}
 
+	public Cursor runRawQueryMainThread(String sql){
+		Cursor cursor=null;
+
+		try {
+			if (database == null || !database.isOpen()) {
+				open();
+			}
+			//Sql cursor never comes back null
+			cursor = database.rawQuery(sql, null);
+
+			//if (cursor != null &cursor.isBeforeFirst()) {
+			//Return true or fa;se = no error
+			cursor.moveToFirst();
+			//}
+			return cursor;
+		}
+		catch(SQLiteException ex)
+		{
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Error!");
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Cursor is null?"+cursor==null?"Null":"Not null");
+			//UtilsShared.AlertMessageSimple(AppConstant.CONTEXT, "Error getting data!", "Data error:" + ex.getMessage());
+			return cursor;
+		}
+	}
 
 	private void checkDataIsOpen() {
 		try {
