@@ -77,7 +77,6 @@ public class StatData {
 		//getMostPiecesShotAtVenue();
 		getFirstAndLastPerformance();
 		getMostCommonName();
-		dataHolderTwoFieldsList.add(new DataHolderTwoFields("Test","1000"));
 	}
 
 	private void getDancerCount() {
