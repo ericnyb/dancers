@@ -121,7 +121,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	@Inject
 	@Named(AppConstant.DAG_CONTROLLER_STATS)
-	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
+	ControlStatsActivityBuilder controlStatsActivityBuilder;
 
 	@Inject
 	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
@@ -359,13 +359,12 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	private void startStats(){
 		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
 		Intent statIntent=new Intent(this,Lib_Stat_RecycleActivity.class);
+		//TODO Not so sure that this couldn't be a concurrency issue - but we are only one calling it.
+		controlStatsActivityBuilder.setDataHolderTwoFieldsList(statData.getDataHolderTwoFieldsList());
 
 		//These are for the activity
 		//statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
-		statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, new ControlStatsActivityBuilder("Shooting History Stats",
-				"Data",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.getDataHolderTwoFieldsList(),null));
+		statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder);
 
 			//Builder is injected
 			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);

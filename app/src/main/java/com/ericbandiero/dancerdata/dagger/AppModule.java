@@ -66,8 +66,8 @@ public class AppModule {
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity(StatData statData){
 		return new ControlStatsActivityBuilder("Shooting History Stats",
 				"Data",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runStats(),null);
+				ContextCompat.getColor(context, R.color.Background_Light_Yellow)
+				);
 	}
 
 	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM_SHOOTS)
