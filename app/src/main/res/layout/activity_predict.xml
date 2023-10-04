@@ -9,8 +9,6 @@
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
               tools:context=".activities.PredictActivity">
-
-
     <include
         android:id="@+id/progressbar"
         layout="@layout/lib_progress"
@@ -22,8 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
-
-
     <ListView
         android:id="@+id/listViewPredict"
         android:layout_width="match_parent"

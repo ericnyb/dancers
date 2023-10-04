@@ -4,9 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-   
 
-    
+
     <RadioGroup
         android:id="@+id/radioGroup1"
         android:layout_width="wrap_content"
@@ -27,11 +26,23 @@
             android:text="@string/OptionVenues" />
 
         <RadioButton
-            android:id="@+id/radioPeople"
+            android:id="@+id/radioChoreographer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/OptionPeople" />
+            android:text="@string/OptionChoreographer" />
+
+        <RadioButton
+            android:id="@+id/radioAny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Anybody" />
+
     </RadioGroup>
+
+    <include
+        android:id="@+id/progressbar"
+        layout="@layout/lib_progress"
+        />
 
     <EditText
         android:id="@+id/editText1"
@@ -49,6 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/textInfoRecords"
+        android:textColor="@color/DarkBlue"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
       <LinearLayout

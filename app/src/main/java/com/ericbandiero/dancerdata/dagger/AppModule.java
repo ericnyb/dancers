@@ -3,14 +3,16 @@ package com.ericbandiero.dancerdata.dagger;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
-
+//import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.HandleClickForRecyclerVenueOrDancer;
 import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
 import com.ericbandiero.dancerdata.code.StatData;
+import com.ericbandiero.librarymain.R.color;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 
@@ -66,15 +68,15 @@ public class AppModule {
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity(StatData statData){
 		return new ControlStatsActivityBuilder("Shooting History Stats",
 				"Data",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
-				statData.runStats(),null);
+				ContextCompat.getColor(context, com.ericbandiero.librarymain.R.color.LightYellow)
+				);
 	}
 
 	@Singleton @Provides @Named (AppConstant.DAG_CONTROLLER_VENUE_BY_PERFORM_SHOOTS)
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity1(){
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Performance Shoots",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				ContextCompat.getColor(context, com.ericbandiero.librarymain.R.color.LightYellow),
 				provideHandleClickForRecyclerVenueOrDancer(HandleClickForRecyclerVenueOrDancer.VENUE_COUNT));
 	}
 
@@ -82,7 +84,7 @@ public class AppModule {
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivity2(){
 		return new ControlStatsActivityBuilder("Venue Stats",
 				"Venues By Dance Pieces Shot",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				ContextCompat.getColor(context, com.ericbandiero.librarymain.R.color.LightYellow),
 				provideHandleClickForRecyclerVenueOrDancer(HandleClickForRecyclerVenueOrDancer.VENUE_COUNT));
 	}
 
@@ -90,7 +92,7 @@ public class AppModule {
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivityGigs(){
 		return new ControlStatsActivityBuilder("Gigs By Year",
 				"Gigs By Year",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow)
+				ContextCompat.getColor(context, com.ericbandiero.librarymain.R.color.LightYellow)
 				);
 	}
 
@@ -98,16 +100,16 @@ public class AppModule {
 	public ControlStatsActivityBuilder provideDaggerControlStatsActivityDancerCounts(){
 		return new ControlStatsActivityBuilder("Dancer Stats",
 				"Dancers by performance",
-				ContextCompat.getColor(context, R.color.Background_Light_Yellow),
+				ContextCompat.getColor(context, com.ericbandiero.librarymain.R.color.LightYellow),
 				provideHandleClickForRecyclerVenueOrDancer(HandleClickForRecyclerVenueOrDancer.DANCER_COUNT));
 	}
 
 	@Singleton @Provides
 	public ControlStatsAdapterBuilder provideDaggerControlStatsAdapterBuilder(){
 		return new ControlStatsAdapterBuilder(
-				ContextCompat.getColor(context, R.color.LightBlue),
-				ContextCompat.getColor(context,R.color.LightSalmon),
-				ContextCompat.getColor(context,R.color.LightGreen),
+				ContextCompat.getColor(context, com.ericbandiero.librarymain.R.color.LightBlue),
+				ContextCompat.getColor(context, com.ericbandiero.librarymain.R.color.LightSalmon),
+				ContextCompat.getColor(context, com.ericbandiero.librarymain.R.color.LightGreen),
 				false);
 	}
 

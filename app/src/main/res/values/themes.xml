@@ -19,14 +19,14 @@
     <!-- ActionBar styles -->
     <style name="MyActionBar"
         parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/LightSkyBlue</item>
+        <item name="android:background">@color/LightBlueSky</item>
 
         <!-- Support library compatibility -->
-        <item name="background">@color/LightSkyBlue</item>
+        <item name="background">@color/LightBlueSky</item>
     </style>
 
     <style name="AppButton" parent="android:style/Widget.Button">
-        <item name="android:background">@color/LightSkyBlue</item>
+        <item name="android:background">@color/LightBlueSky</item>
     </style>
 
 

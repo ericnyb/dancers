@@ -24,7 +24,7 @@ public class TestDaggerObject {
 		DanceApp.app().basicComponent().inject(this);
 		this.name=name;
 		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","We got created!");
-		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","is Dancer dao created:"+dancerDao.prepDataVenue());
+		//if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","is Dancer dao created:"+dancerDao.getVenueData());
 	}
 
 	public String getName() {

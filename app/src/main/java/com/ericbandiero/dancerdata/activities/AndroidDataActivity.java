@@ -3,17 +3,12 @@ package com.ericbandiero.dancerdata.activities;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,28 +23,23 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AppConstant;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.DancerData;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
-import com.ericbandiero.dancerdata.code.PrepareCursorData;
 import com.ericbandiero.dancerdata.code.SqlHelper;
+import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.librarymain.activities.Lib_Base_ActionBarActivity;
-import com.ericbandiero.librarymain.activities.*;
-import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
-
+import com.ericbandiero.librarymain.R.id;
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.activities.Lib_Base_ActionBarActivity;
 import com.ericbandiero.librarymain.activities.Lib_Stat_RecycleActivity;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
-import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,10 +48,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
@@ -70,42 +66,38 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	private static final int ID_MENU_EXIT = 0;
 	private static final String TAG = "Droid Dancer";
 
-	//Test commit change.
-	ArrayList<String> results = new ArrayList<>();
-	//transient Button mSearchButton;
-	transient EditText mInputEdit;
-	transient RadioGroup mradiogroup;
-
-	transient Button buttonPredict;
-
-	//transient TextView textInfo;
-	transient ListView listview;
-	transient List<Integer> listOfDanceCode = new ArrayList<>();
-
-	final Context context = this;
-	transient private RadioButton radioButton;
+	private final ArrayList<String> results = new ArrayList<>();
+	private EditText editTextInput;
+	private RadioGroup radioGroup;
+	private Button buttonPredict;
+	private ListView listview;
+	private final List<Integer> listOfDanceCode = new ArrayList<>();
+	private final Context context = this;
+	private RadioButton radioButton;
 
 	// Used for data collection - group by
-	transient private String fieldToGroupBy;
+	private String fieldToGroupBy;
 
 	// Used for data collection - order by
-	transient private String orderByFields;
+	private String orderByFields;
 
 	// List of fields to get
-	transient List<String> listOfFieldsToGet = new ArrayList<>();
+	private List<String> listOfFieldsToGet = new ArrayList<>();
 
 	// String to get data
-	String sqlSearchString;
+	private String sqlSearchString;
 
 	//For parameters
-	String[] selectionArgs;
+	private String[] selectionArgs;
 
+
+	private Disposable subscribeStats;
 
 	//Permission request integer
-	public static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
+	private static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
 
-	@BindView(R.id.button_performances) Button mSearchButton;
-	@BindView(R.id.textViewRecordCount1) TextView textInfo;
+//	@BindView(R.id.button_performances) Button mSearchButton;
+//	@BindView(R.id.textViewRecordCount1) TextView textInfo;
 
 
 /*
@@ -119,11 +111,14 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	DancerDao dancerDao;
 
 	@Inject
+	StatData statData;
+
+	@Inject
 	ControlStatsAdapterBuilder controlStatsAdapterBuilder;
 
 	@Inject
 	@Named(AppConstant.DAG_CONTROLLER_STATS)
-	Provider <ControlStatsActivityBuilder> controlStatsActivityBuilder;
+	ControlStatsActivityBuilder controlStatsActivityBuilder;
 
 	@Inject
 	@Named(HandleAChildClick.GET_DANCE_DETAIL_FROM_CLICK)
@@ -144,27 +139,42 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//We want a context that we can use
 		dancerDao.setActivityContext(this);
 
-		ButterKnife.bind(this);
+		//ButterKnife.bind(this);
 		// getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		//mSearchButton = (Button) findViewById(R.id.button1);
-		mInputEdit = findViewById(R.id.editText1);
-		mradiogroup = findViewById(R.id.radioGroup1);
+		editTextInput=new EditText(this);
+		radioGroup=new RadioGroup(this);
+		buttonPredict=new Button(this);
+		editTextInput = findViewById(R.id.editText1);
+		radioGroup = findViewById(R.id.radioGroup1);
 		radioButton = findViewById(R.id.radioDancer);
 		//textInfo = (TextView) findViewById(R.id.textViewRecordCount1);
 		listview = findViewById(R.id.listViewDancer);
 		buttonPredict = findViewById(R.id.button_venues);
 
-		//Ask for permissions to use the app
-		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,1);
 
-		if (!AppConstant.WE_HAVE_DATA_IN_TABLE&&dancerDao.isTableEmpty(SqlHelper.MAIN_TABLE_NAME)){
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Table is empty!");
-			UtilsShared.alertMessageSimple(this,"New Database Created","You need to import data - see menu option.");
-			AppConstant.WE_HAVE_DATA_IN_TABLE=false;
-		}
-		else{
-			AppConstant.WE_HAVE_DATA_IN_TABLE=true;
-		}
+		//Ask for permissions to use the app
+		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,PERMISSION_REQUEST_WRITE_STORAGE);
+
+		dancerDao.runRawQueryCursor("select * from " + SqlHelper.MAIN_TABLE_NAME).
+			subscribeWith(new DisposableSingleObserver<Cursor>() {
+			@Override
+			public void onSuccess(Cursor cursor) {
+				boolean isTableEmpty = dancerDao.isTableEmptyNew(cursor);
+				if (!AppConstant.WE_HAVE_DATA_IN_TABLE && isTableEmpty) {
+					UtilsShared.alertMessageSimple(context, "New Database Created", "You need to import data - see menu option.");
+					AppConstant.WE_HAVE_DATA_IN_TABLE = false;
+					dispose();
+				} else {
+					AppConstant.WE_HAVE_DATA_IN_TABLE = true;
+					dispose();
+				}
+			}
+			@Override
+			public void onError(Throwable e) {
+
+			}
+		});
 
 		// First thing - make sure we have a directory
 		//We will call this from the ask callback
@@ -179,20 +189,17 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		listview.setOnItemClickListener(this);
 
-		mradiogroup.setOnCheckedChangeListener(this);
+		radioGroup.setOnCheckedChangeListener(this);
 
 		// EditText SearchEditText =(EditText)findViewById(R.id.editText1);
 
-		mInputEdit.setOnEditorActionListener(new OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
-				Log.i(TAG, "event:" + arg2);
-				if (arg1 == EditorInfo.IME_ACTION_GO) {
-					dataRunner();
-				}
-
-				return false;
+		editTextInput.setOnEditorActionListener((arg0, arg1, arg2) -> {
+			Log.i(TAG, "event:" + arg2);
+			if (arg1 == EditorInfo.IME_ACTION_GO) {
+				dataRunner();
 			}
+
+			return false;
 		});
 		/*
 		List<DataHolderTwoFields> dataHolderTwoFields2=new ArrayList<>();
@@ -203,10 +210,41 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	// /End of main
 
+	/**
+	 * Dispatch onResume() to fragments.  Note that for better inter-operation
+	 * with older versions of the platform, at the point of this call the
+	 * fragments attached to the activity are <em>not</em> resumed.  This means
+	 * that in some cases the previous state may still be saved, not allowing
+	 * fragment transactions that modify the state.  To correctly interact
+	 * with fragments in their proper state, you should instead override
+	 * {@link #onResumeFragments()}.
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+	}
+
+
+	/**
+	 * Dispatch onPause() to fragments.
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		//Better here - we may have completed asynch task - but still preparing data.
+		progressBarStop();
+	}
+
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-		mInputEdit.requestFocus();
+		editTextInput.requestFocus();
 		Log.i("Restarted", "restarted");
 		// mInputEdit.setText("");
 		if (!DetailActivity.getDancerdetailid().equals("-1")) {
@@ -274,13 +312,15 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 	private void dataRunner() {
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(mInputEdit.getWindowToken(),
-				InputMethodManager.HIDE_NOT_ALWAYS);
+		if (imm != null) {
+			imm.hideSoftInputFromWindow(editTextInput.getWindowToken(),
+					InputMethodManager.HIDE_NOT_ALWAYS);
+		}
 
-		String dataSearch = mInputEdit.getText().toString();
+		String dataSearch = editTextInput.getText().toString();
 		getDataAndShowIt(dataSearch);
 		displayResultList();
-		Log.i(TAG, mInputEdit.getText().toString());
+		Log.i(TAG, editTextInput.getText().toString());
 	}
 
 	public void onRadioButtonClick(View v) {
@@ -298,71 +338,98 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		Intent intent = null;
 		int id = view.getId();
 
-		switch (id) {
+		if (id == R.id.button_performances) {
+			progressBarStart();
+			dancerDao.prepPerformanceActivity();
+		} else if (id == R.id.button_venues) {
+			progressBarStart();
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
+			//We call routine to create the data list.
+			List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
+			dancerDao.getVenueData(this, handleAChildClickVenues);
+		}
+
+		/*switch (id) {
 			case R.id.button_performances:
-				intent = dancerDao.prepPerformanceActivity();
+				progressBarStart();
+				dancerDao.prepPerformanceActivity();
+				//startActivity(intent);
+				//progressBarStop();
 				break;
 			case R.id.button_venues:
+				progressBarStart();
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
-
 				//We call routine to create the data list.
-				List<Lib_ExpandableDataWithIds> listData=dancerDao.prepDataVenue();
-
-				//Intent i=new Intent(this, Lib_Expandable_Activity.class);
-				intent = new Intent(this, ExpandListSubclass.class);
-
-				IPrepDataExpandableList prepareCursor = new PrepareCursorData(listData);
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_TITLE, "Venues");
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_DATA_PREPARE, prepareCursor);
-				intent.putExtra(Lib_Expandable_Activity.EXTRA_INTERFACE_HANDLE_CHILD_CLICK, handleAChildClickVenues);
-
-				//ITestParce t1= new My();
-				//t1.doSomething();
-				//intent.putExtra("processCursor", t1);
+				List<Lib_ExpandableDataWithIds> listData=new ArrayList<>();
+				dancerDao.getVenueData(this,handleAChildClickVenues);
 				break;
 			default:
 				break;
-		}
-		startActivity(intent);
+		}*/
 	}
 
+	private void startStats(){
+		//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
+		Intent statIntent=new Intent(this,Lib_Stat_RecycleActivity.class);
+		//TODO Not so sure that this couldn't be a concurrency issue - but we are only one calling it.
+		controlStatsActivityBuilder.setDataHolderTwoFieldsList(statData.getDataHolderTwoFieldsList());
 
+		//These are for the activity
+		//statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
+		statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder);
+
+			//Builder is injected
+			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
+
+		//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
+
+		startActivity(statIntent);
+		if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
+		subscribeStats.dispose();
+		//progressBarStop();
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_stats))) {
+			progressBarStart();
+			Completable completable = Completable.fromAction(() -> statData.runStats()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
+			Action action=new Action() {
+				@Override
+				public void run() throws Exception {
+					if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Action running...");
+					startStats();
+				}
+			};
+
+			subscribeStats = completable.subscribe(action);
+
+			//subscribe.dispose();
+
+
+			//List<DataHolderTwoFields> dataHolderTwoFields = statData.runStats();
 			//TestRxJava  testRxJava=new TestRxJava();
 
 
-			//ControlStatAdapter controlStatAdapter=new ControlStatAdapter();
-			Intent statIntent=new Intent(this,Lib_Stat_RecycleActivity.class);
-
-			//These are for the activity
-			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_STATS_BUILDER, controlStatsActivityBuilder.get());
-
-			//Builder is injected
-			statIntent.putExtra(Lib_Stat_RecycleActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE, controlStatsAdapterBuilder);
-
-			//statIntent.putExtra(Lib_StatsActivity.EXTRA_DATA_STATS_ADAPTER_CONTROL_INTERFACE,(Serializable)new ControlStatAdapter());
-
-			startActivity(statIntent);
-			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Stats picked");
 
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_dancer_counts))) {
+			progressBarStart();
 			dancerDao.runDancerCountsFromRxJava(this);
 		}
 
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_performance))) {
+			progressBarStart();
 			dancerDao.getMostShotVenue(this,false);
 		}
 
 		//"Venue By Dance Piece Count"
 		if (item.getTitle() != null && item.getTitle().equals(getString(R.string.menu_venue_by_dance_piece))) {
+			progressBarStart();
 			dancerDao.getMostPiecesShotAtVenue(this);
 		}
 
@@ -407,28 +474,13 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				.setMessage("Click yes to import.")
 				.setCancelable(false)
 				.setPositiveButton("Yes",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// if this button is clicked, close
-								// current activity
-								//	if (checkIfInputFileExists()) {
-								//DancerDao dancerDao = new DancerDao(context);
-								dancerDao.importData(context);
-
-								//dropTable();
-								//createSqlTable();
-
-								//readFile3();
-								//	}
-							}
+						(dialog, id) -> {
+							dancerDao.importData(context);
 						})
 				.setNegativeButton("Cancel Import",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// if this button is clicked, just close
-								// the dialog box and do nothing
-								dialog.cancel();
-							}
+						(dialog, id) -> {
+							// if this button is clicked, just close the dialog box and do nothing
+							dialog.cancel();
 						});
 
 		// create alert dialog
@@ -464,7 +516,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		menu.add(R.string.menu_venue_by_performance);
 		menu.add(R.string.menu_venue_by_dance_piece);
 		menu.add(R.string.menu_prediction);
-		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
+		//UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
+		UtilsShared.removeMenuItems(menu, id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);
 
 		return true;
@@ -505,7 +558,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 					i++;
 					results.add("" + i + ": " + getColumnsFromSqliteColumn(c));
 				} while (c.moveToNext());
-				textInfo.setText(getString(R.string.results_text) + i);
+				//textInfo.setText(getString(R.string.results_text) + i);
 			} else {
 				results.add("No Data Found!");
 			}
@@ -519,11 +572,74 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 
 		int buttonId = radioButton.getId();
 
-		String userSearchText = mInputEdit.getText().toString().trim()
+		String userSearchText = editTextInput.getText().toString().trim()
 				.toUpperCase();
 
 
-		switch (buttonId) {
+		if (buttonId == R.id.radioDancer) {
+			Log.i(TAG, "dancer");
+			listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+					DancerDao.LAST_NAME, DancerDao.FIRST_NAME,
+					DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+					DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+
+			if (DetailActivity.dancerdetailid.equals("-1")) {
+
+				sqlSearchString = DancerData
+						.getUpperSearch(DancerDao.LAST_NAME)
+						+ " LIKE ?";
+				selectionArgs = new String[]{userSearchText + '%'};
+
+			} else {
+				editTextInput.setText("");
+				sqlSearchString = DancerData.getUpperSearch(DancerDao.CODE)
+						+ "=?";
+				selectionArgs = new String[]{DetailActivity.dancerdetailid};
+
+				DetailActivity.dancerdetailid = "-1";
+			}
+
+			fieldToGroupBy = "Code,LastName,FirstName,Title,Venue,PerfDate,Dance_Code";
+			orderByFields = "LastName,FirstName,PerfDate Desc";
+		} else if (buttonId == R.id.radioVenue) {
+			listOfFieldsToGet = new ArrayList<>(
+					Collections.singletonList(DancerDao.VENUE));
+			sqlSearchString = DancerData.getUpperSearch(DancerDao.VENUE)
+					+ " LIKE ?";
+			selectionArgs = new String[]{userSearchText + '%'};
+			fieldToGroupBy = DancerDao.VENUE;
+			orderByFields = DancerDao.VENUE;
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Venue");
+		} else if (buttonId == R.id.radioChoreographer) {
+			listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+					DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+					DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+			sqlSearchString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+					+ " LIKE ?";
+			selectionArgs = new String[]{userSearchText + '%'};
+			fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
+			orderByFields = "CLastName,CFirstName,PerfDate Desc";
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Choreographer");
+		} else if (buttonId == R.id.radioAny) {
+			//TODO Rework this to use raw query?
+			listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+					DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.LAST_NAME, DancerDao.FIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+					DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+			sqlSearchString =
+					DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+							+ " LIKE ? or " + DancerData.getUpperSearch(DancerDao.CFIRST_NAME) + " LIKE ? or " +
+							DancerData.getUpperSearch(DancerDao.LAST_NAME)
+							+ " LIKE ? or " + DancerData.getUpperSearch(DancerDao.FIRST_NAME) + " LIKE ?";
+			selectionArgs = new String[]{'%' + userSearchText + '%', '%' + userSearchText + '%', '%' + userSearchText + '%', '%' + userSearchText + '%'};
+			fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
+			orderByFields = "PerfDate Desc";
+			if (AppConstant.DEBUG)
+				Log.d(this.getClass().getSimpleName() + ">", "Search ->" + Arrays.toString(selectionArgs));
+		} else {
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "other");
+		}
+
+		/*switch (buttonId) {
 			case R.id.radioDancer:
 				Log.i(TAG, "dancer");
 				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
@@ -539,7 +655,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 					selectionArgs=new String[] {userSearchText+'%'};
 
 				} else {
-					mInputEdit.setText("");
+					editTextInput.setText("");
 					sqlSearchString = DancerData.getUpperSearch(DancerDao.CODE)
 							+ "=?";
 					selectionArgs=new String[] {DetailActivity.dancerdetailid};
@@ -558,10 +674,10 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.VENUE;
 				orderByFields = DancerDao.VENUE;
-				Log.i(TAG, "Venue");
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Venue");
 				break;
 
-			case R.id.radioPeople:
+			case R.id.radioChoreographer:
 				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
 						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
 						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
@@ -570,12 +686,27 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				selectionArgs=new String[] {userSearchText+'%'};
 				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
 				orderByFields = "CLastName,CFirstName,PerfDate Desc";
-				Log.i(TAG, "Venue");
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Choreographer");
+				break;
+			case R.id.radioAny:
+				//TODO Rework this to use raw query?
+				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+						DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME,DancerDao.LAST_NAME, DancerDao.FIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+						DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+				sqlSearchString =
+						DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+						+ " LIKE ? or "+DancerData.getUpperSearch(DancerDao.CFIRST_NAME)+" LIKE ? or "+
+								DancerData.getUpperSearch(DancerDao.LAST_NAME)
+								+ " LIKE ? or "+DancerData.getUpperSearch(DancerDao.FIRST_NAME)+" LIKE ?";
+				selectionArgs=new String[] {'%'+userSearchText+'%','%'+userSearchText+'%','%'+userSearchText+'%','%'+userSearchText+'%'};
+				fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
+				orderByFields ="PerfDate Desc";
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Search ->"+Arrays.toString(selectionArgs));
 				break;
 			default:
-				Log.i(TAG, "other");
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","other");
 				break;
-		}
+		}*/
 
 		Log.i(TAG + " fields", listOfFieldsToGet.toString());
 		Log.i(TAG + " search str", sqlSearchString);
@@ -614,7 +745,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	public void onItemClick(AdapterView<?> adapterView, View view,
 							int position, long row) {
 		Log.d(TAG, listOfDanceCode.toString());
-		if (radioButton.getId() == R.id.radioDancer || radioButton.getId() == R.id.radioPeople) {
+		if (radioButton.getId() == R.id.radioDancer || radioButton.getId() == R.id.radioChoreographer|| radioButton.getId() == R.id.radioAny) {
 			DetailActivity.setDance_id(listOfDanceCode.get(position));
 			Intent intent = new Intent(this, DetailActivity.class);
 			startActivity(intent);

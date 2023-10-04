@@ -11,12 +11,14 @@ import com.ericbandiero.dancerdata.code.IProcessCursorAble;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.database.Cursor;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,12 +38,12 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	private TextView txtviewVenue;
 	private TextView txtviewDate;
 	private TextView txtviewTitle;
-	Set<String> setchoreos= new LinkedHashSet<>();
-	Set<String> setdancers= new LinkedHashSet<>();
-	Set<String> setids= new LinkedHashSet<>();
+	private Set<String> setchoreos= new LinkedHashSet<>();
+	private Set<String> setdancers= new LinkedHashSet<>();
+	private Set<String> setids= new LinkedHashSet<>();
 	
 	public static String dancerdetailid="-1";
-	Cursor cursorDanceInfo;
+	private Cursor cursorDanceInfo;
 
 
 	public static String getDancerdetailid() {
@@ -55,14 +57,14 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	}
 
 
-	List<String>listDancers= new ArrayList<>();
+	private List<String>listDancers= new ArrayList<>();
 	
-	public static int dance_id;
+	private static int dance_id;
 	//SQLiteDatabase database;
 	@Inject
 	DancerDao dancerDao;
 	private TextView txtviewChoreos;
-	ListView listviewdancers;
+	private ListView listviewdancers;
 	public static void setDance_id(int dance_id) {
 		DetailActivity.dance_id = dance_id;
 	}
@@ -155,6 +157,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	finish();
 	}
 
+	@SuppressLint("Range")
 	private void setUpDataFromCursor(Cursor cursor){
 		cursorDanceInfo=cursor;
 		cursorDanceInfo.moveToFirst(); // it's very important to do this action otherwise

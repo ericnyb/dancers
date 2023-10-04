@@ -5,5 +5,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/textviewRecords"
-        android:textColor="@color/Black"/>
+        android:textColor="@color/black"/>
 </merge>

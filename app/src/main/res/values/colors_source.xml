@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="Source_Just_Link_No_RSS">#FFFFFF</color>
+    <color name="Source_NYTimes_SandyBrown">#1E90FF</color>
+    <color name="Source_Dance_NYC">#90EE90</color>
+    <color name="Source_BackStage">#FFD700</color>
+    <color name="Source_DanceEnthusiast">#F08080</color>
+    <color name="Source_TheGuardian">#FF00FF</color>
+    <color name="Source_DanceAdvantage">#FFFF00</color>
+    <color name="Source_Huffington">#ffe4c4</color>
+    <color name="Source_Playbill_Parser">#CF9FFF</color>
+    <color name="LightBlueSky">#87CEFA</color>
+    <color name="blue">#0000FF</color>
+    <color name="black">#000000</color>
+    <color name="DarkBlue">#00008B</color>
+</resources>

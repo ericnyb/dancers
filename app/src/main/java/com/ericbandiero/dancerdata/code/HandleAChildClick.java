@@ -45,9 +45,9 @@ public class HandleAChildClick implements IHandleChildClicksExpandableIds,Serial
 				break;
 			case GET_PERFORMANCE_FROM_CLICK:
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","Getting a performance from a click");
-				Intent intentPerformance = dancerDao.prepPerformanceActivity(child.getAnyObject().toString());
-				intentPerformance.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				context.startActivity(intentPerformance);
+				dancerDao.prepPerformanceActivity(child.getAnyObject().toString());
+				//intentPerformance.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				//context.startActivity(intentPerformance);
 				break;
 		}
 
