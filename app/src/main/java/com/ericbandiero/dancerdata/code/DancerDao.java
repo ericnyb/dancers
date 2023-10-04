@@ -127,6 +127,9 @@ public class DancerDao implements Serializable {
 
 	private Context activityContext;
 
+	//Help with testing on emulator - set this to test importing dancers text file while  running on emulator.
+	private boolean isRunningOnEmulator=true;
+
 	@Inject
 	SharedPreferences sharedPreferences;
 
@@ -195,12 +198,10 @@ public class DancerDao implements Serializable {
 	}
 
 	public void importData(Context context_activity) {
-		//TODO Add option to get from assets for testing
 		activityContext = context_activity;
 
-		//todo Make test easier with a variable?
-		//To test with emulator change condition below to be true. And change flag in readfile
-		if (1==1 || checkIfInputFileExists()) {
+		//To test with emulator change condition in variable isRunningOnEmulator to true
+		if (isRunningOnEmulator == true || checkIfInputFileExists()) {
 			//open();
 			deleteAllFromTable(SqlHelper.MAIN_TABLE_NAME);
 			//dbHelper.createSqlTable();
@@ -353,7 +354,7 @@ public class DancerDao implements Serializable {
 		// Read text from file
 		try {
 			//Test of from assets - set to true
-			if (true) {
+			if (isRunningOnEmulator) {
 				//toastIt(context,"reading a processCursor file...",Toast.LENGTH_SHORT);
 				//UtilsShared.alertMessageSimple(context, "Import Message", "Using processCursor data");
 				AssetManager am = context.getAssets();
