@@ -129,7 +129,7 @@ public class DancerDao implements Serializable {
 	private Context activityContext;
 
 	//Help with testing on emulator - set this to test importing dancers text file while  running on emulator.
-	private boolean isRunningOnEmulator=true;
+	private boolean isRunningOnEmulator=false;
 
 	@Inject
 	SharedPreferences sharedPreferences;
@@ -178,7 +178,6 @@ public class DancerDao implements Serializable {
 		dbHelper = new SqlHelper(context);
 		//We call this to make sure onCreate gets called if database was never created
 		dbHelper.getWritableDatabase();
-
 
 
 	}
