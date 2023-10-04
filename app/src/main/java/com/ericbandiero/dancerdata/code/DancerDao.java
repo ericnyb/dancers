@@ -12,20 +12,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.ericbandiero.dancerdata.activities.ExpandListSubclass;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.activities.Lib_Expandable_Activity;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.DataHolderTwoFields;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
-import com.ericbandiero.librarymain.interfaces.IHandleChildClicksExpandableIds;
 import com.ericbandiero.librarymain.interfaces.IPrepDataExpandableList;
 import com.ericbandiero.myframework.Utility;
 
@@ -47,8 +44,9 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -200,7 +198,9 @@ public class DancerDao implements Serializable {
 		//TODO Add option to get from assets for testing
 		activityContext = context_activity;
 
-		if (checkIfInputFileExists()) {
+		//todo Make test easier with a variable?
+		//To test with emulator change condition below to be true. And change flag in readfile
+		if (1==1 || checkIfInputFileExists()) {
 			//open();
 			deleteAllFromTable(SqlHelper.MAIN_TABLE_NAME);
 			//dbHelper.createSqlTable();
@@ -352,10 +352,10 @@ public class DancerDao implements Serializable {
 		db.beginTransaction();
 		// Read text from file
 		try {
-			//Test of from assets
-			if (false) {
+			//Test of from assets - set to true
+			if (true) {
 				//toastIt(context,"reading a processCursor file...",Toast.LENGTH_SHORT);
-				UtilsShared.alertMessageSimple(context, "Import Message", "Using processCursor data");
+				//UtilsShared.alertMessageSimple(context, "Import Message", "Using processCursor data");
 				AssetManager am = context.getAssets();
 				dancerDataAssets = am.open("dancers.txt", AssetManager.ACCESS_BUFFER);
 				br = new BufferedReader(new InputStreamReader(dancerDataAssets));

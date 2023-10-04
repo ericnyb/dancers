@@ -11,12 +11,14 @@ import com.ericbandiero.dancerdata.code.IProcessCursorAble;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
 import com.ericbandiero.dancerdata.code.DancerDao;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.database.Cursor;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -155,6 +157,7 @@ public class DetailActivity extends AppCompatActivity implements OnItemClickList
 	finish();
 	}
 
+	@SuppressLint("Range")
 	private void setUpDataFromCursor(Cursor cursor){
 		cursorDanceInfo=cursor;
 		cursorDanceInfo.moveToFirst(); // it's very important to do this action otherwise

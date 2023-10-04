@@ -1,7 +1,6 @@
 package com.ericbandiero.dancerdata.code;
 
 import android.app.Activity;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -13,6 +12,8 @@ import com.ericbandiero.librarymain.interfaces.IHandleRecyclerViewClick;
 import java.io.Serializable;
 
 import javax.inject.Inject;
+
+import androidx.core.app.NavUtils;
 
 /**
  * Created by Eric Bandiero on 12/14/2017.

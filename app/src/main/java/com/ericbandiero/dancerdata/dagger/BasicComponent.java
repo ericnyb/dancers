@@ -2,11 +2,10 @@ package com.ericbandiero.dancerdata.dagger;
 
 import com.ericbandiero.dancerdata.activities.AndroidDataActivity;
 import com.ericbandiero.dancerdata.activities.DetailActivity;
-
-import com.ericbandiero.dancerdata.code.HandleClickForRecyclerVenueOrDancer;
 import com.ericbandiero.dancerdata.activities.PredictActivity;
 import com.ericbandiero.dancerdata.code.DancerDao;
 import com.ericbandiero.dancerdata.code.HandleAChildClick;
+import com.ericbandiero.dancerdata.code.HandleClickForRecyclerVenueOrDancer;
 import com.ericbandiero.dancerdata.code.TestDaggerObject;
 
 import javax.inject.Singleton;

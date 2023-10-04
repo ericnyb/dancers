@@ -11,14 +11,14 @@
      android:layout_height="wrap_content"
      android:textAppearance="@android:style/TextAppearance.Medium"
      android:text="@string/textheader"
-     android:textColor="@color/Black"
+     android:textColor="@color/black"
      android:focusable="false"/>
 
     <TextView
         android:id="@+id/textViewChild"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/Blue"
+        android:textColor="@color/blue"
         android:text="@string/textviewchild"
         android:textAppearance="@android:style/TextAppearance.Small"
         android:visibility="gone" />

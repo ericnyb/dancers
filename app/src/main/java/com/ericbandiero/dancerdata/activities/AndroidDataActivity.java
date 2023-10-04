@@ -8,9 +8,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +23,6 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
 
 import com.ericbandiero.dancerdata.R;
 import com.ericbandiero.dancerdata.code.AppConstant;
@@ -37,9 +33,10 @@ import com.ericbandiero.dancerdata.code.SqlHelper;
 import com.ericbandiero.dancerdata.code.StatData;
 import com.ericbandiero.dancerdata.code.TestConcrete;
 import com.ericbandiero.dancerdata.dagger.DanceApp;
-import com.ericbandiero.librarymain.activities.*;
-
+import com.ericbandiero.librarymain.R.id;
 import com.ericbandiero.librarymain.UtilsShared;
+import com.ericbandiero.librarymain.activities.Lib_Base_ActionBarActivity;
+import com.ericbandiero.librarymain.activities.Lib_Stat_RecycleActivity;
 import com.ericbandiero.librarymain.basecode.ControlStatsActivityBuilder;
 import com.ericbandiero.librarymain.basecode.ControlStatsAdapterBuilder;
 import com.ericbandiero.librarymain.data_classes.Lib_ExpandableDataWithIds;
@@ -51,10 +48,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -99,8 +96,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 	//Permission request integer
 	private static final int PERMISSION_REQUEST_WRITE_STORAGE=0X1;
 
-	@BindView(R.id.button_performances) Button mSearchButton;
-	@BindView(R.id.textViewRecordCount1) TextView textInfo;
+//	@BindView(R.id.button_performances) Button mSearchButton;
+//	@BindView(R.id.textViewRecordCount1) TextView textInfo;
 
 
 /*
@@ -142,15 +139,19 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		//We want a context that we can use
 		dancerDao.setActivityContext(this);
 
-		ButterKnife.bind(this);
+		//ButterKnife.bind(this);
 		// getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		//mSearchButton = (Button) findViewById(R.id.button1);
+		editTextInput=new EditText(this);
+		radioGroup=new RadioGroup(this);
+		buttonPredict=new Button(this);
 		editTextInput = findViewById(R.id.editText1);
 		radioGroup = findViewById(R.id.radioGroup1);
 		radioButton = findViewById(R.id.radioDancer);
 		//textInfo = (TextView) findViewById(R.id.textViewRecordCount1);
 		listview = findViewById(R.id.listViewDancer);
 		buttonPredict = findViewById(R.id.button_venues);
+
 
 		//Ask for permissions to use the app
 		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,PERMISSION_REQUEST_WRITE_STORAGE);
@@ -337,7 +338,18 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		Intent intent = null;
 		int id = view.getId();
 
-		switch (id) {
+		if (id == R.id.button_performances) {
+			progressBarStart();
+			dancerDao.prepPerformanceActivity();
+		} else if (id == R.id.button_venues) {
+			progressBarStart();
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Clicked venue");
+			//We call routine to create the data list.
+			List<Lib_ExpandableDataWithIds> listData = new ArrayList<>();
+			dancerDao.getVenueData(this, handleAChildClickVenues);
+		}
+
+		/*switch (id) {
 			case R.id.button_performances:
 				progressBarStart();
 				dancerDao.prepPerformanceActivity();
@@ -353,7 +365,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				break;
 			default:
 				break;
-		}
+		}*/
 	}
 
 	private void startStats(){
@@ -504,7 +516,8 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		menu.add(R.string.menu_venue_by_performance);
 		menu.add(R.string.menu_venue_by_dance_piece);
 		menu.add(R.string.menu_prediction);
-		UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
+		//UtilsShared.removeMenuItems(menu, R.id.menu_item_lib_quit);
+		UtilsShared.removeMenuItems(menu, id.menu_item_lib_quit);
 		//UtilsShared.removeMenuItems(menu,88);
 
 		return true;
@@ -545,7 +558,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 					i++;
 					results.add("" + i + ": " + getColumnsFromSqliteColumn(c));
 				} while (c.moveToNext());
-				textInfo.setText(getString(R.string.results_text) + i);
+				//textInfo.setText(getString(R.string.results_text) + i);
 			} else {
 				results.add("No Data Found!");
 			}
@@ -563,7 +576,70 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 				.toUpperCase();
 
 
-		switch (buttonId) {
+		if (buttonId == R.id.radioDancer) {
+			Log.i(TAG, "dancer");
+			listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+					DancerDao.LAST_NAME, DancerDao.FIRST_NAME,
+					DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+					DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+
+			if (DetailActivity.dancerdetailid.equals("-1")) {
+
+				sqlSearchString = DancerData
+						.getUpperSearch(DancerDao.LAST_NAME)
+						+ " LIKE ?";
+				selectionArgs = new String[]{userSearchText + '%'};
+
+			} else {
+				editTextInput.setText("");
+				sqlSearchString = DancerData.getUpperSearch(DancerDao.CODE)
+						+ "=?";
+				selectionArgs = new String[]{DetailActivity.dancerdetailid};
+
+				DetailActivity.dancerdetailid = "-1";
+			}
+
+			fieldToGroupBy = "Code,LastName,FirstName,Title,Venue,PerfDate,Dance_Code";
+			orderByFields = "LastName,FirstName,PerfDate Desc";
+		} else if (buttonId == R.id.radioVenue) {
+			listOfFieldsToGet = new ArrayList<>(
+					Collections.singletonList(DancerDao.VENUE));
+			sqlSearchString = DancerData.getUpperSearch(DancerDao.VENUE)
+					+ " LIKE ?";
+			selectionArgs = new String[]{userSearchText + '%'};
+			fieldToGroupBy = DancerDao.VENUE;
+			orderByFields = DancerDao.VENUE;
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Venue");
+		} else if (buttonId == R.id.radioChoreographer) {
+			listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+					DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+					DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+			sqlSearchString = DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+					+ " LIKE ?";
+			selectionArgs = new String[]{userSearchText + '%'};
+			fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
+			orderByFields = "CLastName,CFirstName,PerfDate Desc";
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "Choreographer");
+		} else if (buttonId == R.id.radioAny) {
+			//TODO Rework this to use raw query?
+			listOfFieldsToGet = new ArrayList<>(Arrays.asList(
+					DancerDao.CLAST_NAME, DancerDao.CFIRST_NAME, DancerDao.LAST_NAME, DancerDao.FIRST_NAME, DancerDao.TITLE, DancerDao.VENUE, DancerDao.PERF_DATE,
+					DancerDao.DANCE_CODE, DancerDao.CHOR_CODE));
+			sqlSearchString =
+					DancerData.getUpperSearch(DancerDao.CLAST_NAME)
+							+ " LIKE ? or " + DancerData.getUpperSearch(DancerDao.CFIRST_NAME) + " LIKE ? or " +
+							DancerData.getUpperSearch(DancerDao.LAST_NAME)
+							+ " LIKE ? or " + DancerData.getUpperSearch(DancerDao.FIRST_NAME) + " LIKE ?";
+			selectionArgs = new String[]{'%' + userSearchText + '%', '%' + userSearchText + '%', '%' + userSearchText + '%', '%' + userSearchText + '%'};
+			fieldToGroupBy = DancerDao.CLAST_NAME + "," + DancerDao.CFIRST_NAME + "," + DancerDao.DANCE_CODE;
+			orderByFields = "PerfDate Desc";
+			if (AppConstant.DEBUG)
+				Log.d(this.getClass().getSimpleName() + ">", "Search ->" + Arrays.toString(selectionArgs));
+		} else {
+			if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">", "other");
+		}
+
+		/*switch (buttonId) {
 			case R.id.radioDancer:
 				Log.i(TAG, "dancer");
 				listOfFieldsToGet = new ArrayList<>(Arrays.asList(
@@ -630,7 +706,7 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 			default:
 				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName()+">","other");
 				break;
-		}
+		}*/
 
 		Log.i(TAG + " fields", listOfFieldsToGet.toString());
 		Log.i(TAG + " search str", sqlSearchString);
