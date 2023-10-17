@@ -7,7 +7,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -153,8 +157,20 @@ public class AndroidDataActivity extends Lib_Base_ActionBarActivity implements
 		buttonPredict = findViewById(R.id.button_venues);
 
 
-		//Ask for permissions to use the app
-		askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,PERMISSION_REQUEST_WRITE_STORAGE);
+		if (Build.VERSION.SDK_INT >= 30) {
+			if (Environment.isExternalStorageManager()==false) {
+				Intent intent = new Intent();
+				intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+				Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+				intent.setData(uri);
+				startActivity(intent);
+			}
+		}
+		else{
+			//Ask for permissions to use the app
+			askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,PERMISSION_REQUEST_WRITE_STORAGE);
+		}
+
 
 		dancerDao.runRawQueryCursor("select * from " + SqlHelper.MAIN_TABLE_NAME).
 			subscribeWith(new DisposableSingleObserver<Cursor>() {

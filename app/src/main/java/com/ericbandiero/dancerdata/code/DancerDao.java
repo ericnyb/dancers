@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -128,7 +129,7 @@ public class DancerDao implements Serializable {
 	private Context activityContext;
 
 	//Help with testing on emulator - set this to test importing dancers text file while  running on emulator.
-	private boolean isRunningOnEmulator=true;
+	private boolean isRunningOnEmulator=false;
 
 	@Inject
 	SharedPreferences sharedPreferences;
@@ -177,6 +178,8 @@ public class DancerDao implements Serializable {
 		dbHelper = new SqlHelper(context);
 		//We call this to make sure onCreate gets called if database was never created
 		dbHelper.getWritableDatabase();
+
+
 	}
 
 	public void open() throws SQLException {
@@ -201,7 +204,7 @@ public class DancerDao implements Serializable {
 		activityContext = context_activity;
 
 		//To test with emulator change condition in variable isRunningOnEmulator to true
-		if (isRunningOnEmulator == true || checkIfInputFileExists()) {
+		if (checkIfInputFileExists()) {
 			//open();
 			deleteAllFromTable(SqlHelper.MAIN_TABLE_NAME);
 			//dbHelper.createSqlTable();
@@ -474,16 +477,26 @@ public class DancerDao implements Serializable {
 	private boolean checkIfInputFileExists() {
 		boolean fileExists = false;
 
-		File file = new File(Environment.getExternalStorageDirectory()
-				+ DancerDao.WORKING_DATA_FOLDER + DancerDao.DANCER_DATA_INPUT_FILE);
-		if (file.exists()) {
-			fileExists = true;
-		} else {
-			if (AppConstant.DEBUG)
-				Log.d(this.getClass().getSimpleName() + ">", "File doesn't exist:" + file);
-			toastIt(context, file + " doesn't exists", Toast.LENGTH_LONG);
+		if (isRunningOnEmulator==false) {
+			File file = new File(Environment.getExternalStorageDirectory()
+					+ DancerDao.WORKING_DATA_FOLDER + DancerDao.DANCER_DATA_INPUT_FILE);
+			if (file.exists()) {
+				fileExists = true;
+			} else {
+				if (AppConstant.DEBUG)
+					Log.d(this.getClass().getSimpleName() + ">", "File doesn't exist:" + file);
+				toastIt(context, file + " doesn't exists", Toast.LENGTH_LONG);
+			}
 		}
+		else {
+			try {
+				boolean havefile= Arrays.asList(context.getAssets().list("")).contains("dancers.txt");
+				fileExists=havefile;
+			} catch (IOException e) {
+				if (AppConstant.DEBUG) Log.d(this.getClass().getSimpleName() + ">","dancer");;
+			}
 
+		}
 		return fileExists;
 	}
 
